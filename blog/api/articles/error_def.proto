@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package api.articles;
+
+option go_package = "blog/api/articles;articles";
+import "errors/errors.proto";
+
+enum ArticleErrorReason{
+	ERR_ARTICLE_NOT_EXIST = 0 [(errors.code) = 404];
+	ERR_ARTICLE_INVALID_ID_OR_TITLE = 1 [(errors.code) = 400];
+	SUCCESS = 2 [(errors.code) = 200];
+}

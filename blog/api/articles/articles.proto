@@ -1,0 +1,81 @@
+syntax = "proto3";
+
+package api.articles;
+
+option go_package = "blog/api/articles;articles";
+
+service Articles {
+	rpc CreateArticles (CreateArticlesRequest) returns (CreateArticlesReply);
+	rpc UpdateArticles (UpdateArticlesRequest) returns (UpdateArticlesReply);
+	rpc DeleteArticles (DeleteArticlesRequest) returns (DeleteArticlesReply);
+	rpc GetArticles (GetArticlesRequest) returns (GetArticlesReply);
+	rpc GetSingleArticle (GetSingleArticleRequest) returns (GetSingleArticleReply);
+}
+
+message CreateArticlesRequest {
+	string Title  = 1;
+	uint32 Cid = 2;
+	string Desc = 3;
+	string Content = 4;
+	string Img = 5;
+	uint32 PageView = 6;
+	uint32 Uid = 7;
+}
+message CreateArticlesReply {
+	uint32 code = 1;
+	string Msg = 2;
+}
+
+message GetArticlesRequest {
+	uint32 PageSize = 1;
+	uint32 PageNum = 2;
+}
+message GetArticlesReply {
+	message ArticleInfo{
+		uint32 Uid = 1;
+		string Title = 2; // article title
+		string Name = 3;	// category name
+		string Img = 4;
+		string Desc = 5; // article description
+	}
+	repeated ArticleInfo SelectedArticles = 1;
+	uint32 code = 2;
+}
+
+message GetSingleArticleRequest {
+	uint32 ArticleID = 1;
+}
+message GetSingleArticleReply {
+	message RespondMsg{
+		string CreatedAt = 1;
+		string UpdatedAt = 2;
+		string Title = 3;
+		string Desc = 4;
+		string Content = 5;
+		uint32 PageView = 6;
+	}
+	RespondMsg Article = 1;
+	uint32 code = 2;
+	string msg = 3;
+}
+
+message UpdateArticlesRequest {
+	uint32 ArticleID = 1;
+	string Title = 2;
+	uint32 Cid = 3; // category id
+	string desc = 4;
+	string content = 5;
+	string Thumbnail = 6;
+}
+message UpdateArticlesReply {
+	uint32 code = 1;
+	string Msg = 2;
+}
+
+message DeleteArticlesRequest {
+	uint32 ArticleID = 1;
+}
+message DeleteArticlesReply {
+	uint32 code = 1;
+	string Msg = 2;
+}
