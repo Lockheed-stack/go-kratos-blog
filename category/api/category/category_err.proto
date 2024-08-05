@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package api.category;
+
+option go_package = "category/api/category;category";
+import "errors/errors.proto";
+
+enum CategoryErrorReason{
+	ERR_CATEGORY_NOT_EXIST = 0 [(errors.code) = 404];
+	ERR_CATEGORY_INVALID_TITLE = 1 [(errors.code) = 400];
+	ERR_CATEGORY_INVALID_ID = 2 [(errors.code) = 400];
+	ERR_CATEGORY_PRE_EXISTING = 3 [(errors.code) = 400];
+	ERR_CATEGORY_FOREIGN_KEY_CONSTRAINT = 4 [(errors.code) = 400];
+}

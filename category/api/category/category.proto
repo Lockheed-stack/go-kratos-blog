@@ -1,0 +1,61 @@
+syntax = "proto3";
+
+package api.category;
+
+option go_package = "category/api/category;category";
+
+
+service Category {
+	rpc CreateCategory (CreateCategoryRequest) returns (CreateCategoryReply);
+	// rpc GetCategory(GetCategoryRequest) returns (GetCategoryReply);
+	rpc ListCategory(ListCategoryRequest) returns (ListCategoryReply);
+	rpc DeleteCategory(DeleteCategoryRequest) returns (DeleteCategoryReply);
+	rpc UpdateCategory(UpdateCategoryRequest) returns (UpdateCategoryReply);
+}
+
+// create
+message CreateCategoryRequest {
+	string CategoryName = 1;
+}
+message CreateCategoryReply {
+	string Msg = 1;
+	uint32 code = 2;
+}
+
+// select
+// message GetCategoryRequest{
+
+// }
+// message GetCategoryReply{
+
+// }
+
+message ListCategoryRequest{
+	uint32 PageSize = 1;
+	uint32 PageNum = 2;
+}
+message ListCategoryReply{
+	message CategoryInfo{
+		string name = 1;
+	}
+	repeated CategoryInfo CategoryArray = 1;
+	uint32 code = 2;
+	string Msg = 3;
+}
+// delete
+message DeleteCategoryRequest{
+	uint32 id = 1;
+}
+message DeleteCategoryReply{
+	uint32 code = 1;
+	string Msg = 2;
+}
+// update
+message UpdateCategoryRequest{
+	string CategoryName = 1;
+	uint32 CategoryID = 2;
+}
+message UpdateCategoryReply{
+	uint32 code = 1;
+	string Msg = 2;
+}
