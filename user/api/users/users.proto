@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+package api.users;
+
+option go_package = "user/api/users;users";
+
+
+service Users {
+	rpc CreateUsers (CreateUsersRequest) returns (CreateUsersReply);
+	rpc UpdateUsers (UpdateUsersRequest) returns (UpdateUsersReply);
+	rpc DeleteUsers (DeleteUsersRequest) returns (DeleteUsersReply);
+	rpc GetUsers (GetUsersRequest) returns (GetUsersReply);
+	rpc ListUsers (ListUsersRequest) returns (ListUsersReply);
+	rpc AuthUsers (AuthUsersRequest) returns (AuthUsersReply);
+}
+
+message CreateUsersRequest {
+	string UserName = 1;
+	string Password = 2;
+}
+message CreateUsersReply {
+	string Msg = 1;
+	uint32 code = 2;
+}
+
+message UpdateUsersRequest {}
+message UpdateUsersReply {}
+
+message DeleteUsersRequest {
+	uint32 id = 1;
+}
+message DeleteUsersReply {
+	string Msg = 1;
+	uint32 code = 2;
+}
+
+message GetUsersRequest {}
+message GetUsersReply {}
+
+message ListUsersRequest {}
+message ListUsersReply {}
+
+
+message AuthUsersRequest {
+	string UserName = 1;
+	string Password = 2;
+}
+message AuthUsersReply{
+	string Msg = 1;
+	uint32 code = 2;
+}

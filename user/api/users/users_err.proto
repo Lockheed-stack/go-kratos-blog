@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+// 定义包名
+package api.users;
+import "errors/errors.proto";
+
+// 多语言特定包名，用于源代码引用
+option go_package = "user/api/users;users";
+
+
+enum ErrorReason {
+
+  // 为某个枚举单独设置错误码
+  ERR_USER_NOT_FOUND = 0 [(errors.code) = 404];
+
+  ERR_INVALID_USER_NAME = 1 [(errors.code) = 400];
+  ERR_USER_PRE_EXISTING = 2 [(errors.code) = 400];
+  ERR_USER_FOREIGN_KEY_CONSTRAINT = 4 [(errors.code) = 400];
+  ERR_USER_INVALID_REQUEST = 5 [(errors.code) = 400];
+  ERR_USER_USERNAME_PASSWORD_WRONG = 6 [(errors.code) = 400];
+}

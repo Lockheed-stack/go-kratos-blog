@@ -4,8 +4,10 @@ import (
 	"blog/internal/biz"
 	"blog/internal/conf"
 
+	"github.com/go-kratos/kratos/contrib/registry/etcd/v2"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/google/wire"
+	clientv3 "go.etcd.io/etcd/client/v3"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/schema"
@@ -17,7 +19,8 @@ var ProviderSet = wire.NewSet(NewData, NewGreeterRepo, NewArticleRepo)
 // Data .
 type Data struct {
 	// TODO wrapped database client
-	db *gorm.DB
+	db       *gorm.DB
+	ETCD_reg *etcd.Registry
 }
 
 // NewData .
@@ -41,6 +44,15 @@ func NewData(c *conf.Data, logger log.Logger) (*Data, func(), error) {
 		log.NewHelper(logger).Fatal(err)
 	}
 
+	// init etcd etcd_client
+	etcd_client, err := clientv3.New(clientv3.Config{
+		Endpoints: c.Etcd.Endpoint,
+	})
+	if err != nil {
+		return data, nil, err
+	}
+	data.ETCD_reg = etcd.New(etcd_client)
+
 	//closing tasks
 	cleanup := func() {
 		sqlDB, err := db.DB()
@@ -49,7 +61,7 @@ func NewData(c *conf.Data, logger log.Logger) (*Data, func(), error) {
 		} else {
 			sqlDB.Close()
 		}
-
+		etcd_client.Close()
 		log.NewHelper(logger).Info("closing the data resources")
 	}
 	return data, cleanup, nil
