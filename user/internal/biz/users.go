@@ -22,7 +22,7 @@ type UserRepo interface {
 
 	CreateUser(name string, psw string) error
 	RemoveUser(id uint32) error
-	AuthLogin(name string, pwd string) error
+	AuthLogin(name string, pwd string) (uint32, error)
 }
 
 type UserUsecase struct {
@@ -60,21 +60,21 @@ func (uc *UserUsecase) CreateOneUser(username string, passwd string) error {
 	return nil
 }
 
-func (uc *UserUsecase) UserLoginAuth(username string, passwd string) error {
+func (uc *UserUsecase) UserLoginAuth(username string, passwd string) (uint32, error) {
 	hash := sha256.New()
 	hash.Write([]byte(passwd))
 	hex_pwd := hex.EncodeToString(hash.Sum(nil))
-	err := uc.repo.AuthLogin(username, hex_pwd)
+	UID, err := uc.repo.AuthLogin(username, hex_pwd)
 
 	if err != nil {
 		e := errors.FromError(err)
 		switch e.Reason {
 		default:
-			return pb.ErrorErrUserUsernamePasswordWrong("")
+			return 0, pb.ErrorErrUserUsernamePasswordWrong("")
 		}
 	}
 
-	return nil
+	return UID, nil
 }
 
 func (uc *UserUsecase) RemoveOneUser(id uint32) error {

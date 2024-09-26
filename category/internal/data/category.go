@@ -24,10 +24,18 @@ func NewCategoryRepo(data *Data, logger log.Logger) biz.CategoryRepo {
 func (r *categoryRepo) CreateCategory(name string) error {
 	// the category name is unique
 	sqlRes := r.data.db.Create(&biz.Category{Name: name})
-	if err := sqlRes.Error; err != nil {
-		r.log.Error(err)
-		return err
+	if sqlRes.Error != nil {
+		if mysqlErr, ok := sqlRes.Error.(*mysql.MySQLError); ok {
+			switch mysqlErr.Number {
+			case 1062: //Duplicate entry
+				{
+					r.log.Error(mysqlErr.Message)
+					return errors.New(400, "ERR_CATEGORY_PRE_EXISTING", "")
+				}
+			}
+		}
 	}
+
 	return nil
 }
 func (r *categoryRepo) GetCategory_Pagination(pageSize uint32, offset uint32) ([]*pb.ListCategoryReply_CategoryInfo, error) {

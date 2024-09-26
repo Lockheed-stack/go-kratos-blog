@@ -32,10 +32,10 @@ func (ap *articleRepo) CreateAnArticle(article *biz.Article) error {
 }
 
 // select
-func (ap *articleRepo) GetArticles_Pagination(pageSize uint32, offset uint32) ([]*pb.GetArticlesReply_ArticleInfo, error) {
+func (ap *articleRepo) GetArticlesInSameCategory_Pagination(pageSize uint32, offset uint32, cid uint32) ([]*pb.DetailArticleInfo, error) {
 
-	var result = []*pb.GetArticlesReply_ArticleInfo{}
-	sqlRes := ap.data.db.Table("article_view_pagination").Limit(int(pageSize)).Offset(int(offset)).Scan(&result)
+	var result = []*pb.DetailArticleInfo{}
+	sqlRes := ap.data.db.Table("article").Where("cid=?", cid).Limit(int(pageSize)).Offset(int(offset)).Scan(&result)
 
 	if sqlRes.Error != nil {
 		ap.log.Error(sqlRes.Error)
@@ -44,7 +44,17 @@ func (ap *articleRepo) GetArticles_Pagination(pageSize uint32, offset uint32) ([
 
 	return result, nil
 }
+func (ap *articleRepo) GetArticlesByCidAndUid_Pagination(pageSize uint32, offset uint32, cid uint32, uid uint32) ([]*pb.DetailArticleInfo, error) {
+	var result = []*pb.DetailArticleInfo{}
+	sqlRes := ap.data.db.Table("article").Where("cid=? and uid=?", cid, uid).Limit(int(pageSize)).Offset(int(offset)).Scan(&result)
 
+	if sqlRes.Error != nil {
+		ap.log.Error(sqlRes.Error)
+		return nil, sqlRes.Error
+	}
+
+	return result, nil
+}
 func (ap *articleRepo) GetOneArticle(id uint32) (*biz.Article, error) {
 	var article = &biz.Article{}
 

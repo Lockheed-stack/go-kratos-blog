@@ -1,0 +1,153 @@
+syntax = "proto3";
+
+package api.gateway;
+import "google/api/annotations.proto";
+import "api/articles/articles.proto";
+import "api/category/category.proto";
+option go_package = "gateway/api/gateway;gateway";
+
+
+service Gateway {
+	// article relate
+	rpc CreateBlog(CreateBlogRequest) returns (CreateBlogReply){
+		option (google.api.http) = {
+			post: "/gateway/blog/{Username}/add"
+			body: "BlogDetail"
+		};
+	};
+	rpc GetBlogs (GetBlogsRequest) returns (GetBlogsReply){
+		option (google.api.http) = {
+			get: "gateway/blog/{Username}/list"
+		};
+	};
+	rpc GetSingleBlog (GetSingleBlogRequest) returns (GetSingleBlogReply){
+		option (google.api.http) = {
+			get: "gateway/blog/{BlogID}"
+		};
+	};
+	rpc UpdateBlog (UpdateBlogRequest) returns (UpdateBlogReply){
+		option (google.api.http) = {
+			patch: "gateway/blog/{Username}/modify"
+			body: "BlogDetail"
+		};
+	};
+	rpc DeleteBlog (DeleteBlogRequest) returns (DeleteBlogReply){
+		option (google.api.http) = {
+			post: "gateway/blog/{Username}/remove"
+			body: "TargetBlog"
+		};
+	};
+	// category relate
+	rpc CreateBlogCategory (CreateBlogCategoryRequest) returns (CreateBlogCategoryReply){
+		option (google.api.http) = {
+			post: "gateway/category/{Username}/add"
+			body: "CategoryInfo"
+		};
+	};
+	rpc ListBlogCategory(ListBlogCategoryRequest)returns(ListBlogCategoryReply){
+		option (google.api.http) = {
+			get: "gateway/category/{Username}/list"
+		};
+	};
+	rpc DeleteBlogCategory(DeleteBlogCategoryRequest)returns(DeleteBlogCategoryReply){
+		option (google.api.http) = {
+			post: "gateway/category/{Username}/remove"
+			body: "CategoryInfo"
+		};
+	};
+	rpc UpdateBlogCategory(UpdateBlogCategoryRequest)returns(UpdateBlogCategoryReply){
+		option (google.api.http) = {
+			patch: "gateway/category/{Username}/modify"
+			body: "CategoryInfo"
+		};
+	};
+}
+
+// article message
+message CreateBlogRequest {
+	string Username = 1;
+	articles.CreateArticlesRequest BlogDetail = 2;
+}
+message CreateBlogReply {
+	uint32 Code = 1;
+	string Msg = 2;
+}
+
+message GetBlogsRequest {
+	string Username = 1;
+	uint32 PageSize = 2;
+	uint32 PageNum = 3;
+}
+message GetBlogsReply{
+	articles.GetArticlesReply BlogsDetail = 1;
+	uint32 code = 2;
+}
+
+message GetSingleBlogRequest{
+	uint32 BlogID = 1;
+}
+message GetSingleBlogReply{
+	articles.GetSingleArticleReply BlogDetail = 1;
+	uint32 code = 2;
+	string msg = 3;
+}
+
+message UpdateBlogRequest {
+	string Username = 1;
+	articles.UpdateArticlesRequest BlogDetail =2;
+}
+message UpdateBlogReply {
+	uint32 Code = 1;
+	string Msg = 2;
+}
+
+message DeleteBlogRequest {
+	message BlogInfo{
+		uint32 BlogID = 1;
+	}
+	string Username = 1;
+	BlogInfo TargetBlog = 2;
+}
+message DeleteBlogReply {
+	uint32 Code = 1;
+	string Msg = 2;
+}
+
+// category message
+message CreateBlogCategoryRequest{
+	string Username = 1;
+	category.CreateCategoryRequest CategoryInfo =2;
+}
+message CreateBlogCategoryReply{
+	string Msg = 1;
+	uint32 Code = 2;
+}
+
+message ListBlogCategoryRequest{
+	string Username = 1;
+	uint32 PageSize = 2;
+	uint32 PageNum = 3;
+}
+message ListBlogCategoryReply{
+	category.ListCategoryReply CategoriesDetail =1;
+	uint32 Code =2;
+	string Msg = 3;
+}
+
+message DeleteBlogCategoryRequest{
+	string Username = 1;
+	category.DeleteCategoryRequest CategoryInfo = 2;
+}
+message DeleteBlogCategoryReply{
+	uint32 Code = 1;
+	string Msg = 2;
+}
+
+message UpdateBlogCategoryRequest{
+	string Username = 1;
+	category.UpdateCategoryRequest CategoryInfo = 2;
+}
+message UpdateBlogCategoryReply{
+	uint32 Code = 1;
+	string Msg = 2;
+}

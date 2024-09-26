@@ -19,7 +19,8 @@ type Article struct {
 
 type ArticleRepo interface {
 	CreateAnArticle(*Article) error
-	GetArticles_Pagination(uint32, uint32) ([]*pb.GetArticlesReply_ArticleInfo, error)
+	GetArticlesInSameCategory_Pagination(pagesize uint32, pagenum uint32, cid uint32) ([]*pb.DetailArticleInfo, error)
+	GetArticlesByCidAndUid_Pagination(pagesize uint32, pagenum uint32, cid uint32, uid uint32) ([]*pb.DetailArticleInfo, error)
 	GetOneArticle(uint32) (*Article, error)
 
 	UpdateOneArticle(*Article) (uint32, error)
@@ -44,13 +45,21 @@ func (uc *ArticleUsecase) CreateArticle(a *Article) error {
 }
 
 // select
-func (uc *ArticleUsecase) GetSelectedArticles(pageSize uint32, pageNum uint32) ([]*pb.GetArticlesReply_ArticleInfo, error) {
+func (uc *ArticleUsecase) GetSelectedArticlesByCid(pageSize uint32, pageNum uint32, cid uint32) ([]*pb.DetailArticleInfo, error) {
 	if pageSize > 50 {
 		pageSize = 50
 	}
 	var offset uint32 = (pageNum - 1) * pageSize
 
-	return uc.repo.GetArticles_Pagination(pageSize, offset)
+	return uc.repo.GetArticlesInSameCategory_Pagination(pageSize, offset, cid)
+}
+func (uc *ArticleUsecase) GetSelectedArticlesByCidAndUid(pageSize uint32, pageNum uint32, cid uint32, uid uint32) ([]*pb.DetailArticleInfo, error) {
+	if pageSize > 50 {
+		pageSize = 50
+	}
+
+	var offset uint32 = (pageNum - 1) * pageSize
+	return uc.repo.GetArticlesByCidAndUid_Pagination(pageSize, offset, cid, uid)
 }
 func (uc *ArticleUsecase) GetArticleByID(id uint32) (*Article, error) {
 	article, err := uc.repo.GetOneArticle(id)

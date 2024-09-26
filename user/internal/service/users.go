@@ -39,7 +39,7 @@ func (s *UsersService) UpdateUsers(ctx context.Context, req *pb.UpdateUsersReque
 }
 func (s *UsersService) DeleteUsers(ctx context.Context, req *pb.DeleteUsersRequest) (*pb.DeleteUsersReply, error) {
 	resp := &pb.DeleteUsersReply{}
-	err := s.uc.RemoveOneUser(req.Id)
+	err := s.uc.RemoveOneUser(req.ID)
 	if err != nil {
 		kratos_err := err.(*errors.Error)
 		resp.Code = uint32(kratos_err.Code)
@@ -58,7 +58,7 @@ func (s *UsersService) ListUsers(ctx context.Context, req *pb.ListUsersRequest) 
 }
 func (s *UsersService) AuthUsers(ctx context.Context, req *pb.AuthUsersRequest) (*pb.AuthUsersReply, error) {
 	resp := &pb.AuthUsersReply{}
-	err := s.uc.UserLoginAuth(req.UserName, req.Password)
+	UID, err := s.uc.UserLoginAuth(req.UserName, req.Password)
 	if err != nil {
 		kratos_err := err.(*errors.Error)
 		resp.Code = uint32(kratos_err.Code)
@@ -66,6 +66,7 @@ func (s *UsersService) AuthUsers(ctx context.Context, req *pb.AuthUsersRequest) 
 	} else {
 		resp.Code = 200
 		resp.Msg = "OK"
+		resp.UID = UID
 	}
 	return resp, nil
 }

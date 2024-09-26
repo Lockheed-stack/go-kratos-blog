@@ -38,6 +38,7 @@ func (s *ArticlesService) CreateArticles(ctx context.Context, req *pb.CreateArti
 		kratos_err := err.(*errors.Error)
 		resp.Code = uint32(kratos_err.Code)
 		resp.Msg = kratos_err.Reason
+		return resp, err
 	} else {
 		resp.Code = 200
 		resp.Msg = "OK"
@@ -45,13 +46,28 @@ func (s *ArticlesService) CreateArticles(ctx context.Context, req *pb.CreateArti
 	return resp, nil
 }
 
-func (s *ArticlesService) GetArticles(ctx context.Context, req *pb.GetArticlesRequest) (*pb.GetArticlesReply, error) {
+func (s *ArticlesService) GetArticlesInSameCategory(ctx context.Context, req *pb.GetArticlesInSameCategoryRequest) (*pb.GetArticlesInSameCategoryReply, error) {
 
-	result, err := s.ac.GetSelectedArticles(req.PageSize, req.PageNum)
-	resp := &pb.GetArticlesReply{}
+	result, err := s.ac.GetSelectedArticlesByCid(req.PageSize, req.PageNum, req.CID)
+	resp := &pb.GetArticlesInSameCategoryReply{}
 	if err != nil {
 		kratos_err := err.(*errors.Error)
 		resp.Code = uint32(kratos_err.Code)
+		return resp, err
+	} else {
+		resp.SelectedArticles = result
+		resp.Code = 200
+	}
+	return resp, nil
+}
+
+func (s *ArticlesService) GetArticlesByCidAndUid(ctx context.Context, req *pb.GetArticlesByCidAndUidRequest) (*pb.GetArticlesByCidAndUidReply, error) {
+	resp := &pb.GetArticlesByCidAndUidReply{}
+	result, err := s.ac.GetSelectedArticlesByCidAndUid(req.PageSize, req.PageNum, req.CID, req.UID)
+	if err != nil {
+		kratos_err := err.(*errors.Error)
+		resp.Code = uint32(kratos_err.Code)
+		return resp, err
 	} else {
 		resp.SelectedArticles = result
 		resp.Code = 200
@@ -67,14 +83,19 @@ func (s *ArticlesService) GetSingleArticle(ctx context.Context, req *pb.GetSingl
 		kratos_err := err.(*errors.Error)
 		resp.Msg = kratos_err.Reason
 		resp.Code = uint32(kratos_err.Code)
+		return resp, err
 	} else {
-		resp.Article = &pb.GetSingleArticleReply_RespondMsg{
+		resp.Article = &pb.DetailArticleInfo{
 			CreatedAt: result.CreatedAt.String(),
 			UpdatedAt: result.CreatedAt.String(),
 			Title:     result.Title,
 			Desc:      result.Desc,
 			Content:   result.Content,
+			Img:       result.Img,
 			PageView:  uint32(result.PageView),
+			ID:        uint32(result.ID),
+			UID:       uint32(result.Uid),
+			CID:       uint32(result.Cid),
 		}
 		resp.Msg = "OK"
 		resp.Code = 200
@@ -99,6 +120,7 @@ func (s *ArticlesService) UpdateArticles(ctx context.Context, req *pb.UpdateArti
 		kratos_err := err.(*errors.Error)
 		resp.Code = uint32(kratos_err.Code)
 		resp.Msg = kratos_err.Reason
+		return resp, err
 	} else {
 		resp.Code = 200
 		resp.Msg = "OK"
@@ -113,6 +135,7 @@ func (s *ArticlesService) DeleteArticles(ctx context.Context, req *pb.DeleteArti
 		kratos_err := err.(*errors.Error)
 		resp.Code = uint32(kratos_err.Code)
 		resp.Msg = kratos_err.Reason
+		return resp, err
 	} else {
 		resp.Code = 200
 		resp.Msg = "OK"
