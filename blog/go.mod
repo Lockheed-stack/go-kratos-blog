@@ -2,7 +2,7 @@ module blog
 
 go 1.21
 
-toolchain go1.21.1
+// toolchain go1.21.1
 
 require (
 	github.com/go-kratos/kratos/contrib/registry/etcd/v2 v2.0.0-20240815090334-084c8b4167e7
