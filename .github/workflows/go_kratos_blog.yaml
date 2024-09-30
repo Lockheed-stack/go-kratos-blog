@@ -17,10 +17,10 @@ jobs:
               with:
                 username: ${{ secrets.DOCKERHUB_USERNAME }}
                 password: ${{ secrets.DOCKERHUB_TOKEN }}
-            - name: Build and push
-              uses: docker/build-push-action@v6
-              with:
-                context: ./blog
-                push: true
-                tags: lockheedlee/micro-blog:latest
+            
+            - name: Build the Docker image
+              run: docker build ./blog --file Dockerfile --tag lockheedlee/kratos-blog-micro-article:latest
+
+            - name: Push the Docker image
+              run: docker push lockheedlee/kratos-blog-micro-article
             
