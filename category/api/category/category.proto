@@ -13,6 +13,11 @@ service Category {
 	rpc UpdateCategory(UpdateCategoryRequest) returns (UpdateCategoryReply);
 }
 
+message CategoryInfo{
+	uint32 ID = 1;
+	string Name = 2;
+}
+
 // create
 message CreateCategoryRequest {
 	string CategoryName = 1;
@@ -23,28 +28,18 @@ message CreateCategoryReply {
 }
 
 // select
-// message GetCategoryRequest{
-
-// }
-// message GetCategoryReply{
-
-// }
-
 message ListCategoryRequest{
 	uint32 PageSize = 1;
 	uint32 PageNum = 2;
 }
 message ListCategoryReply{
-	message CategoryInfo{
-		string name = 1;
-	}
 	repeated CategoryInfo CategoryArray = 1;
 	uint32 code = 2;
 	string Msg = 3;
 }
 // delete
 message DeleteCategoryRequest{
-	uint32 id = 1;
+	uint32 ID = 1;
 }
 message DeleteCategoryReply{
 	uint32 code = 1;

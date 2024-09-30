@@ -15,7 +15,7 @@ type Category struct {
 
 type CategoryRepo interface {
 	CreateCategory(string) error
-	GetCategory_Pagination(uint32, uint32) ([]*pb.ListCategoryReply_CategoryInfo, error)
+	GetCategory_Pagination(uint32, uint32) ([]*pb.CategoryInfo, error)
 	UpdateCategoryByID(uint32, *Category) error
 	DeleteCategoryByID(uint32) error
 }
@@ -44,7 +44,7 @@ func (uc *CategoryUsecase) CreateOneCategory(name string) error {
 	return nil
 }
 
-func (uc *CategoryUsecase) GetSelectedCategory(pageSize uint32, pageNum uint32) ([]*pb.ListCategoryReply_CategoryInfo, error) {
+func (uc *CategoryUsecase) GetSelectedCategory(pageSize uint32, pageNum uint32) ([]*pb.CategoryInfo, error) {
 	if pageSize > 50 {
 		pageSize = 50
 	}

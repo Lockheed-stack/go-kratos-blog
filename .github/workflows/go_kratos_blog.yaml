@@ -12,9 +12,6 @@ jobs:
             - name: Checkout
               uses: actions/checkout@v4
             
-            - name: Print current workdir
-              run: ls -la
-            
             - name: Login to Docker Hub
               uses: docker/login-action@v3
               with:
@@ -28,4 +25,61 @@ jobs:
               run: |
                 docker tag tmp-image lockheedlee/kratos-blog-micro-article:latest
                 docker push lockheedlee/kratos-blog-micro-article:latest
+    build_category:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+            
+            - name: Login to Docker Hub
+              uses: docker/login-action@v3
+              with:
+                username: ${{ secrets.DOCKERHUB_USERNAME }}
+                password: ${{ secrets.DOCKERHUB_TOKEN }}
+                
+            - name: Build the Docker image
+              run: docker build ./category/. --tag tmp-image
+
+            - name: Tag and Push the Docker image
+              run: |
+                docker tag tmp-image lockheedlee/kratos-blog-micro-category:latest
+                docker push lockheedlee/kratos-blog-micro-category:latest
+    build_user:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+            
+            - name: Login to Docker Hub
+              uses: docker/login-action@v3
+              with:
+                username: ${{ secrets.DOCKERHUB_USERNAME }}
+                password: ${{ secrets.DOCKERHUB_TOKEN }}
+                
+            - name: Build the Docker image
+              run: docker build ./user/. --tag tmp-image
+
+            - name: Tag and Push the Docker image
+              run: |
+                docker tag tmp-image lockheedlee/kratos-blog-micro-user:latest
+                docker push lockheedlee/kratos-blog-micro-user:latest
+    build_gateway:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+            
+            - name: Login to Docker Hub
+              uses: docker/login-action@v3
+              with:
+                username: ${{ secrets.DOCKERHUB_USERNAME }}
+                password: ${{ secrets.DOCKERHUB_TOKEN }}
+                
+            - name: Build the Docker image
+              run: docker build ./gateway/. --tag tmp-image
+
+            - name: Tag and Push the Docker image
+              run: |
+                docker tag tmp-image lockheedlee/kratos-blog-micro-gateway:latest
+                docker push lockheedlee/kratos-blog-micro-gateway:latest
             

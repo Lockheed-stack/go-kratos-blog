@@ -91,7 +91,7 @@ func (u *GatewayUserUsecase) AuthUser(c *gin.Context) {
 	}
 	resp, err := u.repo.GRPC_AuthUser(req)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusGatewayTimeout, gin.H{
 			"result": err.Error(),
 		})
 		return
@@ -113,5 +113,11 @@ func (u *GatewayUserUsecase) AuthUser(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"result": resp.UID,
 		"token":  token,
+	})
+}
+
+func (u *GatewayUserUsecase) TokenCheck(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{
+		"result": "ok",
 	})
 }

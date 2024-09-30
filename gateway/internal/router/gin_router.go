@@ -37,9 +37,10 @@ func NewGinRouter(
 	}
 
 	auth_Required_group := r.Group("/management")
-	auth_Required_group.Use(kgin.Middlewares(
-		recovery.Recovery(),
-	),
+	auth_Required_group.Use(
+		kgin.Middlewares(
+			recovery.Recovery(),
+		),
 		middlewares.JwtMids(),
 		middlewares.NormalUserAuth(),
 	)
@@ -48,13 +49,14 @@ func NewGinRouter(
 		auth_Required_group.POST("/:username/add-blog", blog_handler.CreateOneBlog)
 		auth_Required_group.PATCH("/:username/modify-blog", blog_handler.UpdateOneBlog)
 		auth_Required_group.DELETE("/:username/rm-blog", blog_handler.DeleteOneBlog)
-		auth_Required_group.POST("/:username/upload", upload_handler.Upload)
+		// auth_Required_group.POST("/:username/upload", upload_handler.Upload)
 		// category
 		auth_Required_group.POST("/category/add", category_handler.CreateOneCategory)
 		auth_Required_group.PATCH("/category/update", category_handler.UpdateCategory)
 		auth_Required_group.DELETE("/category/rm", category_handler.DeleteCategory)
 		// user
 		auth_Required_group.DELETE("/user/rm", user_handler.DeleteOneUser)
+		auth_Required_group.POST("/user/token-check", user_handler.TokenCheck)
 	}
 
 	return r

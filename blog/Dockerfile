@@ -3,7 +3,6 @@ FROM golang:1.21 AS builder
 COPY . /src
 WORKDIR /src
 ENV CGO_ENABLED=0
-ENV version=v1.0
 RUN GOPROXY=https://goproxy.cn make build
 
 # FROM debian:stable-slim

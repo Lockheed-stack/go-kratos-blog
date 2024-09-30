@@ -83,6 +83,7 @@ func (u *GatewayBlogUsecase) GetBlogsInSameCategory(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, gin.H{
 		"result": resp.SelectedArticles,
+		"total":  resp.Total,
 	})
 }
 func (u *GatewayBlogUsecase) GetBlogsByCidAndUid(c *gin.Context) {
@@ -119,6 +120,7 @@ func (u *GatewayBlogUsecase) GetBlogsByCidAndUid(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, gin.H{
 		"result": resp.SelectedArticles,
+		"total":  resp.Total,
 	})
 }
 func (u *GatewayBlogUsecase) GetOneBlog(c *gin.Context) {

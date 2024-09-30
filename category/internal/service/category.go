@@ -51,7 +51,7 @@ func (s *CategoryService) ListCategory(ctx context.Context, req *pb.ListCategory
 
 func (s *CategoryService) DeleteCategory(ctx context.Context, req *pb.DeleteCategoryRequest) (*pb.DeleteCategoryReply, error) {
 	resp := &pb.DeleteCategoryReply{}
-	err := s.uc.DeleteOneCategory(req.Id)
+	err := s.uc.DeleteOneCategory(req.ID)
 	if err != nil {
 		kratos_err := err.(*errors.Error)
 		resp.Code = uint32(kratos_err.Code)

@@ -38,8 +38,8 @@ func (r *categoryRepo) CreateCategory(name string) error {
 
 	return nil
 }
-func (r *categoryRepo) GetCategory_Pagination(pageSize uint32, offset uint32) ([]*pb.ListCategoryReply_CategoryInfo, error) {
-	var result = []*pb.ListCategoryReply_CategoryInfo{}
+func (r *categoryRepo) GetCategory_Pagination(pageSize uint32, offset uint32) ([]*pb.CategoryInfo, error) {
+	var result = []*pb.CategoryInfo{}
 
 	sqlRes := r.data.db.Model(&biz.Category{}).Limit(int(pageSize)).Offset(int(offset)).Scan(&result)
 	if err := sqlRes.Error; err != nil {
