@@ -46,17 +46,9 @@ message GetArticlesInSameCategoryRequest {
 	uint32 CID = 3;
 }
 message GetArticlesInSameCategoryReply {
-	// message ArticleInfo{
-	// 	uint32 Uid = 1;	  // ID of the user which the blog belongs to
-	// 	string Title = 2; // article title
-	// 	string Name = 3;	// category name
-	// 	string Img = 4;
-	// 	string Desc = 5; // article description
-	// 	uint32 ID = 6; // article id
-	// 	string Content = 7;
-	// }
 	repeated DetailArticleInfo SelectedArticles = 1;
-	uint32 code = 2;
+	uint32 Total = 2;
+	uint32 code = 3;
 }
 
 message GetArticlesByCidAndUidRequest{
@@ -67,23 +59,14 @@ message GetArticlesByCidAndUidRequest{
 }
 message GetArticlesByCidAndUidReply{
 	repeated DetailArticleInfo SelectedArticles = 1;
-	uint32 code = 2;
+	uint32 Total = 2;
+	uint32 code = 3;
 }
 
 message GetSingleArticleRequest {
 	uint32 ArticleID = 1;
 }
 message GetSingleArticleReply {
-	// message RespondMsg{
-	// 	string CreatedAt = 1;
-	// 	string UpdatedAt = 2;
-	// 	string Title = 3;
-	// 	string Desc = 4;
-	// 	string Content = 5;
-	// 	uint32 PageView = 6;
-	// 	uint32 UID = 7;
-	// 	string Img = 8;
-	// }
 	DetailArticleInfo Article = 1;
 	uint32 code = 2;
 	string msg = 3;

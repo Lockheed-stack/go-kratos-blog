@@ -48,7 +48,7 @@ func (s *ArticlesService) CreateArticles(ctx context.Context, req *pb.CreateArti
 
 func (s *ArticlesService) GetArticlesInSameCategory(ctx context.Context, req *pb.GetArticlesInSameCategoryRequest) (*pb.GetArticlesInSameCategoryReply, error) {
 
-	result, err := s.ac.GetSelectedArticlesByCid(req.PageSize, req.PageNum, req.CID)
+	result, count, err := s.ac.GetSelectedArticlesByCid(req.PageSize, req.PageNum, req.CID)
 	resp := &pb.GetArticlesInSameCategoryReply{}
 	if err != nil {
 		kratos_err := err.(*errors.Error)
@@ -56,6 +56,7 @@ func (s *ArticlesService) GetArticlesInSameCategory(ctx context.Context, req *pb
 		return resp, err
 	} else {
 		resp.SelectedArticles = result
+		resp.Total = count
 		resp.Code = 200
 	}
 	return resp, nil
@@ -63,13 +64,14 @@ func (s *ArticlesService) GetArticlesInSameCategory(ctx context.Context, req *pb
 
 func (s *ArticlesService) GetArticlesByCidAndUid(ctx context.Context, req *pb.GetArticlesByCidAndUidRequest) (*pb.GetArticlesByCidAndUidReply, error) {
 	resp := &pb.GetArticlesByCidAndUidReply{}
-	result, err := s.ac.GetSelectedArticlesByCidAndUid(req.PageSize, req.PageNum, req.CID, req.UID)
+	result, count, err := s.ac.GetSelectedArticlesByCidAndUid(req.PageSize, req.PageNum, req.CID, req.UID)
 	if err != nil {
 		kratos_err := err.(*errors.Error)
 		resp.Code = uint32(kratos_err.Code)
 		return resp, err
 	} else {
 		resp.SelectedArticles = result
+		resp.Total = count
 		resp.Code = 200
 	}
 	return resp, nil

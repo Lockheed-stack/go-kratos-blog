@@ -32,28 +32,31 @@ func (ap *articleRepo) CreateAnArticle(article *biz.Article) error {
 }
 
 // select
-func (ap *articleRepo) GetArticlesInSameCategory_Pagination(pageSize uint32, offset uint32, cid uint32) ([]*pb.DetailArticleInfo, error) {
+func (ap *articleRepo) GetArticlesInSameCategory_Pagination(pageSize uint32, offset uint32, cid uint32) ([]*pb.DetailArticleInfo, uint32, error) {
 
 	var result = []*pb.DetailArticleInfo{}
+	var count int64 = 0
+
 	sqlRes := ap.data.db.Table("article").Where("cid=?", cid).Limit(int(pageSize)).Offset(int(offset)).Scan(&result)
-
 	if sqlRes.Error != nil {
 		ap.log.Error(sqlRes.Error)
-		return nil, sqlRes.Error
+		return nil, uint32(count), sqlRes.Error
 	}
-
-	return result, nil
+	ap.data.db.Model(&biz.Article{}).Where("cid=?", cid).Count(&count)
+	return result, uint32(count), nil
 }
-func (ap *articleRepo) GetArticlesByCidAndUid_Pagination(pageSize uint32, offset uint32, cid uint32, uid uint32) ([]*pb.DetailArticleInfo, error) {
-	var result = []*pb.DetailArticleInfo{}
-	sqlRes := ap.data.db.Table("article").Where("cid=? and uid=?", cid, uid).Limit(int(pageSize)).Offset(int(offset)).Scan(&result)
+func (ap *articleRepo) GetArticlesByCidAndUid_Pagination(pageSize uint32, offset uint32, cid uint32, uid uint32) ([]*pb.DetailArticleInfo, uint32, error) {
 
+	var result = []*pb.DetailArticleInfo{}
+	var count int64 = 0
+
+	sqlRes := ap.data.db.Table("article").Where("cid=? and uid=?", cid, uid).Limit(int(pageSize)).Offset(int(offset)).Scan(&result)
 	if sqlRes.Error != nil {
 		ap.log.Error(sqlRes.Error)
-		return nil, sqlRes.Error
+		return nil, uint32(count), sqlRes.Error
 	}
-
-	return result, nil
+	ap.data.db.Model(&biz.Article{}).Where("cid=? and uid=?", cid, uid).Count(&count)
+	return result, uint32(count), nil
 }
 func (ap *articleRepo) GetOneArticle(id uint32) (*biz.Article, error) {
 	var article = &biz.Article{}
