@@ -19,7 +19,7 @@ jobs:
                 password: ${{ secrets.DOCKERHUB_TOKEN }}
             
             - name: Build the Docker image
-              run: docker build ./blog --file Dockerfile --tag lockheedlee/kratos-blog-micro-article:latest
+              run: docker build ./blog/. --file Dockerfile --tag lockheedlee/kratos-blog-micro-article:latest
 
             - name: Push the Docker image
               run: docker push lockheedlee/kratos-blog-micro-article
