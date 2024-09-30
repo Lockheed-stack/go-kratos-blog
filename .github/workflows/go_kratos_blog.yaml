@@ -22,7 +22,7 @@ jobs:
                 password: ${{ secrets.DOCKERHUB_TOKEN }}
             
             - name: Build the Docker image
-              run: docker build ./blog/. --tag tmpImage
+              run: docker build ./blog/. --tag tmp-image
 
             - name: Push the Docker image
               run: |
