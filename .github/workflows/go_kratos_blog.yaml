@@ -20,12 +20,12 @@ jobs:
               with:
                 username: ${{ secrets.DOCKERHUB_USERNAME }}
                 password: ${{ secrets.DOCKERHUB_TOKEN }}
-            
+                
             - name: Build the Docker image
               run: docker build ./blog/. --tag tmp-image
 
-            - name: Push the Docker image
+            - name: Tag and Push the Docker image
               run: |
-                docker tag tmpImage lockheedlee/kratos-blog-micro-article:latest
+                docker tag tmp-image lockheedlee/kratos-blog-micro-article:latest
                 docker push lockheedlee/kratos-blog-micro-article:latest
             
