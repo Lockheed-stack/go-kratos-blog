@@ -113,7 +113,7 @@ func (u *GatewayCategoryUsecase) DeleteCategory(c *gin.Context) {
 		return
 	}
 	resp, err := u.repo.GRPC_DeleteOneCategory(&category.DeleteCategoryRequest{
-		ID: uint32(categoryID),
+		ID: uint64(categoryID),
 	})
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{

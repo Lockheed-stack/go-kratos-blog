@@ -52,7 +52,7 @@ func (r *userRepo) CreateUser(username string, passwd string) error {
 	return nil
 }
 
-func (r *userRepo) RemoveUser(id uint32) error {
+func (r *userRepo) RemoveUser(id uint64) error {
 
 	user := &biz.User{}
 
@@ -74,7 +74,7 @@ func (r *userRepo) RemoveUser(id uint32) error {
 	return nil
 }
 
-func (r *userRepo) AuthLogin(name string, pwd string) (uint32, error) {
+func (r *userRepo) AuthLogin(name string, pwd string) (uint64, error) {
 
 	user := &biz.User{}
 	r.data.db.Where("username=?", name).First(user)
@@ -83,5 +83,5 @@ func (r *userRepo) AuthLogin(name string, pwd string) (uint32, error) {
 		return 0, errors.New(400, "ERR_USER_USERNAME_PASSWORD_WRONG", "")
 	}
 
-	return uint32(user.ID), nil
+	return uint64(user.ID), nil
 }

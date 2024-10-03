@@ -61,7 +61,7 @@ func (u *GatewayUserUsecase) DeleteOneUser(c *gin.Context) {
 	}
 	resp, err := u.repo.GRPC_DeleteUser(
 		&users.DeleteUsersRequest{
-			ID: uint32(userID),
+			ID: uint64(userID),
 		},
 	)
 	if err != nil {

@@ -21,8 +21,8 @@ type UserRepo interface {
 	CheckDuplicateUsername(name string) bool
 
 	CreateUser(name string, psw string) error
-	RemoveUser(id uint32) error
-	AuthLogin(name string, pwd string) (uint32, error)
+	RemoveUser(id uint64) error
+	AuthLogin(name string, pwd string) (uint64, error)
 }
 
 type UserUsecase struct {
@@ -60,7 +60,7 @@ func (uc *UserUsecase) CreateOneUser(username string, passwd string) error {
 	return nil
 }
 
-func (uc *UserUsecase) UserLoginAuth(username string, passwd string) (uint32, error) {
+func (uc *UserUsecase) UserLoginAuth(username string, passwd string) (uint64, error) {
 	hash := sha256.New()
 	hash.Write([]byte(passwd))
 	hex_pwd := hex.EncodeToString(hash.Sum(nil))
@@ -77,7 +77,7 @@ func (uc *UserUsecase) UserLoginAuth(username string, passwd string) (uint32, er
 	return UID, nil
 }
 
-func (uc *UserUsecase) RemoveOneUser(id uint32) error {
+func (uc *UserUsecase) RemoveOneUser(id uint64) error {
 	err := uc.repo.RemoveUser(id)
 
 	if err != nil {

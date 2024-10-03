@@ -21,19 +21,19 @@ message DetailArticleInfo{
 	string Content = 5;
 	uint32 PageView = 6;
 	string Img = 7;
-	uint32 ID = 8;
-	uint32 UID = 9;
-	uint32 CID = 10;
+	uint64 ID = 8;
+	uint64 UID = 9;
+	uint64 CID = 10;
 }
 
 message CreateArticlesRequest {
 	string Title  = 1;
-	uint32 Cid = 2;
+	uint64 Cid = 2;
 	string Desc = 3;
 	string Content = 4;
 	string Img = 5;
 	uint32 PageView = 6;
-	uint32 Uid = 7;
+	uint64 Uid = 7;
 }
 message CreateArticlesReply {
 	uint32 code = 1;
@@ -43,7 +43,7 @@ message CreateArticlesReply {
 message GetArticlesInSameCategoryRequest {
 	uint32 PageSize = 1;
 	uint32 PageNum = 2;
-	uint32 CID = 3;
+	uint64 CID = 3;
 }
 message GetArticlesInSameCategoryReply {
 	repeated DetailArticleInfo SelectedArticles = 1;
@@ -54,8 +54,8 @@ message GetArticlesInSameCategoryReply {
 message GetArticlesByCidAndUidRequest{
 	uint32 PageSize = 1;
 	uint32 PageNum = 2;
-	uint32 CID = 3;
-	uint32 UID = 4;
+	uint64 CID = 3;
+	uint64 UID = 4;
 }
 message GetArticlesByCidAndUidReply{
 	repeated DetailArticleInfo SelectedArticles = 1;
@@ -64,7 +64,7 @@ message GetArticlesByCidAndUidReply{
 }
 
 message GetSingleArticleRequest {
-	uint32 ArticleID = 1;
+	uint64 ArticleID = 1;
 }
 message GetSingleArticleReply {
 	DetailArticleInfo Article = 1;
@@ -75,7 +75,7 @@ message GetSingleArticleReply {
 message UpdateArticlesRequest {
 	uint32 ArticleID = 1;
 	string Title = 2;
-	uint32 Cid = 3; // category id
+	uint64 Cid = 3; // category id
 	string desc = 4;
 	string content = 5;
 	string Thumbnail = 6;
@@ -86,7 +86,7 @@ message UpdateArticlesReply {
 }
 
 message DeleteArticlesRequest {
-	uint32 ArticleID = 1;
+	uint64 ArticleID = 1;
 }
 message DeleteArticlesReply {
 	uint32 code = 1;

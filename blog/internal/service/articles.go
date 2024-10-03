@@ -95,9 +95,9 @@ func (s *ArticlesService) GetSingleArticle(ctx context.Context, req *pb.GetSingl
 			Content:   result.Content,
 			Img:       result.Img,
 			PageView:  uint32(result.PageView),
-			ID:        uint32(result.ID),
-			UID:       uint32(result.Uid),
-			CID:       uint32(result.Cid),
+			ID:        uint64(result.ID),
+			UID:       result.Uid,
+			CID:       result.Cid,
 		}
 		resp.Msg = "OK"
 		resp.Code = 200

@@ -38,7 +38,7 @@ func GetJWTtime(t time.Duration) *jwt.NumericDate {
 }
 
 // generate token
-func GenerateToken(username string, userID uint32) (string, error) {
+func GenerateToken(username string, userID uint64) (string, error) {
 
 	RegisteredClaims := jwt.RegisteredClaims{
 		ExpiresAt: GetJWTtime(AccessTokenExpiredDuration),

@@ -36,7 +36,7 @@ func (u *GatewayBlogUsecase) CreateOneBlog(c *gin.Context) {
 		})
 		return
 	}
-	req.Uid = uint32(c.GetInt("request_userid"))
+	req.Uid = uint64(c.GetInt("request_userid"))
 
 	resp, err := u.repo.GRPC_CreateOneBlog(req)
 	if err != nil {
@@ -72,7 +72,7 @@ func (u *GatewayBlogUsecase) GetBlogsInSameCategory(c *gin.Context) {
 	req := &articles.GetArticlesInSameCategoryRequest{
 		PageSize: uint32(pageSize),
 		PageNum:  uint32(pageNum),
-		CID:      uint32(cid_int),
+		CID:      uint64(cid_int),
 	}
 	resp, err := u.repo.GRPC_GetBlogsInSameCategory(req)
 	if err != nil {
@@ -108,8 +108,8 @@ func (u *GatewayBlogUsecase) GetBlogsByCidAndUid(c *gin.Context) {
 	req := &articles.GetArticlesByCidAndUidRequest{
 		PageSize: uint32(pageSize),
 		PageNum:  uint32(pageNum),
-		CID:      uint32(cid_int),
-		UID:      uint32(uid_int),
+		CID:      uint64(cid_int),
+		UID:      uint64(uid_int),
 	}
 	resp, err := u.repo.GRPC_GetBlogsByCidAndUid(req)
 	if err != nil {
@@ -133,7 +133,7 @@ func (u *GatewayBlogUsecase) GetOneBlog(c *gin.Context) {
 	}
 
 	resp, err := u.repo.GRPC_GetSingleBlog(&articles.GetSingleArticleRequest{
-		ArticleID: uint32(blogid),
+		ArticleID: uint64(blogid),
 	})
 
 	if err != nil {
@@ -178,7 +178,7 @@ func (u *GatewayBlogUsecase) DeleteOneBlog(c *gin.Context) {
 		return
 	}
 	resp, err := u.repo.GRPC_DeleteBlog(&articles.DeleteArticlesRequest{
-		ArticleID: uint32(blogid),
+		ArticleID: uint64(blogid),
 	})
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{

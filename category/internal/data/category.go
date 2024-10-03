@@ -48,7 +48,7 @@ func (r *categoryRepo) GetCategory_Pagination(pageSize uint32, offset uint32) ([
 	}
 	return result, nil
 }
-func (r *categoryRepo) UpdateCategoryByID(id uint32, category *biz.Category) error {
+func (r *categoryRepo) UpdateCategoryByID(id uint64, category *biz.Category) error {
 	sqlRes := r.data.db.Updates(category)
 
 	if sqlRes.Error != nil {
@@ -75,7 +75,7 @@ func (r *categoryRepo) UpdateCategoryByID(id uint32, category *biz.Category) err
 
 	return nil
 }
-func (r *categoryRepo) DeleteCategoryByID(id uint32) error {
+func (r *categoryRepo) DeleteCategoryByID(id uint64) error {
 	sqlRes := r.data.db.Unscoped().Where("id=?", id).Delete(&biz.Category{})
 
 	if err := sqlRes.Error; err != nil {

@@ -16,8 +16,8 @@ type Category struct {
 type CategoryRepo interface {
 	CreateCategory(string) error
 	GetCategory_Pagination(uint32, uint32) ([]*pb.CategoryInfo, error)
-	UpdateCategoryByID(uint32, *Category) error
-	DeleteCategoryByID(uint32) error
+	UpdateCategoryByID(uint64, *Category) error
+	DeleteCategoryByID(uint64) error
 }
 
 type CategoryUsecase struct {
@@ -53,7 +53,7 @@ func (uc *CategoryUsecase) GetSelectedCategory(pageSize uint32, pageNum uint32) 
 	return uc.repo.GetCategory_Pagination(pageSize, offset)
 }
 
-func (uc *CategoryUsecase) DeleteOneCategory(id uint32) error {
+func (uc *CategoryUsecase) DeleteOneCategory(id uint64) error {
 	err := uc.repo.DeleteCategoryByID(id)
 	if err != nil {
 		e := errors.FromError(err)
@@ -67,7 +67,7 @@ func (uc *CategoryUsecase) DeleteOneCategory(id uint32) error {
 	return nil
 }
 
-func (uc *CategoryUsecase) UpdateOneCategory(id uint32, category *Category) error {
+func (uc *CategoryUsecase) UpdateOneCategory(id uint64, category *Category) error {
 	err := uc.repo.UpdateCategoryByID(id, category)
 
 	if err != nil {

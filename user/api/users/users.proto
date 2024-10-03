@@ -27,7 +27,7 @@ message UpdateUsersRequest {}
 message UpdateUsersReply {}
 
 message DeleteUsersRequest {
-	uint32 ID = 1;
+	uint64 ID = 1;
 }
 message DeleteUsersReply {
 	string Msg = 1;
@@ -48,5 +48,5 @@ message AuthUsersRequest {
 message AuthUsersReply{
 	string Msg = 1;
 	uint32 Code = 2;
-	uint32 UID = 3;
+	uint64 UID = 3;
 }

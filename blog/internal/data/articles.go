@@ -32,7 +32,7 @@ func (ap *articleRepo) CreateAnArticle(article *biz.Article) error {
 }
 
 // select
-func (ap *articleRepo) GetArticlesInSameCategory_Pagination(pageSize uint32, offset uint32, cid uint32) ([]*pb.DetailArticleInfo, uint32, error) {
+func (ap *articleRepo) GetArticlesInSameCategory_Pagination(pageSize uint32, offset uint32, cid uint64) ([]*pb.DetailArticleInfo, uint32, error) {
 
 	var result = []*pb.DetailArticleInfo{}
 	var count int64 = 0
@@ -45,7 +45,7 @@ func (ap *articleRepo) GetArticlesInSameCategory_Pagination(pageSize uint32, off
 	ap.data.db.Model(&biz.Article{}).Where("cid=?", cid).Count(&count)
 	return result, uint32(count), nil
 }
-func (ap *articleRepo) GetArticlesByCidAndUid_Pagination(pageSize uint32, offset uint32, cid uint32, uid uint32) ([]*pb.DetailArticleInfo, uint32, error) {
+func (ap *articleRepo) GetArticlesByCidAndUid_Pagination(pageSize uint32, offset uint32, cid uint64, uid uint64) ([]*pb.DetailArticleInfo, uint32, error) {
 
 	var result = []*pb.DetailArticleInfo{}
 	var count int64 = 0
@@ -58,7 +58,7 @@ func (ap *articleRepo) GetArticlesByCidAndUid_Pagination(pageSize uint32, offset
 	ap.data.db.Model(&biz.Article{}).Where("cid=? and uid=?", cid, uid).Count(&count)
 	return result, uint32(count), nil
 }
-func (ap *articleRepo) GetOneArticle(id uint32) (*biz.Article, error) {
+func (ap *articleRepo) GetOneArticle(id uint64) (*biz.Article, error) {
 	var article = &biz.Article{}
 
 	sqlRes := ap.data.db.Where("id=?", id).First(article)
@@ -90,7 +90,7 @@ func (ap *articleRepo) UpdateOneArticle(article *biz.Article) (uint32, error) {
 }
 
 // delete
-func (ap *articleRepo) RemoveOneArticle(id uint32) (uint32, error) {
+func (ap *articleRepo) RemoveOneArticle(id uint64) (uint32, error) {
 
 	sqlRes := ap.data.db.Where("id=?", id).Delete(&biz.Article{})
 
