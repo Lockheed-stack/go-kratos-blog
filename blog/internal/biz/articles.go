@@ -22,13 +22,13 @@ type Article struct {
 // foreign key: Category, User
 type Category struct {
 	gorm.Model
-	Name string
+	Name string `gorm:"type:varchar(30);uniqueIndex;not null"`
 }
 type User struct {
 	gorm.Model
-	Username string
-	Password string
-	Role     uint8
+	Username string `gorm:"type:varchar(30);uniqueIndex;not null"`
+	Password string `gorm:"type:char(64);not null"`
+	Role     uint8  `gorm:"type:tinyint;UNSIGNED;DEFAULT:2"`
 }
 
 type ArticleRepo interface {
