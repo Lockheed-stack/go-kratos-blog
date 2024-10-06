@@ -9,12 +9,12 @@ import (
 type Article struct {
 	gorm.Model
 	Title    string   `gorm:"type:varchar(100);not null" json:"title"`
-	Cid      uint64   `gorm:"type:bigint;not null;UNSIGNED" json:"cid"`
-	Uid      uint64   `gorm:"type:bigint;not null;UNSIGNED" json:"uid"`
 	Desc     string   `gorm:"type:varchar(200)" json:"desc"`
 	Content  string   `gorm:"type:longtext" json:"content"`
 	Img      string   `gorm:"type:longtext" json:"img"`
 	PageView uint     `gorm:"type:uint;defualt:0" json:"pv"`
+	Cid      uint     `json:"cid"`
+	Uid      uint     `json:"uid"`
 	Category Category `gorm:"foreignKey:Cid"`
 	User     User     `gorm:"foreignKey:Uid"`
 }
@@ -35,6 +35,8 @@ type ArticleRepo interface {
 	CreateAnArticle(*Article) error
 	GetArticlesInSameCategory_Pagination(pagesize uint32, pagenum uint32, cid uint64) ([]*pb.DetailArticleInfo, uint32, error)
 	GetArticlesByCidAndUid_Pagination(pagesize uint32, pagenum uint32, cid uint64, uid uint64) ([]*pb.DetailArticleInfo, uint32, error)
+	GetArticlesForRecommend_Pagination(pagesize uint32, pagenum uint32) ([]*pb.DetailArticleInfo, error)
+	GetArticlesByRandomSelect(count uint32) ([]*pb.DetailArticleInfo, error)
 	GetOneArticle(uint64) (*Article, error)
 
 	UpdateOneArticle(*Article) (uint32, error)
@@ -74,6 +76,19 @@ func (uc *ArticleUsecase) GetSelectedArticlesByCidAndUid(pageSize uint32, pageNu
 
 	var offset uint32 = (pageNum - 1) * pageSize
 	return uc.repo.GetArticlesByCidAndUid_Pagination(pageSize, offset, cid, uid)
+}
+func (uc *ArticleUsecase) GetArticlesForRecommend(pageSize uint32, pageNum uint32) ([]*pb.DetailArticleInfo, error) {
+	if pageSize > 10 {
+		pageSize = 10
+	}
+	var offset uint32 = (pageNum - 1) * pageSize
+	return uc.repo.GetArticlesForRecommend_Pagination(pageSize, offset)
+}
+func (uc *ArticleUsecase) GetArticlesByRandom(count uint32) ([]*pb.DetailArticleInfo, error) {
+	if count > 6 {
+		count = 6
+	}
+	return uc.repo.GetArticlesByRandomSelect(count)
 }
 func (uc *ArticleUsecase) GetArticleByID(id uint64) (*Article, error) {
 	article, err := uc.repo.GetOneArticle(id)

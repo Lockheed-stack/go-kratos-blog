@@ -11,6 +11,8 @@ service Articles {
 	rpc GetArticlesInSameCategory (GetArticlesInSameCategoryRequest) returns (GetArticlesInSameCategoryReply);
 	rpc GetArticlesByCidAndUid (GetArticlesByCidAndUidRequest) returns (GetArticlesByCidAndUidReply);
 	rpc GetSingleArticle (GetSingleArticleRequest) returns (GetSingleArticleReply);
+	rpc GetRecommendArticles (GetRecommendArticlesRequest) returns (GetRecommendArticlesReply);
+	rpc GetRandomArticles(GetRandomArticlesRequest) returns (GetRandomArticlesReply);
 }
 
 message DetailArticleInfo{
@@ -22,8 +24,8 @@ message DetailArticleInfo{
 	uint32 PageView = 6;
 	string Img = 7;
 	uint64 ID = 8;
-	uint64 UID = 9;
-	uint64 CID = 10;
+	uint64 Uid = 9;
+	uint64 Cid = 10;
 }
 
 message CreateArticlesRequest {
@@ -61,6 +63,23 @@ message GetArticlesByCidAndUidReply{
 	repeated DetailArticleInfo SelectedArticles = 1;
 	uint32 Total = 2;
 	uint32 code = 3;
+}
+
+message GetRecommendArticlesRequest{
+	uint32 PageSize = 1;
+	uint32 PageNum = 2;
+}
+message GetRecommendArticlesReply{
+	repeated DetailArticleInfo SelectedArticles = 1;
+	uint32 code = 2;
+}
+
+message GetRandomArticlesRequest{
+	uint32 Count = 1;
+}
+message GetRandomArticlesReply{
+	repeated DetailArticleInfo SelectedArticles = 1;
+	uint32 code = 2;
 }
 
 message GetSingleArticleRequest {

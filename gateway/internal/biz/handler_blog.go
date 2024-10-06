@@ -12,6 +12,8 @@ type GatewayBlogRepo interface {
 	GRPC_CreateOneBlog(*articles.CreateArticlesRequest) (*articles.CreateArticlesReply, error)
 	GRPC_GetBlogsInSameCategory(*articles.GetArticlesInSameCategoryRequest) (*articles.GetArticlesInSameCategoryReply, error)
 	GRPC_GetBlogsByCidAndUid(*articles.GetArticlesByCidAndUidRequest) (*articles.GetArticlesByCidAndUidReply, error)
+	GRPC_GetBlogsForRecommend(*articles.GetRecommendArticlesRequest) (*articles.GetRecommendArticlesReply, error)
+	GRPC_GetBlogsByRandom(*articles.GetRandomArticlesRequest) (*articles.GetRandomArticlesReply, error)
 	GRPC_GetSingleBlog(*articles.GetSingleArticleRequest) (*articles.GetSingleArticleReply, error)
 	GRPC_UpdateBlog(*articles.UpdateArticlesRequest) (*articles.UpdateArticlesReply, error)
 	GRPC_DeleteBlog(*articles.DeleteArticlesRequest) (*articles.DeleteArticlesReply, error)
@@ -121,6 +123,52 @@ func (u *GatewayBlogUsecase) GetBlogsByCidAndUid(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"result": resp.SelectedArticles,
 		"total":  resp.Total,
+	})
+}
+func (u *GatewayBlogUsecase) GetRecommendBlogs(c *gin.Context) {
+	pageSize, err1 := strconv.Atoi(c.Query("PageSize"))
+	pageNum, err2 := strconv.Atoi(c.Query("PageNum"))
+	if err1 != nil || err2 != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"result": "Invalid Query",
+		})
+		return
+	}
+	req := &articles.GetRecommendArticlesRequest{
+		PageSize: uint32(pageSize),
+		PageNum:  uint32(pageNum),
+	}
+	resp, err := u.repo.GRPC_GetBlogsForRecommend(req)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"result": err.Error(),
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"result": resp.SelectedArticles,
+	})
+}
+func (u *GatewayBlogUsecase) GetRandomBlogs(c *gin.Context) {
+	count, err := strconv.Atoi(c.Query("Count"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"result": "Invalid Query",
+		})
+		return
+	}
+	req := &articles.GetRandomArticlesRequest{
+		Count: uint32(count),
+	}
+	resp, err := u.repo.GRPC_GetBlogsByRandom(req)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"result": err.Error(),
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"result": resp.SelectedArticles,
 	})
 }
 func (u *GatewayBlogUsecase) GetOneBlog(c *gin.Context) {

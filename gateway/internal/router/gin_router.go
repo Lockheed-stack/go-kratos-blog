@@ -29,6 +29,8 @@ func NewGinRouter(
 		public_group.GET("/blog/:blogID", blog_handler.GetOneBlog)
 		public_group.GET("/list/:cid", blog_handler.GetBlogsInSameCategory)
 		public_group.GET("/:uid/list/:cid", blog_handler.GetBlogsByCidAndUid)
+		public_group.GET("/recommendBlogs", blog_handler.GetRecommendBlogs)
+		public_group.GET("/randomBlogs", blog_handler.GetRandomBlogs)
 		// category
 		public_group.GET("/category", category_handler.GetCategoryList)
 		// user

@@ -33,8 +33,8 @@ type DetailArticleInfo struct {
 	PageView  uint32 `protobuf:"varint,6,opt,name=PageView,proto3" json:"PageView,omitempty"`
 	Img       string `protobuf:"bytes,7,opt,name=Img,proto3" json:"Img,omitempty"`
 	ID        uint64 `protobuf:"varint,8,opt,name=ID,proto3" json:"ID,omitempty"`
-	UID       uint64 `protobuf:"varint,9,opt,name=UID,proto3" json:"UID,omitempty"`
-	CID       uint64 `protobuf:"varint,10,opt,name=CID,proto3" json:"CID,omitempty"`
+	Uid       uint64 `protobuf:"varint,9,opt,name=Uid,proto3" json:"Uid,omitempty"`
+	Cid       uint64 `protobuf:"varint,10,opt,name=Cid,proto3" json:"Cid,omitempty"`
 }
 
 func (x *DetailArticleInfo) Reset() {
@@ -125,16 +125,16 @@ func (x *DetailArticleInfo) GetID() uint64 {
 	return 0
 }
 
-func (x *DetailArticleInfo) GetUID() uint64 {
+func (x *DetailArticleInfo) GetUid() uint64 {
 	if x != nil {
-		return x.UID
+		return x.Uid
 	}
 	return 0
 }
 
-func (x *DetailArticleInfo) GetCID() uint64 {
+func (x *DetailArticleInfo) GetCid() uint64 {
 	if x != nil {
-		return x.CID
+		return x.Cid
 	}
 	return 0
 }
@@ -549,6 +549,218 @@ func (x *GetArticlesByCidAndUidReply) GetCode() uint32 {
 	return 0
 }
 
+type GetRecommendArticlesRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	PageSize uint32 `protobuf:"varint,1,opt,name=PageSize,proto3" json:"PageSize,omitempty"`
+	PageNum  uint32 `protobuf:"varint,2,opt,name=PageNum,proto3" json:"PageNum,omitempty"`
+}
+
+func (x *GetRecommendArticlesRequest) Reset() {
+	*x = GetRecommendArticlesRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_api_articles_articles_proto_msgTypes[7]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GetRecommendArticlesRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetRecommendArticlesRequest) ProtoMessage() {}
+
+func (x *GetRecommendArticlesRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_api_articles_articles_proto_msgTypes[7]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetRecommendArticlesRequest.ProtoReflect.Descriptor instead.
+func (*GetRecommendArticlesRequest) Descriptor() ([]byte, []int) {
+	return file_api_articles_articles_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *GetRecommendArticlesRequest) GetPageSize() uint32 {
+	if x != nil {
+		return x.PageSize
+	}
+	return 0
+}
+
+func (x *GetRecommendArticlesRequest) GetPageNum() uint32 {
+	if x != nil {
+		return x.PageNum
+	}
+	return 0
+}
+
+type GetRecommendArticlesReply struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	SelectedArticles []*DetailArticleInfo `protobuf:"bytes,1,rep,name=SelectedArticles,proto3" json:"SelectedArticles,omitempty"`
+	Code             uint32               `protobuf:"varint,2,opt,name=code,proto3" json:"code,omitempty"`
+}
+
+func (x *GetRecommendArticlesReply) Reset() {
+	*x = GetRecommendArticlesReply{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_api_articles_articles_proto_msgTypes[8]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GetRecommendArticlesReply) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetRecommendArticlesReply) ProtoMessage() {}
+
+func (x *GetRecommendArticlesReply) ProtoReflect() protoreflect.Message {
+	mi := &file_api_articles_articles_proto_msgTypes[8]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetRecommendArticlesReply.ProtoReflect.Descriptor instead.
+func (*GetRecommendArticlesReply) Descriptor() ([]byte, []int) {
+	return file_api_articles_articles_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *GetRecommendArticlesReply) GetSelectedArticles() []*DetailArticleInfo {
+	if x != nil {
+		return x.SelectedArticles
+	}
+	return nil
+}
+
+func (x *GetRecommendArticlesReply) GetCode() uint32 {
+	if x != nil {
+		return x.Code
+	}
+	return 0
+}
+
+type GetRandomArticlesRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Count uint32 `protobuf:"varint,1,opt,name=Count,proto3" json:"Count,omitempty"`
+}
+
+func (x *GetRandomArticlesRequest) Reset() {
+	*x = GetRandomArticlesRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_api_articles_articles_proto_msgTypes[9]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GetRandomArticlesRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetRandomArticlesRequest) ProtoMessage() {}
+
+func (x *GetRandomArticlesRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_api_articles_articles_proto_msgTypes[9]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetRandomArticlesRequest.ProtoReflect.Descriptor instead.
+func (*GetRandomArticlesRequest) Descriptor() ([]byte, []int) {
+	return file_api_articles_articles_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *GetRandomArticlesRequest) GetCount() uint32 {
+	if x != nil {
+		return x.Count
+	}
+	return 0
+}
+
+type GetRandomArticlesReply struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	SelectedArticles []*DetailArticleInfo `protobuf:"bytes,1,rep,name=SelectedArticles,proto3" json:"SelectedArticles,omitempty"`
+	Code             uint32               `protobuf:"varint,2,opt,name=code,proto3" json:"code,omitempty"`
+}
+
+func (x *GetRandomArticlesReply) Reset() {
+	*x = GetRandomArticlesReply{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_api_articles_articles_proto_msgTypes[10]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GetRandomArticlesReply) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetRandomArticlesReply) ProtoMessage() {}
+
+func (x *GetRandomArticlesReply) ProtoReflect() protoreflect.Message {
+	mi := &file_api_articles_articles_proto_msgTypes[10]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetRandomArticlesReply.ProtoReflect.Descriptor instead.
+func (*GetRandomArticlesReply) Descriptor() ([]byte, []int) {
+	return file_api_articles_articles_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *GetRandomArticlesReply) GetSelectedArticles() []*DetailArticleInfo {
+	if x != nil {
+		return x.SelectedArticles
+	}
+	return nil
+}
+
+func (x *GetRandomArticlesReply) GetCode() uint32 {
+	if x != nil {
+		return x.Code
+	}
+	return 0
+}
+
 type GetSingleArticleRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -560,7 +772,7 @@ type GetSingleArticleRequest struct {
 func (x *GetSingleArticleRequest) Reset() {
 	*x = GetSingleArticleRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_articles_articles_proto_msgTypes[7]
+		mi := &file_api_articles_articles_proto_msgTypes[11]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -573,7 +785,7 @@ func (x *GetSingleArticleRequest) String() string {
 func (*GetSingleArticleRequest) ProtoMessage() {}
 
 func (x *GetSingleArticleRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_articles_articles_proto_msgTypes[7]
+	mi := &file_api_articles_articles_proto_msgTypes[11]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -586,7 +798,7 @@ func (x *GetSingleArticleRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetSingleArticleRequest.ProtoReflect.Descriptor instead.
 func (*GetSingleArticleRequest) Descriptor() ([]byte, []int) {
-	return file_api_articles_articles_proto_rawDescGZIP(), []int{7}
+	return file_api_articles_articles_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *GetSingleArticleRequest) GetArticleID() uint64 {
@@ -609,7 +821,7 @@ type GetSingleArticleReply struct {
 func (x *GetSingleArticleReply) Reset() {
 	*x = GetSingleArticleReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_articles_articles_proto_msgTypes[8]
+		mi := &file_api_articles_articles_proto_msgTypes[12]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -622,7 +834,7 @@ func (x *GetSingleArticleReply) String() string {
 func (*GetSingleArticleReply) ProtoMessage() {}
 
 func (x *GetSingleArticleReply) ProtoReflect() protoreflect.Message {
-	mi := &file_api_articles_articles_proto_msgTypes[8]
+	mi := &file_api_articles_articles_proto_msgTypes[12]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -635,7 +847,7 @@ func (x *GetSingleArticleReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetSingleArticleReply.ProtoReflect.Descriptor instead.
 func (*GetSingleArticleReply) Descriptor() ([]byte, []int) {
-	return file_api_articles_articles_proto_rawDescGZIP(), []int{8}
+	return file_api_articles_articles_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *GetSingleArticleReply) GetArticle() *DetailArticleInfo {
@@ -675,7 +887,7 @@ type UpdateArticlesRequest struct {
 func (x *UpdateArticlesRequest) Reset() {
 	*x = UpdateArticlesRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_articles_articles_proto_msgTypes[9]
+		mi := &file_api_articles_articles_proto_msgTypes[13]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -688,7 +900,7 @@ func (x *UpdateArticlesRequest) String() string {
 func (*UpdateArticlesRequest) ProtoMessage() {}
 
 func (x *UpdateArticlesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_articles_articles_proto_msgTypes[9]
+	mi := &file_api_articles_articles_proto_msgTypes[13]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -701,7 +913,7 @@ func (x *UpdateArticlesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateArticlesRequest.ProtoReflect.Descriptor instead.
 func (*UpdateArticlesRequest) Descriptor() ([]byte, []int) {
-	return file_api_articles_articles_proto_rawDescGZIP(), []int{9}
+	return file_api_articles_articles_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *UpdateArticlesRequest) GetArticleID() uint32 {
@@ -758,7 +970,7 @@ type UpdateArticlesReply struct {
 func (x *UpdateArticlesReply) Reset() {
 	*x = UpdateArticlesReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_articles_articles_proto_msgTypes[10]
+		mi := &file_api_articles_articles_proto_msgTypes[14]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -771,7 +983,7 @@ func (x *UpdateArticlesReply) String() string {
 func (*UpdateArticlesReply) ProtoMessage() {}
 
 func (x *UpdateArticlesReply) ProtoReflect() protoreflect.Message {
-	mi := &file_api_articles_articles_proto_msgTypes[10]
+	mi := &file_api_articles_articles_proto_msgTypes[14]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -784,7 +996,7 @@ func (x *UpdateArticlesReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateArticlesReply.ProtoReflect.Descriptor instead.
 func (*UpdateArticlesReply) Descriptor() ([]byte, []int) {
-	return file_api_articles_articles_proto_rawDescGZIP(), []int{10}
+	return file_api_articles_articles_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *UpdateArticlesReply) GetCode() uint32 {
@@ -812,7 +1024,7 @@ type DeleteArticlesRequest struct {
 func (x *DeleteArticlesRequest) Reset() {
 	*x = DeleteArticlesRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_articles_articles_proto_msgTypes[11]
+		mi := &file_api_articles_articles_proto_msgTypes[15]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -825,7 +1037,7 @@ func (x *DeleteArticlesRequest) String() string {
 func (*DeleteArticlesRequest) ProtoMessage() {}
 
 func (x *DeleteArticlesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_articles_articles_proto_msgTypes[11]
+	mi := &file_api_articles_articles_proto_msgTypes[15]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -838,7 +1050,7 @@ func (x *DeleteArticlesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteArticlesRequest.ProtoReflect.Descriptor instead.
 func (*DeleteArticlesRequest) Descriptor() ([]byte, []int) {
-	return file_api_articles_articles_proto_rawDescGZIP(), []int{11}
+	return file_api_articles_articles_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *DeleteArticlesRequest) GetArticleID() uint64 {
@@ -860,7 +1072,7 @@ type DeleteArticlesReply struct {
 func (x *DeleteArticlesReply) Reset() {
 	*x = DeleteArticlesReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_articles_articles_proto_msgTypes[12]
+		mi := &file_api_articles_articles_proto_msgTypes[16]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -873,7 +1085,7 @@ func (x *DeleteArticlesReply) String() string {
 func (*DeleteArticlesReply) ProtoMessage() {}
 
 func (x *DeleteArticlesReply) ProtoReflect() protoreflect.Message {
-	mi := &file_api_articles_articles_proto_msgTypes[12]
+	mi := &file_api_articles_articles_proto_msgTypes[16]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -886,7 +1098,7 @@ func (x *DeleteArticlesReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteArticlesReply.ProtoReflect.Descriptor instead.
 func (*DeleteArticlesReply) Descriptor() ([]byte, []int) {
-	return file_api_articles_articles_proto_rawDescGZIP(), []int{12}
+	return file_api_articles_articles_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *DeleteArticlesReply) GetCode() uint32 {
@@ -922,9 +1134,9 @@ var file_api_articles_articles_proto_rawDesc = []byte{
 	0x01, 0x28, 0x0d, 0x52, 0x08, 0x50, 0x61, 0x67, 0x65, 0x56, 0x69, 0x65, 0x77, 0x12, 0x10, 0x0a,
 	0x03, 0x49, 0x6d, 0x67, 0x18, 0x07, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x49, 0x6d, 0x67, 0x12,
 	0x0e, 0x0a, 0x02, 0x49, 0x44, 0x18, 0x08, 0x20, 0x01, 0x28, 0x04, 0x52, 0x02, 0x49, 0x44, 0x12,
-	0x10, 0x0a, 0x03, 0x55, 0x49, 0x44, 0x18, 0x09, 0x20, 0x01, 0x28, 0x04, 0x52, 0x03, 0x55, 0x49,
-	0x44, 0x12, 0x10, 0x0a, 0x03, 0x43, 0x49, 0x44, 0x18, 0x0a, 0x20, 0x01, 0x28, 0x04, 0x52, 0x03,
-	0x43, 0x49, 0x44, 0x22, 0xad, 0x01, 0x0a, 0x15, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x41, 0x72,
+	0x10, 0x0a, 0x03, 0x55, 0x69, 0x64, 0x18, 0x09, 0x20, 0x01, 0x28, 0x04, 0x52, 0x03, 0x55, 0x69,
+	0x64, 0x12, 0x10, 0x0a, 0x03, 0x43, 0x69, 0x64, 0x18, 0x0a, 0x20, 0x01, 0x28, 0x04, 0x52, 0x03,
+	0x43, 0x69, 0x64, 0x22, 0xad, 0x01, 0x0a, 0x15, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x41, 0x72,
 	0x74, 0x69, 0x63, 0x6c, 0x65, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x14, 0x0a,
 	0x05, 0x54, 0x69, 0x74, 0x6c, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x54, 0x69,
 	0x74, 0x6c, 0x65, 0x12, 0x10, 0x0a, 0x03, 0x43, 0x69, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x04,
@@ -972,6 +1184,30 @@ var file_api_articles_articles_proto_rawDesc = []byte{
 	0x6c, 0x65, 0x63, 0x74, 0x65, 0x64, 0x41, 0x72, 0x74, 0x69, 0x63, 0x6c, 0x65, 0x73, 0x12, 0x14,
 	0x0a, 0x05, 0x54, 0x6f, 0x74, 0x61, 0x6c, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0d, 0x52, 0x05, 0x54,
 	0x6f, 0x74, 0x61, 0x6c, 0x12, 0x12, 0x0a, 0x04, 0x63, 0x6f, 0x64, 0x65, 0x18, 0x03, 0x20, 0x01,
+	0x28, 0x0d, 0x52, 0x04, 0x63, 0x6f, 0x64, 0x65, 0x22, 0x53, 0x0a, 0x1b, 0x47, 0x65, 0x74, 0x52,
+	0x65, 0x63, 0x6f, 0x6d, 0x6d, 0x65, 0x6e, 0x64, 0x41, 0x72, 0x74, 0x69, 0x63, 0x6c, 0x65, 0x73,
+	0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x1a, 0x0a, 0x08, 0x50, 0x61, 0x67, 0x65, 0x53,
+	0x69, 0x7a, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0d, 0x52, 0x08, 0x50, 0x61, 0x67, 0x65, 0x53,
+	0x69, 0x7a, 0x65, 0x12, 0x18, 0x0a, 0x07, 0x50, 0x61, 0x67, 0x65, 0x4e, 0x75, 0x6d, 0x18, 0x02,
+	0x20, 0x01, 0x28, 0x0d, 0x52, 0x07, 0x50, 0x61, 0x67, 0x65, 0x4e, 0x75, 0x6d, 0x22, 0x7c, 0x0a,
+	0x19, 0x47, 0x65, 0x74, 0x52, 0x65, 0x63, 0x6f, 0x6d, 0x6d, 0x65, 0x6e, 0x64, 0x41, 0x72, 0x74,
+	0x69, 0x63, 0x6c, 0x65, 0x73, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x12, 0x4b, 0x0a, 0x10, 0x53, 0x65,
+	0x6c, 0x65, 0x63, 0x74, 0x65, 0x64, 0x41, 0x72, 0x74, 0x69, 0x63, 0x6c, 0x65, 0x73, 0x18, 0x01,
+	0x20, 0x03, 0x28, 0x0b, 0x32, 0x1f, 0x2e, 0x61, 0x70, 0x69, 0x2e, 0x61, 0x72, 0x74, 0x69, 0x63,
+	0x6c, 0x65, 0x73, 0x2e, 0x44, 0x65, 0x74, 0x61, 0x69, 0x6c, 0x41, 0x72, 0x74, 0x69, 0x63, 0x6c,
+	0x65, 0x49, 0x6e, 0x66, 0x6f, 0x52, 0x10, 0x53, 0x65, 0x6c, 0x65, 0x63, 0x74, 0x65, 0x64, 0x41,
+	0x72, 0x74, 0x69, 0x63, 0x6c, 0x65, 0x73, 0x12, 0x12, 0x0a, 0x04, 0x63, 0x6f, 0x64, 0x65, 0x18,
+	0x02, 0x20, 0x01, 0x28, 0x0d, 0x52, 0x04, 0x63, 0x6f, 0x64, 0x65, 0x22, 0x30, 0x0a, 0x18, 0x47,
+	0x65, 0x74, 0x52, 0x61, 0x6e, 0x64, 0x6f, 0x6d, 0x41, 0x72, 0x74, 0x69, 0x63, 0x6c, 0x65, 0x73,
+	0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x14, 0x0a, 0x05, 0x43, 0x6f, 0x75, 0x6e, 0x74,
+	0x18, 0x01, 0x20, 0x01, 0x28, 0x0d, 0x52, 0x05, 0x43, 0x6f, 0x75, 0x6e, 0x74, 0x22, 0x79, 0x0a,
+	0x16, 0x47, 0x65, 0x74, 0x52, 0x61, 0x6e, 0x64, 0x6f, 0x6d, 0x41, 0x72, 0x74, 0x69, 0x63, 0x6c,
+	0x65, 0x73, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x12, 0x4b, 0x0a, 0x10, 0x53, 0x65, 0x6c, 0x65, 0x63,
+	0x74, 0x65, 0x64, 0x41, 0x72, 0x74, 0x69, 0x63, 0x6c, 0x65, 0x73, 0x18, 0x01, 0x20, 0x03, 0x28,
+	0x0b, 0x32, 0x1f, 0x2e, 0x61, 0x70, 0x69, 0x2e, 0x61, 0x72, 0x74, 0x69, 0x63, 0x6c, 0x65, 0x73,
+	0x2e, 0x44, 0x65, 0x74, 0x61, 0x69, 0x6c, 0x41, 0x72, 0x74, 0x69, 0x63, 0x6c, 0x65, 0x49, 0x6e,
+	0x66, 0x6f, 0x52, 0x10, 0x53, 0x65, 0x6c, 0x65, 0x63, 0x74, 0x65, 0x64, 0x41, 0x72, 0x74, 0x69,
+	0x63, 0x6c, 0x65, 0x73, 0x12, 0x12, 0x0a, 0x04, 0x63, 0x6f, 0x64, 0x65, 0x18, 0x02, 0x20, 0x01,
 	0x28, 0x0d, 0x52, 0x04, 0x63, 0x6f, 0x64, 0x65, 0x22, 0x37, 0x0a, 0x17, 0x47, 0x65, 0x74, 0x53,
 	0x69, 0x6e, 0x67, 0x6c, 0x65, 0x41, 0x72, 0x74, 0x69, 0x63, 0x6c, 0x65, 0x52, 0x65, 0x71, 0x75,
 	0x65, 0x73, 0x74, 0x12, 0x1c, 0x0a, 0x09, 0x41, 0x72, 0x74, 0x69, 0x63, 0x6c, 0x65, 0x49, 0x44,
@@ -1005,7 +1241,7 @@ var file_api_articles_articles_proto_rawDesc = []byte{
 	0x65, 0x6c, 0x65, 0x74, 0x65, 0x41, 0x72, 0x74, 0x69, 0x63, 0x6c, 0x65, 0x73, 0x52, 0x65, 0x70,
 	0x6c, 0x79, 0x12, 0x12, 0x0a, 0x04, 0x63, 0x6f, 0x64, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0d,
 	0x52, 0x04, 0x63, 0x6f, 0x64, 0x65, 0x12, 0x10, 0x0a, 0x03, 0x4d, 0x73, 0x67, 0x18, 0x02, 0x20,
-	0x01, 0x28, 0x09, 0x52, 0x03, 0x4d, 0x73, 0x67, 0x32, 0xe5, 0x04, 0x0a, 0x08, 0x41, 0x72, 0x74,
+	0x01, 0x28, 0x09, 0x52, 0x03, 0x4d, 0x73, 0x67, 0x32, 0xb4, 0x06, 0x0a, 0x08, 0x41, 0x72, 0x74,
 	0x69, 0x63, 0x6c, 0x65, 0x73, 0x12, 0x58, 0x0a, 0x0e, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x41,
 	0x72, 0x74, 0x69, 0x63, 0x6c, 0x65, 0x73, 0x12, 0x23, 0x2e, 0x61, 0x70, 0x69, 0x2e, 0x61, 0x72,
 	0x74, 0x69, 0x63, 0x6c, 0x65, 0x73, 0x2e, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x41, 0x72, 0x74,
@@ -1044,9 +1280,22 @@ var file_api_articles_articles_proto_rawDesc = []byte{
 	0x69, 0x63, 0x6c, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x23, 0x2e, 0x61, 0x70,
 	0x69, 0x2e, 0x61, 0x72, 0x74, 0x69, 0x63, 0x6c, 0x65, 0x73, 0x2e, 0x47, 0x65, 0x74, 0x53, 0x69,
 	0x6e, 0x67, 0x6c, 0x65, 0x41, 0x72, 0x74, 0x69, 0x63, 0x6c, 0x65, 0x52, 0x65, 0x70, 0x6c, 0x79,
-	0x42, 0x1c, 0x5a, 0x1a, 0x62, 0x6c, 0x6f, 0x67, 0x2f, 0x61, 0x70, 0x69, 0x2f, 0x61, 0x72, 0x74,
-	0x69, 0x63, 0x6c, 0x65, 0x73, 0x3b, 0x61, 0x72, 0x74, 0x69, 0x63, 0x6c, 0x65, 0x73, 0x62, 0x06,
-	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x12, 0x6a, 0x0a, 0x14, 0x47, 0x65, 0x74, 0x52, 0x65, 0x63, 0x6f, 0x6d, 0x6d, 0x65, 0x6e, 0x64,
+	0x41, 0x72, 0x74, 0x69, 0x63, 0x6c, 0x65, 0x73, 0x12, 0x29, 0x2e, 0x61, 0x70, 0x69, 0x2e, 0x61,
+	0x72, 0x74, 0x69, 0x63, 0x6c, 0x65, 0x73, 0x2e, 0x47, 0x65, 0x74, 0x52, 0x65, 0x63, 0x6f, 0x6d,
+	0x6d, 0x65, 0x6e, 0x64, 0x41, 0x72, 0x74, 0x69, 0x63, 0x6c, 0x65, 0x73, 0x52, 0x65, 0x71, 0x75,
+	0x65, 0x73, 0x74, 0x1a, 0x27, 0x2e, 0x61, 0x70, 0x69, 0x2e, 0x61, 0x72, 0x74, 0x69, 0x63, 0x6c,
+	0x65, 0x73, 0x2e, 0x47, 0x65, 0x74, 0x52, 0x65, 0x63, 0x6f, 0x6d, 0x6d, 0x65, 0x6e, 0x64, 0x41,
+	0x72, 0x74, 0x69, 0x63, 0x6c, 0x65, 0x73, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x12, 0x61, 0x0a, 0x11,
+	0x47, 0x65, 0x74, 0x52, 0x61, 0x6e, 0x64, 0x6f, 0x6d, 0x41, 0x72, 0x74, 0x69, 0x63, 0x6c, 0x65,
+	0x73, 0x12, 0x26, 0x2e, 0x61, 0x70, 0x69, 0x2e, 0x61, 0x72, 0x74, 0x69, 0x63, 0x6c, 0x65, 0x73,
+	0x2e, 0x47, 0x65, 0x74, 0x52, 0x61, 0x6e, 0x64, 0x6f, 0x6d, 0x41, 0x72, 0x74, 0x69, 0x63, 0x6c,
+	0x65, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x24, 0x2e, 0x61, 0x70, 0x69, 0x2e,
+	0x61, 0x72, 0x74, 0x69, 0x63, 0x6c, 0x65, 0x73, 0x2e, 0x47, 0x65, 0x74, 0x52, 0x61, 0x6e, 0x64,
+	0x6f, 0x6d, 0x41, 0x72, 0x74, 0x69, 0x63, 0x6c, 0x65, 0x73, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x42,
+	0x1c, 0x5a, 0x1a, 0x62, 0x6c, 0x6f, 0x67, 0x2f, 0x61, 0x70, 0x69, 0x2f, 0x61, 0x72, 0x74, 0x69,
+	0x63, 0x6c, 0x65, 0x73, 0x3b, 0x61, 0x72, 0x74, 0x69, 0x63, 0x6c, 0x65, 0x73, 0x62, 0x06, 0x70,
+	0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -1061,7 +1310,7 @@ func file_api_articles_articles_proto_rawDescGZIP() []byte {
 	return file_api_articles_articles_proto_rawDescData
 }
 
-var file_api_articles_articles_proto_msgTypes = make([]protoimpl.MessageInfo, 13)
+var file_api_articles_articles_proto_msgTypes = make([]protoimpl.MessageInfo, 17)
 var file_api_articles_articles_proto_goTypes = []any{
 	(*DetailArticleInfo)(nil),                // 0: api.articles.DetailArticleInfo
 	(*CreateArticlesRequest)(nil),            // 1: api.articles.CreateArticlesRequest
@@ -1070,34 +1319,44 @@ var file_api_articles_articles_proto_goTypes = []any{
 	(*GetArticlesInSameCategoryReply)(nil),   // 4: api.articles.GetArticlesInSameCategoryReply
 	(*GetArticlesByCidAndUidRequest)(nil),    // 5: api.articles.GetArticlesByCidAndUidRequest
 	(*GetArticlesByCidAndUidReply)(nil),      // 6: api.articles.GetArticlesByCidAndUidReply
-	(*GetSingleArticleRequest)(nil),          // 7: api.articles.GetSingleArticleRequest
-	(*GetSingleArticleReply)(nil),            // 8: api.articles.GetSingleArticleReply
-	(*UpdateArticlesRequest)(nil),            // 9: api.articles.UpdateArticlesRequest
-	(*UpdateArticlesReply)(nil),              // 10: api.articles.UpdateArticlesReply
-	(*DeleteArticlesRequest)(nil),            // 11: api.articles.DeleteArticlesRequest
-	(*DeleteArticlesReply)(nil),              // 12: api.articles.DeleteArticlesReply
+	(*GetRecommendArticlesRequest)(nil),      // 7: api.articles.GetRecommendArticlesRequest
+	(*GetRecommendArticlesReply)(nil),        // 8: api.articles.GetRecommendArticlesReply
+	(*GetRandomArticlesRequest)(nil),         // 9: api.articles.GetRandomArticlesRequest
+	(*GetRandomArticlesReply)(nil),           // 10: api.articles.GetRandomArticlesReply
+	(*GetSingleArticleRequest)(nil),          // 11: api.articles.GetSingleArticleRequest
+	(*GetSingleArticleReply)(nil),            // 12: api.articles.GetSingleArticleReply
+	(*UpdateArticlesRequest)(nil),            // 13: api.articles.UpdateArticlesRequest
+	(*UpdateArticlesReply)(nil),              // 14: api.articles.UpdateArticlesReply
+	(*DeleteArticlesRequest)(nil),            // 15: api.articles.DeleteArticlesRequest
+	(*DeleteArticlesReply)(nil),              // 16: api.articles.DeleteArticlesReply
 }
 var file_api_articles_articles_proto_depIdxs = []int32{
 	0,  // 0: api.articles.GetArticlesInSameCategoryReply.SelectedArticles:type_name -> api.articles.DetailArticleInfo
 	0,  // 1: api.articles.GetArticlesByCidAndUidReply.SelectedArticles:type_name -> api.articles.DetailArticleInfo
-	0,  // 2: api.articles.GetSingleArticleReply.Article:type_name -> api.articles.DetailArticleInfo
-	1,  // 3: api.articles.Articles.CreateArticles:input_type -> api.articles.CreateArticlesRequest
-	9,  // 4: api.articles.Articles.UpdateArticles:input_type -> api.articles.UpdateArticlesRequest
-	11, // 5: api.articles.Articles.DeleteArticles:input_type -> api.articles.DeleteArticlesRequest
-	3,  // 6: api.articles.Articles.GetArticlesInSameCategory:input_type -> api.articles.GetArticlesInSameCategoryRequest
-	5,  // 7: api.articles.Articles.GetArticlesByCidAndUid:input_type -> api.articles.GetArticlesByCidAndUidRequest
-	7,  // 8: api.articles.Articles.GetSingleArticle:input_type -> api.articles.GetSingleArticleRequest
-	2,  // 9: api.articles.Articles.CreateArticles:output_type -> api.articles.CreateArticlesReply
-	10, // 10: api.articles.Articles.UpdateArticles:output_type -> api.articles.UpdateArticlesReply
-	12, // 11: api.articles.Articles.DeleteArticles:output_type -> api.articles.DeleteArticlesReply
-	4,  // 12: api.articles.Articles.GetArticlesInSameCategory:output_type -> api.articles.GetArticlesInSameCategoryReply
-	6,  // 13: api.articles.Articles.GetArticlesByCidAndUid:output_type -> api.articles.GetArticlesByCidAndUidReply
-	8,  // 14: api.articles.Articles.GetSingleArticle:output_type -> api.articles.GetSingleArticleReply
-	9,  // [9:15] is the sub-list for method output_type
-	3,  // [3:9] is the sub-list for method input_type
-	3,  // [3:3] is the sub-list for extension type_name
-	3,  // [3:3] is the sub-list for extension extendee
-	0,  // [0:3] is the sub-list for field type_name
+	0,  // 2: api.articles.GetRecommendArticlesReply.SelectedArticles:type_name -> api.articles.DetailArticleInfo
+	0,  // 3: api.articles.GetRandomArticlesReply.SelectedArticles:type_name -> api.articles.DetailArticleInfo
+	0,  // 4: api.articles.GetSingleArticleReply.Article:type_name -> api.articles.DetailArticleInfo
+	1,  // 5: api.articles.Articles.CreateArticles:input_type -> api.articles.CreateArticlesRequest
+	13, // 6: api.articles.Articles.UpdateArticles:input_type -> api.articles.UpdateArticlesRequest
+	15, // 7: api.articles.Articles.DeleteArticles:input_type -> api.articles.DeleteArticlesRequest
+	3,  // 8: api.articles.Articles.GetArticlesInSameCategory:input_type -> api.articles.GetArticlesInSameCategoryRequest
+	5,  // 9: api.articles.Articles.GetArticlesByCidAndUid:input_type -> api.articles.GetArticlesByCidAndUidRequest
+	11, // 10: api.articles.Articles.GetSingleArticle:input_type -> api.articles.GetSingleArticleRequest
+	7,  // 11: api.articles.Articles.GetRecommendArticles:input_type -> api.articles.GetRecommendArticlesRequest
+	9,  // 12: api.articles.Articles.GetRandomArticles:input_type -> api.articles.GetRandomArticlesRequest
+	2,  // 13: api.articles.Articles.CreateArticles:output_type -> api.articles.CreateArticlesReply
+	14, // 14: api.articles.Articles.UpdateArticles:output_type -> api.articles.UpdateArticlesReply
+	16, // 15: api.articles.Articles.DeleteArticles:output_type -> api.articles.DeleteArticlesReply
+	4,  // 16: api.articles.Articles.GetArticlesInSameCategory:output_type -> api.articles.GetArticlesInSameCategoryReply
+	6,  // 17: api.articles.Articles.GetArticlesByCidAndUid:output_type -> api.articles.GetArticlesByCidAndUidReply
+	12, // 18: api.articles.Articles.GetSingleArticle:output_type -> api.articles.GetSingleArticleReply
+	8,  // 19: api.articles.Articles.GetRecommendArticles:output_type -> api.articles.GetRecommendArticlesReply
+	10, // 20: api.articles.Articles.GetRandomArticles:output_type -> api.articles.GetRandomArticlesReply
+	13, // [13:21] is the sub-list for method output_type
+	5,  // [5:13] is the sub-list for method input_type
+	5,  // [5:5] is the sub-list for extension type_name
+	5,  // [5:5] is the sub-list for extension extendee
+	0,  // [0:5] is the sub-list for field type_name
 }
 
 func init() { file_api_articles_articles_proto_init() }
@@ -1191,7 +1450,7 @@ func file_api_articles_articles_proto_init() {
 			}
 		}
 		file_api_articles_articles_proto_msgTypes[7].Exporter = func(v any, i int) any {
-			switch v := v.(*GetSingleArticleRequest); i {
+			switch v := v.(*GetRecommendArticlesRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1203,7 +1462,7 @@ func file_api_articles_articles_proto_init() {
 			}
 		}
 		file_api_articles_articles_proto_msgTypes[8].Exporter = func(v any, i int) any {
-			switch v := v.(*GetSingleArticleReply); i {
+			switch v := v.(*GetRecommendArticlesReply); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1215,7 +1474,7 @@ func file_api_articles_articles_proto_init() {
 			}
 		}
 		file_api_articles_articles_proto_msgTypes[9].Exporter = func(v any, i int) any {
-			switch v := v.(*UpdateArticlesRequest); i {
+			switch v := v.(*GetRandomArticlesRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1227,7 +1486,7 @@ func file_api_articles_articles_proto_init() {
 			}
 		}
 		file_api_articles_articles_proto_msgTypes[10].Exporter = func(v any, i int) any {
-			switch v := v.(*UpdateArticlesReply); i {
+			switch v := v.(*GetRandomArticlesReply); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1239,7 +1498,7 @@ func file_api_articles_articles_proto_init() {
 			}
 		}
 		file_api_articles_articles_proto_msgTypes[11].Exporter = func(v any, i int) any {
-			switch v := v.(*DeleteArticlesRequest); i {
+			switch v := v.(*GetSingleArticleRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1251,6 +1510,54 @@ func file_api_articles_articles_proto_init() {
 			}
 		}
 		file_api_articles_articles_proto_msgTypes[12].Exporter = func(v any, i int) any {
+			switch v := v.(*GetSingleArticleReply); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_api_articles_articles_proto_msgTypes[13].Exporter = func(v any, i int) any {
+			switch v := v.(*UpdateArticlesRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_api_articles_articles_proto_msgTypes[14].Exporter = func(v any, i int) any {
+			switch v := v.(*UpdateArticlesReply); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_api_articles_articles_proto_msgTypes[15].Exporter = func(v any, i int) any {
+			switch v := v.(*DeleteArticlesRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_api_articles_articles_proto_msgTypes[16].Exporter = func(v any, i int) any {
 			switch v := v.(*DeleteArticlesReply); i {
 			case 0:
 				return &v.state
@@ -1269,7 +1576,7 @@ func file_api_articles_articles_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_api_articles_articles_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   13,
+			NumMessages:   17,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

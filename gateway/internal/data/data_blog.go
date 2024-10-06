@@ -51,6 +51,24 @@ func (r *gatewayBlogRepo) GRPC_GetBlogsByCidAndUid(req *articles.GetArticlesByCi
 	}
 	return result, nil
 }
+func (r *gatewayBlogRepo) GRPC_GetBlogsForRecommend(req *articles.GetRecommendArticlesRequest) (*articles.GetRecommendArticlesReply, error) {
+	client := articles.NewArticlesClient(r.data.ConnGRPC_blog)
+	result, err := client.GetRecommendArticles(context.Background(), req)
+	if err != nil {
+		r.log.Error(err)
+		return nil, err
+	}
+	return result, err
+}
+func (r *gatewayBlogRepo) GRPC_GetBlogsByRandom(req *articles.GetRandomArticlesRequest) (*articles.GetRandomArticlesReply, error) {
+	client := articles.NewArticlesClient(r.data.ConnGRPC_blog)
+	result, err := client.GetRandomArticles(context.Background(), req)
+	if err != nil {
+		r.log.Error(err)
+		return nil, err
+	}
+	return result, err
+}
 func (r *gatewayBlogRepo) GRPC_GetSingleBlog(req *articles.GetSingleArticleRequest) (*articles.GetSingleArticleReply, error) {
 
 	// fast path

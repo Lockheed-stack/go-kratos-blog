@@ -25,6 +25,8 @@ const (
 	Articles_GetArticlesInSameCategory_FullMethodName = "/api.articles.Articles/GetArticlesInSameCategory"
 	Articles_GetArticlesByCidAndUid_FullMethodName    = "/api.articles.Articles/GetArticlesByCidAndUid"
 	Articles_GetSingleArticle_FullMethodName          = "/api.articles.Articles/GetSingleArticle"
+	Articles_GetRecommendArticles_FullMethodName      = "/api.articles.Articles/GetRecommendArticles"
+	Articles_GetRandomArticles_FullMethodName         = "/api.articles.Articles/GetRandomArticles"
 )
 
 // ArticlesClient is the client API for Articles service.
@@ -37,6 +39,8 @@ type ArticlesClient interface {
 	GetArticlesInSameCategory(ctx context.Context, in *GetArticlesInSameCategoryRequest, opts ...grpc.CallOption) (*GetArticlesInSameCategoryReply, error)
 	GetArticlesByCidAndUid(ctx context.Context, in *GetArticlesByCidAndUidRequest, opts ...grpc.CallOption) (*GetArticlesByCidAndUidReply, error)
 	GetSingleArticle(ctx context.Context, in *GetSingleArticleRequest, opts ...grpc.CallOption) (*GetSingleArticleReply, error)
+	GetRecommendArticles(ctx context.Context, in *GetRecommendArticlesRequest, opts ...grpc.CallOption) (*GetRecommendArticlesReply, error)
+	GetRandomArticles(ctx context.Context, in *GetRandomArticlesRequest, opts ...grpc.CallOption) (*GetRandomArticlesReply, error)
 }
 
 type articlesClient struct {
@@ -107,6 +111,26 @@ func (c *articlesClient) GetSingleArticle(ctx context.Context, in *GetSingleArti
 	return out, nil
 }
 
+func (c *articlesClient) GetRecommendArticles(ctx context.Context, in *GetRecommendArticlesRequest, opts ...grpc.CallOption) (*GetRecommendArticlesReply, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetRecommendArticlesReply)
+	err := c.cc.Invoke(ctx, Articles_GetRecommendArticles_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *articlesClient) GetRandomArticles(ctx context.Context, in *GetRandomArticlesRequest, opts ...grpc.CallOption) (*GetRandomArticlesReply, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetRandomArticlesReply)
+	err := c.cc.Invoke(ctx, Articles_GetRandomArticles_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ArticlesServer is the server API for Articles service.
 // All implementations must embed UnimplementedArticlesServer
 // for forward compatibility.
@@ -117,6 +141,8 @@ type ArticlesServer interface {
 	GetArticlesInSameCategory(context.Context, *GetArticlesInSameCategoryRequest) (*GetArticlesInSameCategoryReply, error)
 	GetArticlesByCidAndUid(context.Context, *GetArticlesByCidAndUidRequest) (*GetArticlesByCidAndUidReply, error)
 	GetSingleArticle(context.Context, *GetSingleArticleRequest) (*GetSingleArticleReply, error)
+	GetRecommendArticles(context.Context, *GetRecommendArticlesRequest) (*GetRecommendArticlesReply, error)
+	GetRandomArticles(context.Context, *GetRandomArticlesRequest) (*GetRandomArticlesReply, error)
 	mustEmbedUnimplementedArticlesServer()
 }
 
@@ -144,6 +170,12 @@ func (UnimplementedArticlesServer) GetArticlesByCidAndUid(context.Context, *GetA
 }
 func (UnimplementedArticlesServer) GetSingleArticle(context.Context, *GetSingleArticleRequest) (*GetSingleArticleReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetSingleArticle not implemented")
+}
+func (UnimplementedArticlesServer) GetRecommendArticles(context.Context, *GetRecommendArticlesRequest) (*GetRecommendArticlesReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetRecommendArticles not implemented")
+}
+func (UnimplementedArticlesServer) GetRandomArticles(context.Context, *GetRandomArticlesRequest) (*GetRandomArticlesReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetRandomArticles not implemented")
 }
 func (UnimplementedArticlesServer) mustEmbedUnimplementedArticlesServer() {}
 func (UnimplementedArticlesServer) testEmbeddedByValue()                  {}
@@ -274,6 +306,42 @@ func _Articles_GetSingleArticle_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Articles_GetRecommendArticles_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetRecommendArticlesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ArticlesServer).GetRecommendArticles(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Articles_GetRecommendArticles_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ArticlesServer).GetRecommendArticles(ctx, req.(*GetRecommendArticlesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Articles_GetRandomArticles_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetRandomArticlesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ArticlesServer).GetRandomArticles(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Articles_GetRandomArticles_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ArticlesServer).GetRandomArticles(ctx, req.(*GetRandomArticlesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Articles_ServiceDesc is the grpc.ServiceDesc for Articles service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -304,6 +372,14 @@ var Articles_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetSingleArticle",
 			Handler:    _Articles_GetSingleArticle_Handler,
+		},
+		{
+			MethodName: "GetRecommendArticles",
+			Handler:    _Articles_GetRecommendArticles_Handler,
+		},
+		{
+			MethodName: "GetRandomArticles",
+			Handler:    _Articles_GetRandomArticles_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

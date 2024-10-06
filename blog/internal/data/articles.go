@@ -3,6 +3,9 @@ package data
 import (
 	pb "blog/api/articles"
 	"blog/internal/biz"
+	"fmt"
+	"math/rand"
+	"time"
 
 	"github.com/go-kratos/kratos/v2/log"
 )
@@ -58,6 +61,38 @@ func (ap *articleRepo) GetArticlesByCidAndUid_Pagination(pageSize uint32, offset
 	ap.data.db.Model(&biz.Article{}).Where("cid=? and uid=?", cid, uid).Count(&count)
 	return result, uint32(count), nil
 }
+func (ap *articleRepo) GetArticlesForRecommend_Pagination(pageSize uint32, offset uint32) ([]*pb.DetailArticleInfo, error) {
+	var result = []*pb.DetailArticleInfo{}
+	sqlRes := ap.data.db.Table("article").Order("page_view desc").Limit(int(pageSize)).Offset(int(offset)).Scan(&result)
+	if sqlRes.Error != nil {
+		ap.log.Error(sqlRes.Error)
+		return nil, sqlRes.Error
+	}
+	return result, nil
+}
+func (ap *articleRepo) GetArticlesByRandomSelect(count uint32) ([]*pb.DetailArticleInfo, error) {
+	var result = []*pb.DetailArticleInfo{}
+	var total int64
+	ap.data.db.Table("article").Count(&total)
+	if total == 0 {
+		return result, nil
+	}
+
+	// generate article id by random
+	var randArticlesID []int = make([]int, count)
+	r := rand.New(rand.NewSource(time.Now().Unix()))
+	for i := 0; i < int(count); i++ {
+		randArticlesID[i] = r.Intn(int(total))
+	}
+	fmt.Println(randArticlesID)
+	sqlRes := ap.data.db.Table("article").Where("id In ?", randArticlesID).Scan(&result)
+	fmt.Printf("%+v\n", result)
+	if sqlRes.Error != nil {
+		ap.log.Error(sqlRes.Error)
+		return nil, sqlRes.Error
+	}
+	return result, nil
+}
 func (ap *articleRepo) GetOneArticle(id uint64) (*biz.Article, error) {
 	var article = &biz.Article{}
 
@@ -66,7 +101,7 @@ func (ap *articleRepo) GetOneArticle(id uint64) (*biz.Article, error) {
 		ap.log.Error(err)
 		return article, err
 	}
-
+	fmt.Printf("%+v\n", article)
 	return article, nil
 }
 

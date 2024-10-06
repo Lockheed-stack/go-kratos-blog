@@ -25,8 +25,8 @@ func (s *ArticlesService) CreateArticles(ctx context.Context, req *pb.CreateArti
 
 	article := &biz.Article{
 		Title:    req.Title,
-		Cid:      req.Cid,
-		Uid:      req.Uid,
+		Cid:      uint(req.Cid),
+		Uid:      uint(req.Uid),
 		Desc:     req.Desc,
 		Content:  req.Content,
 		Img:      req.Img,
@@ -76,7 +76,32 @@ func (s *ArticlesService) GetArticlesByCidAndUid(ctx context.Context, req *pb.Ge
 	}
 	return resp, nil
 }
-
+func (s *ArticlesService) GetRecommendArticles(ctx context.Context, req *pb.GetRecommendArticlesRequest) (*pb.GetRecommendArticlesReply, error) {
+	resp := &pb.GetRecommendArticlesReply{}
+	result, err := s.ac.GetArticlesForRecommend(req.PageSize, req.PageNum)
+	if err != nil {
+		kratos_err := err.(*errors.Error)
+		resp.Code = uint32(kratos_err.Code)
+		return resp, err
+	} else {
+		resp.SelectedArticles = result
+		resp.Code = 200
+	}
+	return resp, nil
+}
+func (s *ArticlesService) GetRandomArticles(ctx context.Context, req *pb.GetRandomArticlesRequest) (*pb.GetRandomArticlesReply, error) {
+	resp := &pb.GetRandomArticlesReply{}
+	result, err := s.ac.GetArticlesByRandom(req.Count)
+	if err != nil {
+		kratos_err := err.(*errors.Error)
+		resp.Code = uint32(kratos_err.Code)
+		return resp, err
+	} else {
+		resp.SelectedArticles = result
+		resp.Code = 200
+	}
+	return resp, nil
+}
 func (s *ArticlesService) GetSingleArticle(ctx context.Context, req *pb.GetSingleArticleRequest) (*pb.GetSingleArticleReply, error) {
 
 	result, err := s.ac.GetArticleByID(req.ArticleID)
@@ -96,8 +121,8 @@ func (s *ArticlesService) GetSingleArticle(ctx context.Context, req *pb.GetSingl
 			Img:       result.Img,
 			PageView:  uint32(result.PageView),
 			ID:        uint64(result.ID),
-			UID:       result.Uid,
-			CID:       result.Cid,
+			Uid:       uint64(result.Uid),
+			Cid:       uint64(result.Cid),
 		}
 		resp.Msg = "OK"
 		resp.Code = 200
@@ -109,7 +134,7 @@ func (s *ArticlesService) GetSingleArticle(ctx context.Context, req *pb.GetSingl
 func (s *ArticlesService) UpdateArticles(ctx context.Context, req *pb.UpdateArticlesRequest) (*pb.UpdateArticlesReply, error) {
 	article := &biz.Article{
 		Model:   gorm.Model{ID: uint(req.ArticleID)},
-		Cid:     req.Cid,
+		Cid:     uint(req.Cid),
 		Desc:    req.Desc,
 		Content: req.Content,
 		Img:     req.Thumbnail,
