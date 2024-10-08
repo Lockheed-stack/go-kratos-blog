@@ -95,7 +95,7 @@ func decryptAES_GCM(block cipher.Block, ciphertext []byte) error {
 }
 
 // authenticate token
-func AuthToken(token string) (uint32, error) {
+func AuthToken(token string) (uint64, error) {
 	parseToken, err := jwt.ParseWithClaims(
 		token,
 		&MyClaims{},
@@ -120,7 +120,7 @@ func AuthToken(token string) (uint32, error) {
 			return 0, err
 		}
 
-		plain_id := binary.BigEndian.Uint32(cipher_id)
+		plain_id := binary.BigEndian.Uint64(cipher_id)
 		Kratos_log.Infof("auth user id:%v, Token is valid\n", plain_id)
 		return plain_id, nil
 	}
