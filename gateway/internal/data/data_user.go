@@ -47,3 +47,12 @@ func (r *gatewayUserRepo) GRPC_AuthUser(req *users.AuthUsersRequest) (*users.Aut
 	}
 	return result, nil
 }
+func (r *gatewayUserRepo) GRPC_GetSelectedUsers(req *users.GetSelectedUsersRequest) (*users.GetSelectedUsersReply, error) {
+	client := users.NewUsersClient(r.data.ConnGRPC_user)
+	result, err := client.GetSelectedUsers(context.Background(), req)
+	if err != nil {
+		r.log.Error(err)
+		return nil, err
+	}
+	return result, nil
+}

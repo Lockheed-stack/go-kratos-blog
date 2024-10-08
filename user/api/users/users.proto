@@ -9,9 +9,16 @@ service Users {
 	rpc CreateUsers (CreateUsersRequest) returns (CreateUsersReply);
 	rpc UpdateUsers (UpdateUsersRequest) returns (UpdateUsersReply);
 	rpc DeleteUsers (DeleteUsersRequest) returns (DeleteUsersReply);
-	rpc GetUsers (GetUsersRequest) returns (GetUsersReply);
+	rpc GetSelectedUsers (GetSelectedUsersRequest) returns (GetSelectedUsersReply);
 	rpc ListUsers (ListUsersRequest) returns (ListUsersReply);
 	rpc AuthUsers (AuthUsersRequest) returns (AuthUsersReply);
+}
+
+message UserInfo {
+	string Username = 1;
+	string Avatar = 2;
+	string SelfDesc = 3;
+	uint64 ID = 4;
 }
 
 message CreateUsersRequest {
@@ -34,8 +41,13 @@ message DeleteUsersReply {
 	uint32 Code = 2;
 }
 
-message GetUsersRequest {}
-message GetUsersReply {}
+message GetSelectedUsersRequest {
+	repeated uint64 UsersID = 1;
+}
+message GetSelectedUsersReply {
+	repeated UserInfo SelectedUsers = 1;
+	uint32 Code = 2;
+}
 
 message ListUsersRequest {}
 message ListUsersReply {}

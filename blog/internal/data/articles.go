@@ -3,7 +3,6 @@ package data
 import (
 	pb "blog/api/articles"
 	"blog/internal/biz"
-	"fmt"
 	"math/rand"
 	"time"
 
@@ -40,7 +39,7 @@ func (ap *articleRepo) GetArticlesInSameCategory_Pagination(pageSize uint32, off
 	var result = []*pb.DetailArticleInfo{}
 	var count int64 = 0
 
-	sqlRes := ap.data.db.Table("article").Where("cid=?", cid).Limit(int(pageSize)).Offset(int(offset)).Scan(&result)
+	sqlRes := ap.data.db.Model(&biz.Article{}).Where("cid=?", cid).Limit(int(pageSize)).Offset(int(offset)).Scan(&result)
 	if sqlRes.Error != nil {
 		ap.log.Error(sqlRes.Error)
 		return nil, uint32(count), sqlRes.Error
@@ -53,7 +52,7 @@ func (ap *articleRepo) GetArticlesByCidAndUid_Pagination(pageSize uint32, offset
 	var result = []*pb.DetailArticleInfo{}
 	var count int64 = 0
 
-	sqlRes := ap.data.db.Table("article").Where("cid=? and uid=?", cid, uid).Limit(int(pageSize)).Offset(int(offset)).Scan(&result)
+	sqlRes := ap.data.db.Model(&biz.Article{}).Where("cid=? and uid=?", cid, uid).Limit(int(pageSize)).Offset(int(offset)).Scan(&result)
 	if sqlRes.Error != nil {
 		ap.log.Error(sqlRes.Error)
 		return nil, uint32(count), sqlRes.Error
@@ -63,7 +62,7 @@ func (ap *articleRepo) GetArticlesByCidAndUid_Pagination(pageSize uint32, offset
 }
 func (ap *articleRepo) GetArticlesForRecommend_Pagination(pageSize uint32, offset uint32) ([]*pb.DetailArticleInfo, error) {
 	var result = []*pb.DetailArticleInfo{}
-	sqlRes := ap.data.db.Table("article").Order("page_view desc").Limit(int(pageSize)).Offset(int(offset)).Scan(&result)
+	sqlRes := ap.data.db.Model(&biz.Article{}).Order("page_view desc").Limit(int(pageSize)).Offset(int(offset)).Scan(&result)
 	if sqlRes.Error != nil {
 		ap.log.Error(sqlRes.Error)
 		return nil, sqlRes.Error
@@ -73,7 +72,7 @@ func (ap *articleRepo) GetArticlesForRecommend_Pagination(pageSize uint32, offse
 func (ap *articleRepo) GetArticlesByRandomSelect(count uint32) ([]*pb.DetailArticleInfo, error) {
 	var result = []*pb.DetailArticleInfo{}
 	var total int64
-	ap.data.db.Table("article").Count(&total)
+	ap.data.db.Model(&biz.Article{}).Count(&total)
 	if total == 0 {
 		return result, nil
 	}
@@ -84,9 +83,9 @@ func (ap *articleRepo) GetArticlesByRandomSelect(count uint32) ([]*pb.DetailArti
 	for i := 0; i < int(count); i++ {
 		randArticlesID[i] = r.Intn(int(total))
 	}
-	fmt.Println(randArticlesID)
-	sqlRes := ap.data.db.Table("article").Where("id In ?", randArticlesID).Scan(&result)
-	fmt.Printf("%+v\n", result)
+
+	sqlRes := ap.data.db.Model(&biz.Article{}).Where("id In ?", randArticlesID).Scan(&result)
+
 	if sqlRes.Error != nil {
 		ap.log.Error(sqlRes.Error)
 		return nil, sqlRes.Error
@@ -101,7 +100,7 @@ func (ap *articleRepo) GetOneArticle(id uint64) (*biz.Article, error) {
 		ap.log.Error(err)
 		return article, err
 	}
-	fmt.Printf("%+v\n", article)
+
 	return article, nil
 }
 

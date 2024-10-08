@@ -36,6 +36,7 @@ func NewGinRouter(
 		// user
 		public_group.POST("/login", user_handler.AuthUser)
 		public_group.POST("/user/add", user_handler.CreateOneUser)
+		public_group.POST("/user/publicInfo", user_handler.GetPublicUsersInfo)
 	}
 
 	auth_Required_group := r.Group("/management")

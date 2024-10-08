@@ -1,6 +1,7 @@
 package biz
 
 import (
+	"fmt"
 	"gateway/api/users"
 	"gateway/internal/middlewares"
 	"net/http"
@@ -13,6 +14,7 @@ type GatewayUserRepo interface {
 	GRPC_CreateUser(*users.CreateUsersRequest) (*users.CreateUsersReply, error)
 	GRPC_DeleteUser(*users.DeleteUsersRequest) (*users.DeleteUsersReply, error)
 	GRPC_AuthUser(*users.AuthUsersRequest) (*users.AuthUsersReply, error)
+	GRPC_GetSelectedUsers(*users.GetSelectedUsersRequest) (*users.GetSelectedUsersReply, error)
 }
 
 type GatewayUserUsecase struct {
@@ -119,5 +121,34 @@ func (u *GatewayUserUsecase) AuthUser(c *gin.Context) {
 func (u *GatewayUserUsecase) TokenCheck(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"result": "ok",
+	})
+}
+
+func (u *GatewayUserUsecase) GetPublicUsersInfo(c *gin.Context) {
+	req := &users.GetSelectedUsersRequest{}
+	if err := c.ShouldBindJSON(req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"result": err.Error(),
+		})
+		return
+	}
+
+	resp, err := u.repo.GRPC_GetSelectedUsers(req)
+	fmt.Println(resp, err)
+	if err != nil {
+		c.JSON(http.StatusGatewayTimeout, gin.H{
+			"result": err.Error(),
+		})
+		return
+	}
+	if resp.Code != 200 {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"result": nil,
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"result": resp.SelectedUsers,
 	})
 }

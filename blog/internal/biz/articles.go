@@ -29,6 +29,8 @@ type User struct {
 	Username string `gorm:"type:varchar(30);uniqueIndex;not null"`
 	Password string `gorm:"type:char(64);not null"`
 	Role     uint8  `gorm:"type:tinyint;UNSIGNED;DEFAULT:2"`
+	Avatar   string `gorm:"type:longtext"`
+	SelfDesc string `gorm:"type:varchar(150);DEFAULT:'nothing'"`
 }
 
 type ArticleRepo interface {

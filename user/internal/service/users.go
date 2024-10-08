@@ -50,8 +50,17 @@ func (s *UsersService) DeleteUsers(ctx context.Context, req *pb.DeleteUsersReque
 	}
 	return resp, nil
 }
-func (s *UsersService) GetUsers(ctx context.Context, req *pb.GetUsersRequest) (*pb.GetUsersReply, error) {
-	return &pb.GetUsersReply{}, nil
+func (s *UsersService) GetSelectedUsers(ctx context.Context, req *pb.GetSelectedUsersRequest) (*pb.GetSelectedUsersReply, error) {
+	resp := &pb.GetSelectedUsersReply{}
+	result, err := s.uc.GetUsersByIDs(req.UsersID)
+	if err != nil {
+		kratos_err := err.(*errors.Error)
+		resp.Code = uint32(kratos_err.Code)
+	} else {
+		resp.SelectedUsers = result
+		resp.Code = 200
+	}
+	return resp, nil
 }
 func (s *UsersService) ListUsers(ctx context.Context, req *pb.ListUsersRequest) (*pb.ListUsersReply, error) {
 	return &pb.ListUsersReply{}, nil

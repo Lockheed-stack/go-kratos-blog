@@ -1,6 +1,7 @@
 package data
 
 import (
+	pb "user/api/users"
 	"user/internal/biz"
 
 	"github.com/go-kratos/kratos/v2/errors"
@@ -84,4 +85,19 @@ func (r *userRepo) AuthLogin(name string, pwd string) (uint64, error) {
 	}
 
 	return uint64(user.ID), nil
+}
+
+func (r *userRepo) GetSelectedUsers(selectedFields []string, IDs []uint64) ([]*pb.UserInfo, error) {
+	result := []*pb.UserInfo{}
+	sqlRes := r.data.db.Model(&biz.User{}).Select(selectedFields).Where("id IN ?", IDs).Scan(&result)
+	if err := sqlRes.Error; err != nil {
+		r.log.Error(err)
+		if mysqlErr, ok := err.(*mysql.MySQLError); ok {
+			switch mysqlErr.Number {
+			default:
+				return nil, errors.New(400, "ERR_USER_INVALID_REQUEST", "")
+			}
+		}
+	}
+	return result, nil
 }
