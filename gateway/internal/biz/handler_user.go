@@ -105,7 +105,7 @@ func (u *GatewayUserUsecase) AuthUser(c *gin.Context) {
 		return
 	}
 
-	token, err := middlewares.GenerateToken(req.UserName, resp.UID)
+	token, err := middlewares.GenerateToken(req.UserName, resp.SelectedUser.ID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"result": err.Error(),
@@ -113,7 +113,7 @@ func (u *GatewayUserUsecase) AuthUser(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{
-		"result": resp.UID,
+		"result": resp.SelectedUser,
 		"token":  token,
 	})
 }

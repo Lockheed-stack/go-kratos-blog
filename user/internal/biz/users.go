@@ -23,7 +23,7 @@ type UserRepo interface {
 	CheckDuplicateUsername(name string) bool
 	CreateUser(name string, psw string) error
 	RemoveUser(id uint64) error
-	AuthLogin(name string, pwd string) (uint64, error)
+	AuthLogin(name string, pwd string) (*pb.UserInfo, error)
 	GetSelectedUsers(selectedFields []string, IDs []uint64) ([]*pb.UserInfo, error)
 }
 
@@ -62,21 +62,21 @@ func (uc *UserUsecase) CreateOneUser(username string, passwd string) error {
 	return nil
 }
 
-func (uc *UserUsecase) UserLoginAuth(username string, passwd string) (uint64, error) {
+func (uc *UserUsecase) UserLoginAuth(username string, passwd string) (*pb.UserInfo, error) {
 	hash := sha256.New()
 	hash.Write([]byte(passwd))
 	hex_pwd := hex.EncodeToString(hash.Sum(nil))
-	UID, err := uc.repo.AuthLogin(username, hex_pwd)
+	result, err := uc.repo.AuthLogin(username, hex_pwd)
 
 	if err != nil {
 		e := errors.FromError(err)
 		switch e.Reason {
 		default:
-			return 0, pb.ErrorErrUserUsernamePasswordWrong("")
+			return nil, pb.ErrorErrUserUsernamePasswordWrong("")
 		}
 	}
 
-	return UID, nil
+	return result, nil
 }
 
 func (uc *UserUsecase) RemoveOneUser(id uint64) error {

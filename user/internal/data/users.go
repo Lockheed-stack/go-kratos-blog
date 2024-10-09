@@ -75,16 +75,21 @@ func (r *userRepo) RemoveUser(id uint64) error {
 	return nil
 }
 
-func (r *userRepo) AuthLogin(name string, pwd string) (uint64, error) {
+func (r *userRepo) AuthLogin(name string, pwd string) (*pb.UserInfo, error) {
 
 	user := &biz.User{}
 	r.data.db.Where("username=?", name).First(user)
 
 	if user.ID == 0 || user.Password != pwd {
-		return 0, errors.New(400, "ERR_USER_USERNAME_PASSWORD_WRONG", "")
+		return nil, errors.New(400, "ERR_USER_USERNAME_PASSWORD_WRONG", "")
 	}
+	result := &pb.UserInfo{}
+	result.ID = uint64(user.ID)
+	result.Avatar = user.Avatar
+	result.SelfDesc = user.SelfDesc
+	result.Username = user.Username
 
-	return uint64(user.ID), nil
+	return result, nil
 }
 
 func (r *userRepo) GetSelectedUsers(selectedFields []string, IDs []uint64) ([]*pb.UserInfo, error) {

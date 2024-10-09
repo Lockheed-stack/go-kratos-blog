@@ -60,5 +60,5 @@ message AuthUsersRequest {
 message AuthUsersReply{
 	string Msg = 1;
 	uint32 Code = 2;
-	uint64 UID = 3;
+	UserInfo SelectedUser = 3;
 }

@@ -67,7 +67,7 @@ func (s *UsersService) ListUsers(ctx context.Context, req *pb.ListUsersRequest) 
 }
 func (s *UsersService) AuthUsers(ctx context.Context, req *pb.AuthUsersRequest) (*pb.AuthUsersReply, error) {
 	resp := &pb.AuthUsersReply{}
-	UID, err := s.uc.UserLoginAuth(req.UserName, req.Password)
+	result, err := s.uc.UserLoginAuth(req.UserName, req.Password)
 	if err != nil {
 		kratos_err := err.(*errors.Error)
 		resp.Code = uint32(kratos_err.Code)
@@ -75,7 +75,7 @@ func (s *UsersService) AuthUsers(ctx context.Context, req *pb.AuthUsersRequest) 
 	} else {
 		resp.Code = 200
 		resp.Msg = "OK"
-		resp.UID = UID
+		resp.SelectedUser = result
 	}
 	return resp, nil
 }
