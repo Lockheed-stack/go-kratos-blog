@@ -87,8 +87,8 @@ func (uc *ArticleUsecase) GetArticlesForRecommend(pageSize uint32, pageNum uint3
 	return uc.repo.GetArticlesForRecommend_Pagination(pageSize, offset)
 }
 func (uc *ArticleUsecase) GetArticlesByRandom(count uint32) ([]*pb.DetailArticleInfo, error) {
-	if count > 6 {
-		count = 6
+	if count > 36 {
+		count = 36
 	}
 	return uc.repo.GetArticlesByRandomSelect(count)
 }

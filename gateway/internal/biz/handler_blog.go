@@ -150,13 +150,21 @@ func (u *GatewayBlogUsecase) GetRecommendBlogs(c *gin.Context) {
 	})
 }
 func (u *GatewayBlogUsecase) GetRandomBlogs(c *gin.Context) {
-	count, err := strconv.Atoi(c.Query("Count"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"result": "Invalid Query",
-		})
-		return
+	str_count := c.Query("Count")
+	var count int
+	if str_count == "" {
+		count = 6
+	} else {
+		tmp, err := strconv.Atoi(str_count)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"result": "Invalid Query",
+			})
+			return
+		}
+		count = tmp
 	}
+
 	req := &articles.GetRandomArticlesRequest{
 		Count: uint32(count),
 	}

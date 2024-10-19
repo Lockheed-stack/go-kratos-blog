@@ -14,6 +14,7 @@ RUN GOPROXY=https://goproxy.cn make build
 #         && apt-get autoremove -y && apt-get autoclean -y
 FROM alpine
 COPY --from=builder /src/bin /app
+ENV GIN_MODE=release
 
 WORKDIR /app
 

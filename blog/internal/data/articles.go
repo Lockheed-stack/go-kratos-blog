@@ -77,14 +77,14 @@ func (ap *articleRepo) GetArticlesByRandomSelect(count uint32) ([]*pb.DetailArti
 		return result, nil
 	}
 
-	// generate article id by random
-	var randArticlesID []int = make([]int, count)
-	r := rand.New(rand.NewSource(time.Now().Unix()))
-	for i := 0; i < int(count); i++ {
-		randArticlesID[i] = r.Intn(int(total))
+	max_start_index := total - int64(count)
+	var random_start_index int64
+	if max_start_index > 0 {
+		r := rand.New(rand.NewSource(time.Now().Unix()))
+		random_start_index = r.Int63n(max_start_index)
 	}
 
-	sqlRes := ap.data.db.Model(&biz.Article{}).Where("id In ?", randArticlesID).Scan(&result)
+	sqlRes := ap.data.db.Model(&biz.Article{}).Where("id > ?", random_start_index).Limit(int(count)).Scan(&result)
 
 	if sqlRes.Error != nil {
 		ap.log.Error(sqlRes.Error)
