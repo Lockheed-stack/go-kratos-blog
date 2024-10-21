@@ -7,6 +7,7 @@ option go_package = "blog/api/articles;articles";
 service Articles {
 	rpc CreateArticles (CreateArticlesRequest) returns (CreateArticlesReply);
 	rpc UpdateArticles (UpdateArticlesRequest) returns (UpdateArticlesReply);
+	rpc UpdateArticlesPageview (UpdateArticlesPageviewRequest) returns (UpdateArticlesPageviewReply);
 	rpc DeleteArticles (DeleteArticlesRequest) returns (DeleteArticlesReply);
 	rpc GetArticlesInSameCategory (GetArticlesInSameCategoryRequest) returns (GetArticlesInSameCategoryReply);
 	rpc GetArticlesByCidAndUid (GetArticlesByCidAndUidRequest) returns (GetArticlesByCidAndUidReply);
@@ -100,6 +101,14 @@ message UpdateArticlesRequest {
 	string Thumbnail = 6;
 }
 message UpdateArticlesReply {
+	uint32 code = 1;
+	string Msg = 2;
+}
+
+message UpdateArticlesPageviewRequest{
+	map<uint32,uint32> Pageview = 1;
+}
+message UpdateArticlesPageviewReply{
 	uint32 code = 1;
 	string Msg = 2;
 }

@@ -42,6 +42,7 @@ type ArticleRepo interface {
 	GetOneArticle(uint64) (*Article, error)
 
 	UpdateOneArticle(*Article) (uint32, error)
+	UpdateArticlesPageview(map[uint32]uint32) (uint32, error)
 	RemoveOneArticle(uint64) (uint32, error)
 }
 
@@ -106,6 +107,15 @@ func (uc *ArticleUsecase) UpdateArticle(a *Article) error {
 	rows, err := uc.repo.UpdateOneArticle(a)
 	if err != nil || rows == 0 {
 		return pb.ErrorErrArticleNotExist("Article '%v' doesn't exist\n", a.ID)
+	}
+	return nil
+}
+func (uc *ArticleUsecase) UpdateArticlesPageview(id_pageview map[uint32]uint32) error {
+	rows, err := uc.repo.UpdateArticlesPageview(id_pageview)
+	if err != nil {
+		return pb.ErrorErrArticleNotExist("an error occured when update articles pageview: %v", err.Error())
+	} else if rows < uint32(len(id_pageview)) {
+		return pb.ErrorErrArticleNotExist("%v records expected to update, but only %v updated", len(id_pageview), rows)
 	}
 	return nil
 }

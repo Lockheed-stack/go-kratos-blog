@@ -154,6 +154,22 @@ func (s *ArticlesService) UpdateArticles(ctx context.Context, req *pb.UpdateArti
 	}
 	return resp, nil
 }
+
+func (s *ArticlesService) UpdateArticlesPageview(ctx context.Context, req *pb.UpdateArticlesPageviewRequest) (*pb.UpdateArticlesPageviewReply, error) {
+	resp := &pb.UpdateArticlesPageviewReply{}
+	err := s.ac.UpdateArticlesPageview(req.Pageview)
+	if err != nil {
+		kratos_err := err.(*errors.Error)
+		resp.Code = uint32(kratos_err.Code)
+		resp.Msg = kratos_err.Message
+		return resp, err
+	} else {
+		resp.Code = 200
+		resp.Msg = "OK"
+	}
+	return resp, nil
+}
+
 func (s *ArticlesService) DeleteArticles(ctx context.Context, req *pb.DeleteArticlesRequest) (*pb.DeleteArticlesReply, error) {
 
 	resp := &pb.DeleteArticlesReply{}

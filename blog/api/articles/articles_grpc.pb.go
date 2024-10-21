@@ -21,6 +21,7 @@ const _ = grpc.SupportPackageIsVersion9
 const (
 	Articles_CreateArticles_FullMethodName            = "/api.articles.Articles/CreateArticles"
 	Articles_UpdateArticles_FullMethodName            = "/api.articles.Articles/UpdateArticles"
+	Articles_UpdateArticlesPageview_FullMethodName    = "/api.articles.Articles/UpdateArticlesPageview"
 	Articles_DeleteArticles_FullMethodName            = "/api.articles.Articles/DeleteArticles"
 	Articles_GetArticlesInSameCategory_FullMethodName = "/api.articles.Articles/GetArticlesInSameCategory"
 	Articles_GetArticlesByCidAndUid_FullMethodName    = "/api.articles.Articles/GetArticlesByCidAndUid"
@@ -35,6 +36,7 @@ const (
 type ArticlesClient interface {
 	CreateArticles(ctx context.Context, in *CreateArticlesRequest, opts ...grpc.CallOption) (*CreateArticlesReply, error)
 	UpdateArticles(ctx context.Context, in *UpdateArticlesRequest, opts ...grpc.CallOption) (*UpdateArticlesReply, error)
+	UpdateArticlesPageview(ctx context.Context, in *UpdateArticlesPageviewRequest, opts ...grpc.CallOption) (*UpdateArticlesPageviewReply, error)
 	DeleteArticles(ctx context.Context, in *DeleteArticlesRequest, opts ...grpc.CallOption) (*DeleteArticlesReply, error)
 	GetArticlesInSameCategory(ctx context.Context, in *GetArticlesInSameCategoryRequest, opts ...grpc.CallOption) (*GetArticlesInSameCategoryReply, error)
 	GetArticlesByCidAndUid(ctx context.Context, in *GetArticlesByCidAndUidRequest, opts ...grpc.CallOption) (*GetArticlesByCidAndUidReply, error)
@@ -65,6 +67,16 @@ func (c *articlesClient) UpdateArticles(ctx context.Context, in *UpdateArticlesR
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(UpdateArticlesReply)
 	err := c.cc.Invoke(ctx, Articles_UpdateArticles_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *articlesClient) UpdateArticlesPageview(ctx context.Context, in *UpdateArticlesPageviewRequest, opts ...grpc.CallOption) (*UpdateArticlesPageviewReply, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdateArticlesPageviewReply)
+	err := c.cc.Invoke(ctx, Articles_UpdateArticlesPageview_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -137,6 +149,7 @@ func (c *articlesClient) GetRandomArticles(ctx context.Context, in *GetRandomArt
 type ArticlesServer interface {
 	CreateArticles(context.Context, *CreateArticlesRequest) (*CreateArticlesReply, error)
 	UpdateArticles(context.Context, *UpdateArticlesRequest) (*UpdateArticlesReply, error)
+	UpdateArticlesPageview(context.Context, *UpdateArticlesPageviewRequest) (*UpdateArticlesPageviewReply, error)
 	DeleteArticles(context.Context, *DeleteArticlesRequest) (*DeleteArticlesReply, error)
 	GetArticlesInSameCategory(context.Context, *GetArticlesInSameCategoryRequest) (*GetArticlesInSameCategoryReply, error)
 	GetArticlesByCidAndUid(context.Context, *GetArticlesByCidAndUidRequest) (*GetArticlesByCidAndUidReply, error)
@@ -158,6 +171,9 @@ func (UnimplementedArticlesServer) CreateArticles(context.Context, *CreateArticl
 }
 func (UnimplementedArticlesServer) UpdateArticles(context.Context, *UpdateArticlesRequest) (*UpdateArticlesReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateArticles not implemented")
+}
+func (UnimplementedArticlesServer) UpdateArticlesPageview(context.Context, *UpdateArticlesPageviewRequest) (*UpdateArticlesPageviewReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateArticlesPageview not implemented")
 }
 func (UnimplementedArticlesServer) DeleteArticles(context.Context, *DeleteArticlesRequest) (*DeleteArticlesReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteArticles not implemented")
@@ -230,6 +246,24 @@ func _Articles_UpdateArticles_Handler(srv interface{}, ctx context.Context, dec 
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ArticlesServer).UpdateArticles(ctx, req.(*UpdateArticlesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Articles_UpdateArticlesPageview_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateArticlesPageviewRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ArticlesServer).UpdateArticlesPageview(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Articles_UpdateArticlesPageview_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ArticlesServer).UpdateArticlesPageview(ctx, req.(*UpdateArticlesPageviewRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -356,6 +390,10 @@ var Articles_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateArticles",
 			Handler:    _Articles_UpdateArticles_Handler,
+		},
+		{
+			MethodName: "UpdateArticlesPageview",
+			Handler:    _Articles_UpdateArticlesPageview_Handler,
 		},
 		{
 			MethodName: "DeleteArticles",

@@ -122,6 +122,20 @@ func (ap *articleRepo) UpdateOneArticle(article *biz.Article) (uint32, error) {
 	}
 	return uint32(sqlRes.RowsAffected), nil
 }
+func (ap *articleRepo) UpdateArticlesPageview(id_pageview map[uint32]uint32) (uint32, error) {
+	article := &biz.Article{}
+	var rowsAffected int64
+	for k, v := range id_pageview {
+		article.ID = uint(k)
+		sqlRes := ap.data.db.Model(article).Update("page_view", v)
+		if err := sqlRes.Error; err != nil {
+			return uint32(rowsAffected), err
+		}
+		rowsAffected += sqlRes.RowsAffected
+	}
+
+	return uint32(rowsAffected), nil
+}
 
 // delete
 func (ap *articleRepo) RemoveOneArticle(id uint64) (uint32, error) {

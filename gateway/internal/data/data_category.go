@@ -30,6 +30,19 @@ func (r *gatewayCategoryRepo) GRPC_CreateOneCategory(req *category.CreateCategor
 	return result, nil
 }
 func (r *gatewayCategoryRepo) GRPC_ListCategory(req *category.ListCategoryRequest) (*category.ListCategoryReply, error) {
+
+	/* ------------- fast path ---------------------*/
+	key := "category_list"
+	categoryList, err := GetCategoryRedis(r.data.Redis_cli, key)
+	if err == nil { // redis cache matched
+		result := &category.ListCategoryReply{
+			CategoryArray: categoryList,
+			Code:          200,
+		}
+		return result, nil
+	}
+
+	/*------------- slow path ----------------------*/
 	client := category.NewCategoryClient(r.data.ConnGRPC_category)
 	result, err := client.ListCategory(context.Background(), req)
 	if err != nil {

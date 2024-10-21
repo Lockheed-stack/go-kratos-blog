@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/gob"
 	"gateway/api/articles"
+	"gateway/api/category"
 	"time"
 
 	"github.com/redis/go-redis/v9"
@@ -167,7 +168,34 @@ func GetBlogsListRedis(rdb *redis.Client, key string) ([]*articles.DetailArticle
 	return result, nil
 }
 
-func SetPageView(rdb *redis.Client, key string) error {
+// category relate
+func SetCategoryRedis(rdb *redis.Client, key string, data []*category.CategoryInfo) error {
+	// marshal
+	var buf bytes.Buffer
+	enc := gob.NewEncoder(&buf)
+	err := enc.Encode(data)
+	if err != nil {
+		return err
+	}
+	_, err = rdb.Set(context.Background(), key, buf.Bytes(), time.Hour*8).Result()
 
+	if err != nil {
+		return err
+	}
 	return nil
+}
+func GetCategoryRedis(rdb *redis.Client, key string) ([]*category.CategoryInfo, error) {
+	val, err := rdb.Get(context.Background(), key).Result()
+	if err != nil {
+		return nil, err
+	}
+
+	// Unmarshal
+	var result []*category.CategoryInfo
+	dec := gob.NewDecoder(bytes.NewBufferString(val))
+	err = dec.Decode(&result)
+	if err != nil {
+		return nil, err
+	}
+	return result, nil
 }
