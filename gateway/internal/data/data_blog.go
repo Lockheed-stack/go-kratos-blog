@@ -238,7 +238,7 @@ func (r *gatewayBlogRepo) GRPC_UpdateBlog(req *articles.UpdateArticlesRequest) (
 	}
 
 	// del redis key
-	key := strconv.Itoa(int(req.ArticleID))
+	key := strconv.Itoa(int(req.ArticleInfo.ID))
 	err = DelOneBlogKeyRedis(r.data.Redis_cli, key)
 	if err != nil {
 		r.log.Error(err)

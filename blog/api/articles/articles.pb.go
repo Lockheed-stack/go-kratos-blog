@@ -876,12 +876,7 @@ type UpdateArticlesRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	ArticleID uint32 `protobuf:"varint,1,opt,name=ArticleID,proto3" json:"ArticleID,omitempty"`
-	Title     string `protobuf:"bytes,2,opt,name=Title,proto3" json:"Title,omitempty"`
-	Cid       uint64 `protobuf:"varint,3,opt,name=Cid,proto3" json:"Cid,omitempty"` // category id
-	Desc      string `protobuf:"bytes,4,opt,name=desc,proto3" json:"desc,omitempty"`
-	Content   string `protobuf:"bytes,5,opt,name=content,proto3" json:"content,omitempty"`
-	Thumbnail string `protobuf:"bytes,6,opt,name=Thumbnail,proto3" json:"Thumbnail,omitempty"`
+	ArticleInfo *DetailArticleInfo `protobuf:"bytes,1,opt,name=ArticleInfo,proto3" json:"ArticleInfo,omitempty"`
 }
 
 func (x *UpdateArticlesRequest) Reset() {
@@ -916,46 +911,11 @@ func (*UpdateArticlesRequest) Descriptor() ([]byte, []int) {
 	return file_api_articles_articles_proto_rawDescGZIP(), []int{13}
 }
 
-func (x *UpdateArticlesRequest) GetArticleID() uint32 {
+func (x *UpdateArticlesRequest) GetArticleInfo() *DetailArticleInfo {
 	if x != nil {
-		return x.ArticleID
+		return x.ArticleInfo
 	}
-	return 0
-}
-
-func (x *UpdateArticlesRequest) GetTitle() string {
-	if x != nil {
-		return x.Title
-	}
-	return ""
-}
-
-func (x *UpdateArticlesRequest) GetCid() uint64 {
-	if x != nil {
-		return x.Cid
-	}
-	return 0
-}
-
-func (x *UpdateArticlesRequest) GetDesc() string {
-	if x != nil {
-		return x.Desc
-	}
-	return ""
-}
-
-func (x *UpdateArticlesRequest) GetContent() string {
-	if x != nil {
-		return x.Content
-	}
-	return ""
-}
-
-func (x *UpdateArticlesRequest) GetThumbnail() string {
-	if x != nil {
-		return x.Thumbnail
-	}
-	return ""
+	return nil
 }
 
 type UpdateArticlesReply struct {
@@ -1321,18 +1281,13 @@ var file_api_articles_articles_proto_rawDesc = []byte{
 	0x6c, 0x41, 0x72, 0x74, 0x69, 0x63, 0x6c, 0x65, 0x49, 0x6e, 0x66, 0x6f, 0x52, 0x07, 0x41, 0x72,
 	0x74, 0x69, 0x63, 0x6c, 0x65, 0x12, 0x12, 0x0a, 0x04, 0x63, 0x6f, 0x64, 0x65, 0x18, 0x02, 0x20,
 	0x01, 0x28, 0x0d, 0x52, 0x04, 0x63, 0x6f, 0x64, 0x65, 0x12, 0x10, 0x0a, 0x03, 0x6d, 0x73, 0x67,
-	0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x6d, 0x73, 0x67, 0x22, 0xa9, 0x01, 0x0a, 0x15,
-	0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x41, 0x72, 0x74, 0x69, 0x63, 0x6c, 0x65, 0x73, 0x52, 0x65,
-	0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x1c, 0x0a, 0x09, 0x41, 0x72, 0x74, 0x69, 0x63, 0x6c, 0x65,
-	0x49, 0x44, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0d, 0x52, 0x09, 0x41, 0x72, 0x74, 0x69, 0x63, 0x6c,
-	0x65, 0x49, 0x44, 0x12, 0x14, 0x0a, 0x05, 0x54, 0x69, 0x74, 0x6c, 0x65, 0x18, 0x02, 0x20, 0x01,
-	0x28, 0x09, 0x52, 0x05, 0x54, 0x69, 0x74, 0x6c, 0x65, 0x12, 0x10, 0x0a, 0x03, 0x43, 0x69, 0x64,
-	0x18, 0x03, 0x20, 0x01, 0x28, 0x04, 0x52, 0x03, 0x43, 0x69, 0x64, 0x12, 0x12, 0x0a, 0x04, 0x64,
-	0x65, 0x73, 0x63, 0x18, 0x04, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x64, 0x65, 0x73, 0x63, 0x12,
-	0x18, 0x0a, 0x07, 0x63, 0x6f, 0x6e, 0x74, 0x65, 0x6e, 0x74, 0x18, 0x05, 0x20, 0x01, 0x28, 0x09,
-	0x52, 0x07, 0x63, 0x6f, 0x6e, 0x74, 0x65, 0x6e, 0x74, 0x12, 0x1c, 0x0a, 0x09, 0x54, 0x68, 0x75,
-	0x6d, 0x62, 0x6e, 0x61, 0x69, 0x6c, 0x18, 0x06, 0x20, 0x01, 0x28, 0x09, 0x52, 0x09, 0x54, 0x68,
-	0x75, 0x6d, 0x62, 0x6e, 0x61, 0x69, 0x6c, 0x22, 0x3b, 0x0a, 0x13, 0x55, 0x70, 0x64, 0x61, 0x74,
+	0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x6d, 0x73, 0x67, 0x22, 0x5a, 0x0a, 0x15, 0x55,
+	0x70, 0x64, 0x61, 0x74, 0x65, 0x41, 0x72, 0x74, 0x69, 0x63, 0x6c, 0x65, 0x73, 0x52, 0x65, 0x71,
+	0x75, 0x65, 0x73, 0x74, 0x12, 0x41, 0x0a, 0x0b, 0x41, 0x72, 0x74, 0x69, 0x63, 0x6c, 0x65, 0x49,
+	0x6e, 0x66, 0x6f, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x1f, 0x2e, 0x61, 0x70, 0x69, 0x2e,
+	0x61, 0x72, 0x74, 0x69, 0x63, 0x6c, 0x65, 0x73, 0x2e, 0x44, 0x65, 0x74, 0x61, 0x69, 0x6c, 0x41,
+	0x72, 0x74, 0x69, 0x63, 0x6c, 0x65, 0x49, 0x6e, 0x66, 0x6f, 0x52, 0x0b, 0x41, 0x72, 0x74, 0x69,
+	0x63, 0x6c, 0x65, 0x49, 0x6e, 0x66, 0x6f, 0x22, 0x3b, 0x0a, 0x13, 0x55, 0x70, 0x64, 0x61, 0x74,
 	0x65, 0x41, 0x72, 0x74, 0x69, 0x63, 0x6c, 0x65, 0x73, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x12, 0x12,
 	0x0a, 0x04, 0x63, 0x6f, 0x64, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0d, 0x52, 0x04, 0x63, 0x6f,
 	0x64, 0x65, 0x12, 0x10, 0x0a, 0x03, 0x4d, 0x73, 0x67, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52,
@@ -1464,30 +1419,31 @@ var file_api_articles_articles_proto_depIdxs = []int32{
 	0,  // 2: api.articles.GetRecommendArticlesReply.SelectedArticles:type_name -> api.articles.DetailArticleInfo
 	0,  // 3: api.articles.GetRandomArticlesReply.SelectedArticles:type_name -> api.articles.DetailArticleInfo
 	0,  // 4: api.articles.GetSingleArticleReply.Article:type_name -> api.articles.DetailArticleInfo
-	19, // 5: api.articles.UpdateArticlesPageviewRequest.Pageview:type_name -> api.articles.UpdateArticlesPageviewRequest.PageviewEntry
-	1,  // 6: api.articles.Articles.CreateArticles:input_type -> api.articles.CreateArticlesRequest
-	13, // 7: api.articles.Articles.UpdateArticles:input_type -> api.articles.UpdateArticlesRequest
-	15, // 8: api.articles.Articles.UpdateArticlesPageview:input_type -> api.articles.UpdateArticlesPageviewRequest
-	17, // 9: api.articles.Articles.DeleteArticles:input_type -> api.articles.DeleteArticlesRequest
-	3,  // 10: api.articles.Articles.GetArticlesInSameCategory:input_type -> api.articles.GetArticlesInSameCategoryRequest
-	5,  // 11: api.articles.Articles.GetArticlesByCidAndUid:input_type -> api.articles.GetArticlesByCidAndUidRequest
-	11, // 12: api.articles.Articles.GetSingleArticle:input_type -> api.articles.GetSingleArticleRequest
-	7,  // 13: api.articles.Articles.GetRecommendArticles:input_type -> api.articles.GetRecommendArticlesRequest
-	9,  // 14: api.articles.Articles.GetRandomArticles:input_type -> api.articles.GetRandomArticlesRequest
-	2,  // 15: api.articles.Articles.CreateArticles:output_type -> api.articles.CreateArticlesReply
-	14, // 16: api.articles.Articles.UpdateArticles:output_type -> api.articles.UpdateArticlesReply
-	16, // 17: api.articles.Articles.UpdateArticlesPageview:output_type -> api.articles.UpdateArticlesPageviewReply
-	18, // 18: api.articles.Articles.DeleteArticles:output_type -> api.articles.DeleteArticlesReply
-	4,  // 19: api.articles.Articles.GetArticlesInSameCategory:output_type -> api.articles.GetArticlesInSameCategoryReply
-	6,  // 20: api.articles.Articles.GetArticlesByCidAndUid:output_type -> api.articles.GetArticlesByCidAndUidReply
-	12, // 21: api.articles.Articles.GetSingleArticle:output_type -> api.articles.GetSingleArticleReply
-	8,  // 22: api.articles.Articles.GetRecommendArticles:output_type -> api.articles.GetRecommendArticlesReply
-	10, // 23: api.articles.Articles.GetRandomArticles:output_type -> api.articles.GetRandomArticlesReply
-	15, // [15:24] is the sub-list for method output_type
-	6,  // [6:15] is the sub-list for method input_type
-	6,  // [6:6] is the sub-list for extension type_name
-	6,  // [6:6] is the sub-list for extension extendee
-	0,  // [0:6] is the sub-list for field type_name
+	0,  // 5: api.articles.UpdateArticlesRequest.ArticleInfo:type_name -> api.articles.DetailArticleInfo
+	19, // 6: api.articles.UpdateArticlesPageviewRequest.Pageview:type_name -> api.articles.UpdateArticlesPageviewRequest.PageviewEntry
+	1,  // 7: api.articles.Articles.CreateArticles:input_type -> api.articles.CreateArticlesRequest
+	13, // 8: api.articles.Articles.UpdateArticles:input_type -> api.articles.UpdateArticlesRequest
+	15, // 9: api.articles.Articles.UpdateArticlesPageview:input_type -> api.articles.UpdateArticlesPageviewRequest
+	17, // 10: api.articles.Articles.DeleteArticles:input_type -> api.articles.DeleteArticlesRequest
+	3,  // 11: api.articles.Articles.GetArticlesInSameCategory:input_type -> api.articles.GetArticlesInSameCategoryRequest
+	5,  // 12: api.articles.Articles.GetArticlesByCidAndUid:input_type -> api.articles.GetArticlesByCidAndUidRequest
+	11, // 13: api.articles.Articles.GetSingleArticle:input_type -> api.articles.GetSingleArticleRequest
+	7,  // 14: api.articles.Articles.GetRecommendArticles:input_type -> api.articles.GetRecommendArticlesRequest
+	9,  // 15: api.articles.Articles.GetRandomArticles:input_type -> api.articles.GetRandomArticlesRequest
+	2,  // 16: api.articles.Articles.CreateArticles:output_type -> api.articles.CreateArticlesReply
+	14, // 17: api.articles.Articles.UpdateArticles:output_type -> api.articles.UpdateArticlesReply
+	16, // 18: api.articles.Articles.UpdateArticlesPageview:output_type -> api.articles.UpdateArticlesPageviewReply
+	18, // 19: api.articles.Articles.DeleteArticles:output_type -> api.articles.DeleteArticlesReply
+	4,  // 20: api.articles.Articles.GetArticlesInSameCategory:output_type -> api.articles.GetArticlesInSameCategoryReply
+	6,  // 21: api.articles.Articles.GetArticlesByCidAndUid:output_type -> api.articles.GetArticlesByCidAndUidReply
+	12, // 22: api.articles.Articles.GetSingleArticle:output_type -> api.articles.GetSingleArticleReply
+	8,  // 23: api.articles.Articles.GetRecommendArticles:output_type -> api.articles.GetRecommendArticlesReply
+	10, // 24: api.articles.Articles.GetRandomArticles:output_type -> api.articles.GetRandomArticlesReply
+	16, // [16:25] is the sub-list for method output_type
+	7,  // [7:16] is the sub-list for method input_type
+	7,  // [7:7] is the sub-list for extension type_name
+	7,  // [7:7] is the sub-list for extension extendee
+	0,  // [0:7] is the sub-list for field type_name
 }
 
 func init() { file_api_articles_articles_proto_init() }

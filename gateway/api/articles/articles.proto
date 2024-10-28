@@ -93,12 +93,7 @@ message GetSingleArticleReply {
 }
 
 message UpdateArticlesRequest {
-	uint32 ArticleID = 1;
-	string Title = 2;
-	uint64 Cid = 3; // category id
-	string desc = 4;
-	string content = 5;
-	string Thumbnail = 6;
+	DetailArticleInfo ArticleInfo = 1;
 }
 message UpdateArticlesReply {
 	uint32 code = 1;

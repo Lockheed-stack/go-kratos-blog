@@ -205,14 +205,17 @@ func (u *GatewayBlogUsecase) GetOneBlog(c *gin.Context) {
 
 func (u *GatewayBlogUsecase) UpdateOneBlog(c *gin.Context) {
 
-	req := &articles.UpdateArticlesRequest{}
-	if err := c.ShouldBindJSON(req); err != nil {
+	info := &articles.DetailArticleInfo{}
+	if err := c.ShouldBindJSON(info); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"result": err.Error(),
 		})
 		return
 	}
 
+	req := &articles.UpdateArticlesRequest{
+		ArticleInfo: info,
+	}
 	resp, err := u.repo.GRPC_UpdateBlog(req)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{

@@ -133,12 +133,12 @@ func (s *ArticlesService) GetSingleArticle(ctx context.Context, req *pb.GetSingl
 
 func (s *ArticlesService) UpdateArticles(ctx context.Context, req *pb.UpdateArticlesRequest) (*pb.UpdateArticlesReply, error) {
 	article := &biz.Article{
-		Model:   gorm.Model{ID: uint(req.ArticleID)},
-		Cid:     uint(req.Cid),
-		Desc:    req.Desc,
-		Content: req.Content,
-		Img:     req.Thumbnail,
-		Title:   req.Title,
+		Model:   gorm.Model{ID: uint(req.ArticleInfo.ID)},
+		Cid:     uint(req.ArticleInfo.Cid),
+		Desc:    req.ArticleInfo.Desc,
+		Content: req.ArticleInfo.Content,
+		Img:     req.ArticleInfo.Img,
+		Title:   req.ArticleInfo.Title,
 	}
 
 	resp := &pb.UpdateArticlesReply{}
