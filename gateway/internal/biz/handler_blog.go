@@ -4,6 +4,7 @@ import (
 	"gateway/api/articles"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -20,25 +21,103 @@ type GatewayBlogRepo interface {
 }
 
 type GatewayBlogUsecase struct {
-	repo GatewayBlogRepo
+	repo        GatewayBlogRepo
+	upload_repo GatewayUploadRepo
 }
 
-func NewGatewayBlogUsecase(repo GatewayBlogRepo) *GatewayBlogUsecase {
+func NewGatewayBlogUsecase(repo GatewayBlogRepo, upload_repo GatewayUploadRepo) *GatewayBlogUsecase {
 	return &GatewayBlogUsecase{
-		repo: repo,
+		repo:        repo,
+		upload_repo: upload_repo,
 	}
 }
 
 func (u *GatewayBlogUsecase) CreateOneBlog(c *gin.Context) {
 
 	req := &articles.CreateArticlesRequest{}
-	if err := c.ShouldBindJSON(req); err != nil {
+	// if err := c.ShouldBindJSON(req); err != nil {
+	// 	c.JSON(http.StatusBadRequest, gin.H{
+	// 		"result": err.Error(),
+	// 	})
+	// 	return
+	// }
+
+	/* ------------ Processing blog info ---------------*/
+	title := c.Request.FormValue("Title")
+	cid := c.Request.FormValue("Cid")
+	req.Desc = c.Request.FormValue("Desc")
+	if title == "" || cid == "" {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"result": err.Error(),
+			"result": "title or cid cannot be empty",
 		})
 		return
+	} else {
+		cid_num, err := strconv.Atoi(cid)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"result": "invalid cid",
+			})
+			return
+		}
+		req.Title = title
+		req.Cid = uint64(cid_num)
+	}
+	// blog cover
+	if img := c.Request.FormValue("Img"); img != "" { // if the image is an url
+		protocal := strings.Split(img, ":")[0]
+		if protocal != "http" && protocal != "https" {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"result": "Invalid Img",
+			})
+			return
+		}
+		req.Img = img
+	} else { // the image is a file
+		imgfile, fileheader, err := c.Request.FormFile("Img_blob")
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"result": err.Error(),
+			})
+			return
+		}
+		url, err := u.upload_repo.Local_UploadFile(imgfile, fileheader.Size)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"result": err.Error(),
+			})
+			return
+		}
+		req.Img = url
+	}
+	// blog content
+	if content := c.Request.FormValue("Content"); content != "" { // if the blog content is an url
+		protocal := strings.Split(content, ":")[0]
+		if protocal != "http" && protocal != "https" {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"result": "Invalid content",
+			})
+			return
+		}
+		req.Content = content
+	} else { // the blog content is a file
+		blogfile, fileheader, err := c.Request.FormFile("Content_blob")
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"result": err.Error(),
+			})
+			return
+		}
+		url, err := u.upload_repo.Local_UploadFile(blogfile, fileheader.Size)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"result": err.Error(),
+			})
+			return
+		}
+		req.Content = url
 	}
 	req.Uid = uint64(c.GetInt("request_userid"))
+	/* ------------ Processing blog info ---------------*/
 
 	resp, err := u.repo.GRPC_CreateOneBlog(req)
 	if err != nil {
@@ -206,12 +285,99 @@ func (u *GatewayBlogUsecase) GetOneBlog(c *gin.Context) {
 func (u *GatewayBlogUsecase) UpdateOneBlog(c *gin.Context) {
 
 	info := &articles.DetailArticleInfo{}
-	if err := c.ShouldBindJSON(info); err != nil {
+	// if err := c.ShouldBindJSON(info); err != nil {
+	// 	c.JSON(http.StatusBadRequest, gin.H{
+	// 		"result": err.Error(),
+	// 	})
+	// 	return
+	// }
+
+	/*---------------- Processing blog info for update ----------------*/
+	title := c.Request.FormValue("Title")
+	cid := c.Request.FormValue("Cid")
+	info.Desc = c.Request.FormValue("Desc")
+	if title == "" || cid == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"result": "title or cid cannot be empty",
+		})
+		return
+	} else {
+		cid_num, err := strconv.Atoi(cid)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"result": "invalid cid",
+			})
+			return
+		}
+		info.Title = title
+		info.Cid = uint64(cid_num)
+	}
+	// blog cover
+	if img := c.Request.FormValue("Img"); img != "" { // if the image is an url
+		protocal := strings.Split(img, ":")[0]
+		if protocal != "http" && protocal != "https" {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"result": "Invalid Img",
+			})
+			return
+		}
+		info.Img = img
+	} else { // the image is a file
+		imgfile, fileheader, err := c.Request.FormFile("Img_blob")
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"result": err.Error(),
+			})
+			return
+		}
+		url, err := u.upload_repo.Local_UploadFile(imgfile, fileheader.Size)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"result": err.Error(),
+			})
+			return
+		}
+		info.Img = url
+	}
+	// blog content
+	if content := c.Request.FormValue("Content"); content != "" { // if the blog content is an url
+		protocal := strings.Split(content, ":")[0]
+		if protocal != "http" && protocal != "https" {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"result": "Invalid content",
+			})
+			return
+		}
+		info.Content = content
+	} else { // the blog content is a file
+		blogfile, fileheader, err := c.Request.FormFile("Content_blob")
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"result": err.Error(),
+			})
+			return
+		}
+		url, err := u.upload_repo.Local_UploadFile(blogfile, fileheader.Size)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"result": err.Error(),
+			})
+			return
+		}
+		info.Content = url
+	}
+
+	id_num, err := strconv.Atoi(c.Request.FormValue("ID"))
+	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"result": err.Error(),
 		})
 		return
 	}
+	info.ID = uint64(id_num)
+
+	info.Uid = uint64(c.GetInt("request_userid"))
+	/*---------------- Processing blog info for update ----------------*/
 
 	req := &articles.UpdateArticlesRequest{
 		ArticleInfo: info,

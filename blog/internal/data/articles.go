@@ -106,13 +106,24 @@ func (ap *articleRepo) GetOneArticle(id uint64) (*biz.Article, error) {
 
 // update
 func (ap *articleRepo) UpdateOneArticle(article *biz.Article) (uint32, error) {
+	// check the blog which wants to be updated belongs to its owner
+	var original_article = &biz.Article{}
+	sqlRes := ap.data.db.Select("uid").Where("id=?", article.ID).Find(original_article)
+	if err := sqlRes.Error; err != nil {
+		return 0, err
+	}
+	if original_article.Uid != article.Uid {
+		return 0, nil
+	}
+
+	// update blog
 	var maps = make(map[string]interface{})
 	maps["title"] = article.Title
 	maps["cid"] = article.Cid
 	maps["desc"] = article.Desc
 	maps["content"] = article.Content
 	maps["img"] = article.Img
-	sqlRes := ap.data.db.Model(article).Updates(maps)
+	sqlRes = ap.data.db.Model(article).Updates(maps)
 
 	if err := sqlRes.Error; err != nil {
 		return uint32(sqlRes.RowsAffected), err

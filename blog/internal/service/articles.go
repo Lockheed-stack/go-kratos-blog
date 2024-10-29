@@ -139,6 +139,7 @@ func (s *ArticlesService) UpdateArticles(ctx context.Context, req *pb.UpdateArti
 		Content: req.ArticleInfo.Content,
 		Img:     req.ArticleInfo.Img,
 		Title:   req.ArticleInfo.Title,
+		Uid:     uint(req.ArticleInfo.Uid),
 	}
 
 	resp := &pb.UpdateArticlesReply{}

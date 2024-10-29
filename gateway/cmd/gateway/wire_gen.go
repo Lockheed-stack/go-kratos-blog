@@ -30,12 +30,12 @@ func wireApp(confServer *conf.Server, confData *conf.Data, logger log.Logger, co
 		return nil, nil, err
 	}
 	gatewayBlogRepo := data.NewGatewayBlogRepo(dataData, logger)
-	gatewayBlogUsecase := biz.NewGatewayBlogUsecase(gatewayBlogRepo)
+	gatewayUploadRepo := data.NewGatewayUploadRepo(dataData, logger)
+	gatewayBlogUsecase := biz.NewGatewayBlogUsecase(gatewayBlogRepo, gatewayUploadRepo)
 	gatewayCategoryRepo := data.NewGatewayCategoryRepo(dataData, logger)
 	gatewayCategoryUsecase := biz.NewGatewayCategoryUsecase(gatewayCategoryRepo)
 	gatewayUserRepo := data.NewGatewayUserRepo(dataData, logger)
 	gatewayUserUsecase := biz.NewGatewayUserUsecase(gatewayUserRepo)
-	gatewayUploadRepo := data.NewGatewayUploadRepo(dataData, logger)
 	gatewayUploadUsecase := biz.NewGatewayUploadUsecase(gatewayUploadRepo)
 	mids := middlewares.NewMids(confMiddlewares, logger)
 	engine := router.NewGinRouter(gatewayBlogUsecase, gatewayCategoryUsecase, gatewayUserUsecase, gatewayUploadUsecase, mids)
