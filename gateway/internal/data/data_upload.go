@@ -22,10 +22,16 @@ func NewGatewayUploadRepo(data *Data, logger log.Logger) biz.GatewayUploadRepo {
 	}
 }
 
-func (r *gatewayUploadRepo) Local_UploadFile(file multipart.File, fileSize int64) (string, error) {
-	putPolicy := storage.PutPolicy{
-		Scope: r.data.Qiniu_Bucket,
+func (r *gatewayUploadRepo) UploadFile(file multipart.File, fileSize int64, fileName string) (string, error) {
+	putPolicy := storage.PutPolicy{}
+
+	if fileName == "" {
+		putPolicy.Scope = r.data.Qiniu_Bucket_Img
+		putPolicy.FsizeLimit = 1024 * 150 // max image size:150kb
+	} else {
+		putPolicy.Scope = r.data.Qiniu_Bucket_Article + ":" + fileName
 	}
+
 	mac := qbox.NewMac(r.data.Qiniu_AccessKey, r.data.Qiniu_SecretKey)
 	upToken := putPolicy.UploadToken(mac)
 
@@ -39,10 +45,19 @@ func (r *gatewayUploadRepo) Local_UploadFile(file multipart.File, fileSize int64
 	formUploader := storage.NewFormUploader(&cfg)
 	ret := storage.PutRet{}
 
-	err := formUploader.PutWithoutKey(context.Background(), &ret, upToken, file, fileSize, &putExtra)
-	if err != nil {
-		return "", err
+	if fileName == "" {
+		err := formUploader.PutWithoutKey(context.Background(), &ret, upToken, file, fileSize, &putExtra)
+		if err != nil {
+			return "", err
+		}
+	} else {
+		err := formUploader.Put(context.Background(), &ret, upToken, fileName, file, fileSize, &putExtra)
+		if err != nil {
+			return "", err
+		}
 	}
+
+	r.log.Info("hash: ", ret.Hash)
 	url := r.data.WebHost + ret.Key
 	return url, nil
 }

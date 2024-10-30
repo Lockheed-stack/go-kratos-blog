@@ -1,7 +1,6 @@
 package biz
 
 import (
-	"fmt"
 	"mime/multipart"
 	"net/http"
 
@@ -9,7 +8,7 @@ import (
 )
 
 type GatewayUploadRepo interface {
-	Local_UploadFile(multipart.File, int64) (string, error)
+	UploadFile(file multipart.File, filesize int64, filename string) (string, error)
 }
 
 type GatewayUploadUsecase struct {
@@ -23,24 +22,24 @@ func NewGatewayUploadUsecase(repo GatewayUploadRepo) *GatewayUploadUsecase {
 }
 
 func (u *GatewayUploadUsecase) Upload(c *gin.Context) {
-	form, err := c.MultipartForm()
+	file, header, err := c.Request.FormFile("file")
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"result": "err 1:" + err.Error(),
 		})
 		return
 	}
-	fmt.Println(form.File, form.Value, c.Request.FormValue("id"))
+	name := c.Request.FormValue("title")
+	url, err := u.repo.UploadFile(file, header.Size, name)
 
-	// url, err := u.repo.Local_UploadFile(file, fileSize)
-	// if err != nil {
-	// 	c.JSON(http.StatusBadRequest, gin.H{
-	// 		"result": "err 2:" + err.Error(),
-	// 	})
-	// 	return
-	// }
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"result": "err 2:" + err.Error(),
+		})
+		return
+	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"result": "url",
+		"result": url,
 	})
 }

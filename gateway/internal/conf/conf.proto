@@ -43,8 +43,9 @@ message Data {
   message QiniuyunUpload {
     string accessKey = 1;
     string secretKey = 2;
-    string bucket = 3;
-    string webHost = 4;
+    string bucketImg = 3;
+    string bucketArticle = 4;
+    string webHost = 5;
   }
   Database database = 1;
   Redis redis = 2;

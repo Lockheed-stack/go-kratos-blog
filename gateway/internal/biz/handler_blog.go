@@ -80,7 +80,7 @@ func (u *GatewayBlogUsecase) CreateOneBlog(c *gin.Context) {
 			})
 			return
 		}
-		url, err := u.upload_repo.Local_UploadFile(imgfile, fileheader.Size)
+		url, err := u.upload_repo.UploadFile(imgfile, fileheader.Size, "")
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"result": err.Error(),
@@ -107,7 +107,7 @@ func (u *GatewayBlogUsecase) CreateOneBlog(c *gin.Context) {
 			})
 			return
 		}
-		url, err := u.upload_repo.Local_UploadFile(blogfile, fileheader.Size)
+		url, err := u.upload_repo.UploadFile(blogfile, fileheader.Size, title)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"result": err.Error(),
@@ -330,7 +330,7 @@ func (u *GatewayBlogUsecase) UpdateOneBlog(c *gin.Context) {
 			})
 			return
 		}
-		url, err := u.upload_repo.Local_UploadFile(imgfile, fileheader.Size)
+		url, err := u.upload_repo.UploadFile(imgfile, fileheader.Size, "")
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"result": err.Error(),
@@ -357,7 +357,7 @@ func (u *GatewayBlogUsecase) UpdateOneBlog(c *gin.Context) {
 			})
 			return
 		}
-		url, err := u.upload_repo.Local_UploadFile(blogfile, fileheader.Size)
+		url, err := u.upload_repo.UploadFile(blogfile, fileheader.Size, title)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"result": err.Error(),

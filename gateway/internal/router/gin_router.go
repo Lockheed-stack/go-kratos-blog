@@ -31,6 +31,7 @@ func NewGinRouter(
 		public_group.GET("/:uid/list/:cid", blog_handler.GetBlogsByCidAndUid)
 		public_group.GET("/recommendBlogs", blog_handler.GetRecommendBlogs)
 		public_group.GET("/randomBlogs", blog_handler.GetRandomBlogs)
+		// public_group.POST("/upload", upload_handler.Upload)
 		// category
 		public_group.GET("/category", category_handler.GetCategoryList)
 		// user

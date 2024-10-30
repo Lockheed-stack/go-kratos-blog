@@ -31,10 +31,11 @@ type Data struct {
 	ConnGRPC_user     *grpc.ClientConn
 	Redis_cli         *redis.Client
 	// qiniuyun
-	Qiniu_AccessKey string
-	Qiniu_SecretKey string
-	Qiniu_Bucket    string
-	WebHost         string
+	Qiniu_AccessKey      string
+	Qiniu_SecretKey      string
+	Qiniu_Bucket_Img     string
+	Qiniu_Bucket_Article string
+	WebHost              string
 	// context: for cancel goroutines and cleanup resources
 	Cancel_CTX context.Context
 }
@@ -98,7 +99,8 @@ func NewData(c *conf.Data, logger log.Logger) (*Data, func(), error) {
 	// qiniuyun config
 	data.Qiniu_AccessKey = c.Qiniuyun.AccessKey
 	data.Qiniu_SecretKey = c.Qiniuyun.SecretKey
-	data.Qiniu_Bucket = c.Qiniuyun.Bucket
+	data.Qiniu_Bucket_Img = c.Qiniuyun.BucketImg
+	data.Qiniu_Bucket_Article = c.Qiniuyun.BucketArticle
 	data.WebHost = c.Qiniuyun.WebHost
 
 	// context
