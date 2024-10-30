@@ -45,7 +45,8 @@ message Data {
     string secretKey = 2;
     string bucketImg = 3;
     string bucketArticle = 4;
-    string webHost = 5;
+    string cdnImg = 5;
+    string cdnArticle = 6;
   }
   Database database = 1;
   Redis redis = 2;

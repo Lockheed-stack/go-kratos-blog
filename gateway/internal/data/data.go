@@ -35,7 +35,8 @@ type Data struct {
 	Qiniu_SecretKey      string
 	Qiniu_Bucket_Img     string
 	Qiniu_Bucket_Article string
-	WebHost              string
+	cdnImg               string
+	cdnArticle           string
 	// context: for cancel goroutines and cleanup resources
 	Cancel_CTX context.Context
 }
@@ -101,7 +102,8 @@ func NewData(c *conf.Data, logger log.Logger) (*Data, func(), error) {
 	data.Qiniu_SecretKey = c.Qiniuyun.SecretKey
 	data.Qiniu_Bucket_Img = c.Qiniuyun.BucketImg
 	data.Qiniu_Bucket_Article = c.Qiniuyun.BucketArticle
-	data.WebHost = c.Qiniuyun.WebHost
+	data.cdnImg = c.Qiniuyun.CdnImg
+	data.cdnArticle = c.Qiniuyun.CdnArticle
 
 	// context
 	ctx, cancel := context.WithCancel(context.Background())

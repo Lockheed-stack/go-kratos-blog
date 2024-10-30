@@ -22,6 +22,10 @@ func NewGatewayUploadRepo(data *Data, logger log.Logger) biz.GatewayUploadRepo {
 	}
 }
 
+/*
+Note: if the fileName is empty string, it will be uploaded to image bucket;
+else it will be updated to blog(article) bucket.
+*/
 func (r *gatewayUploadRepo) UploadFile(file multipart.File, fileSize int64, fileName string) (string, error) {
 	putPolicy := storage.PutPolicy{}
 
@@ -45,19 +49,22 @@ func (r *gatewayUploadRepo) UploadFile(file multipart.File, fileSize int64, file
 	formUploader := storage.NewFormUploader(&cfg)
 	ret := storage.PutRet{}
 
-	if fileName == "" {
+	url := ""
+	if fileName == "" { // upload image
 		err := formUploader.PutWithoutKey(context.Background(), &ret, upToken, file, fileSize, &putExtra)
 		if err != nil {
 			return "", err
 		}
-	} else {
+		url = r.data.cdnImg + ret.Key
+	} else { // upload markdown
 		err := formUploader.Put(context.Background(), &ret, upToken, fileName, file, fileSize, &putExtra)
 		if err != nil {
 			return "", err
 		}
+		url = r.data.cdnArticle + ret.Key
 	}
 
-	r.log.Info("hash: ", ret.Hash)
-	url := r.data.WebHost + ret.Key
+	// r.log.Info("hash: ", ret.Hash)
+
 	return url, nil
 }
