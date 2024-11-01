@@ -16,64 +16,68 @@ type gatewayBlogRepo struct {
 	data          *Data
 	log           *log.Helper
 	lock          sync.Mutex
-	ch            chan struct{}
+	hits_ch       chan struct{}
 	statistics_pv map[uint32]uint32
 	hits_trigger  *trigger
 }
 type trigger struct {
-	hits         uint64
-	last_hits    uint64
-	trigger_time int64
-	ticker       *time.Ticker
+	hits        uint64
+	last_hits   uint64
+	ticker_60   *time.Ticker
+	ticker_300  *time.Ticker
+	ticker_3600 *time.Ticker
 }
 
 func NewGatewayBlogRepo(data *Data, logger log.Logger) biz.GatewayBlogRepo {
 	tri := &trigger{
-		trigger_time: time.Now().Unix(),
-		ticker:       time.NewTicker(time.Hour),
+		ticker_60:   time.NewTicker(time.Minute),
+		ticker_300:  time.NewTicker(time.Minute * 5),
+		ticker_3600: time.NewTicker(time.Hour),
 	}
 
 	r := &gatewayBlogRepo{
 		data:          data,
 		log:           log.NewHelper(logger),
 		lock:          sync.Mutex{},
-		ch:            make(chan struct{}, 100),
+		hits_ch:       make(chan struct{}, 1000),
 		statistics_pv: make(map[uint32]uint32),
 		hits_trigger:  tri,
 	}
 	go func() {
 		for {
-			<-tri.ticker.C
-			// If it has been less than 5 minutes since the last trigger, the save operation will not be executed.
-			if time.Now().Unix()-tri.trigger_time > 300 {
-				increment := r.hits_trigger.hits - r.hits_trigger.last_hits
-				if increment >= 1 { // At least 1 request in an hour
-					r.savePageviewToDB()
-				}
-			}
-		}
-	}()
-	go func() {
-		for {
 			select {
-			case <-r.ch:
+			case <-tri.ticker_3600.C:
+				{
+					increment := r.hits_trigger.hits - r.hits_trigger.last_hits
+					if increment >= 1 { // At least 1 request in an hour
+						r.savePageviewToDB()
+						r.hits_trigger.last_hits = r.hits_trigger.hits
+					}
+				}
+			case <-tri.ticker_300.C:
+				{
+					increment := r.hits_trigger.hits - r.hits_trigger.last_hits
+					if increment >= 100 { // At least 100 requests in 300 seconds
+						r.savePageviewToDB()
+						r.hits_trigger.last_hits = r.hits_trigger.hits
+					}
+				}
+			case <-tri.ticker_60.C:
+				{
+					increment := r.hits_trigger.hits - r.hits_trigger.last_hits
+					if increment >= 10000 { // At least 10000 requests in 60s
+						r.savePageviewToDB()
+						r.hits_trigger.last_hits = r.hits_trigger.hits
+					}
+				}
+			case <-r.hits_ch:
 				{
 					r.hits_trigger.hits += 1
-					now := time.Now().Unix()
-					increment := r.hits_trigger.hits - r.hits_trigger.last_hits
-					time_span := now - r.hits_trigger.trigger_time
-					r.log.Debugf("time span:%v, incr:%v, pv:%v\n", time_span, increment, r.statistics_pv)
-
-					// At least 10000 requests in 60s or at least 100 requests in 300s
-					if (time_span <= 60 && increment >= 10000) || (time_span <= 300 && increment >= 100) {
-						r.hits_trigger.last_hits = r.hits_trigger.hits
-						r.hits_trigger.trigger_time = now
-						r.savePageviewToDB()
-					}
 				}
 			case <-r.data.Cancel_CTX.Done():
 				{
-					close(r.ch)
+					// clean channel resource when this service shutdown
+					close(r.hits_ch)
 					r.log.Info("channel closed!")
 					return
 				}
@@ -188,7 +192,7 @@ func (r *gatewayBlogRepo) GRPC_GetSingleBlog(req *articles.GetSingleArticleReque
 		r.statistics_pv[uint32(req.ArticleID)] += 1
 		r.lock.Unlock()
 
-		r.ch <- struct{}{}
+		r.hits_ch <- struct{}{}
 		result := &articles.GetSingleArticleReply{
 			Article: info,
 			Code:    200,
@@ -216,7 +220,7 @@ func (r *gatewayBlogRepo) GRPC_GetSingleBlog(req *articles.GetSingleArticleReque
 		r.statistics_pv[uint32(req.ArticleID)] = result.Article.PageView
 	}
 	r.lock.Unlock()
-	r.ch <- struct{}{}
+	r.hits_ch <- struct{}{}
 
 	// set redis key
 	go func() {
