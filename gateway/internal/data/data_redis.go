@@ -167,6 +167,13 @@ func GetBlogsListRedis(rdb *redis.Client, key string) ([]*articles.DetailArticle
 	}
 	return result, nil
 }
+func DelBatchBlogKeyRedis(rdb *redis.Client, keys []string) error {
+	_, err := rdb.Del(context.Background(), keys...).Result()
+	if err != nil {
+		return err
+	}
+	return nil
+}
 
 // category relate
 func SetCategoryRedis(rdb *redis.Client, key string, data []*category.CategoryInfo) error {

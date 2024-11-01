@@ -183,15 +183,19 @@ func (r *gatewayBlogRepo) GRPC_GetSingleBlog(req *articles.GetSingleArticleReque
 
 	/* ------------------- fast path -------------------- */
 	article_id_str := strconv.Itoa(int(req.ArticleID))
-	info, err := GetOneBlogRedis(r.data.Redis_cli, article_id_str)
-	if err == nil { // redis cache matched
 
-		// NOTE: map is non-concurrent safety, it cannot concurrent write
-		r.lock.Lock()
-		info.PageView = r.statistics_pv[uint32(req.ArticleID)]
+	// NOTE: map is non-concurrent safety, it cannot concurrent write or read
+	r.lock.Lock()
+	pv, ok := r.statistics_pv[uint32(req.ArticleID)]
+	if ok {
 		r.statistics_pv[uint32(req.ArticleID)] += 1
-		r.lock.Unlock()
+	}
+	r.lock.Unlock()
 
+	info, err := GetOneBlogRedis(r.data.Redis_cli, article_id_str)
+	if err == nil && ok { // redis cache matched. But if service restart, the data in statistics_pv will lost.
+
+		info.PageView = pv
 		r.hits_ch <- struct{}{}
 		result := &articles.GetSingleArticleReply{
 			Article: info,
@@ -214,7 +218,7 @@ func (r *gatewayBlogRepo) GRPC_GetSingleBlog(req *articles.GetSingleArticleReque
 	if val, ok := r.statistics_pv[uint32(req.ArticleID)]; ok {
 		result.Article.PageView = val
 		r.statistics_pv[uint32(req.ArticleID)] += 1
-		r.log.Info("pv: ", r.statistics_pv[uint32(req.ArticleID)])
+		// r.log.Info("pv: ", r.statistics_pv[uint32(req.ArticleID)])
 	} else {
 		r.statistics_pv[uint32(req.ArticleID)] = result.Article.PageView
 	}
@@ -279,12 +283,22 @@ func (r *gatewayBlogRepo) savePageviewToDB() {
 		// Pageview: pv_map,
 		Pageview: r.statistics_pv,
 	}
+
 	go func() {
 		result, err := client.UpdateArticlesPageview(context.Background(), req)
 		if err != nil {
 			r.log.Error(err)
 		} else {
 			r.log.Infof("Save to DB:%v", result.Msg)
+		}
+		// remove keys in redis
+		keys := []string{}
+		for k := range r.statistics_pv {
+			keys = append(keys, strconv.Itoa(int(k)))
+		}
+		err = DelBatchBlogKeyRedis(r.data.Redis_cli, keys)
+		if err != nil {
+			r.log.Error(err)
 		}
 	}()
 }
