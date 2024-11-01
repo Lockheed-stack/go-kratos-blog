@@ -214,7 +214,6 @@ func (r *gatewayBlogRepo) GRPC_GetSingleBlog(req *articles.GetSingleArticleReque
 	if val, ok := r.statistics_pv[uint32(req.ArticleID)]; ok {
 		result.Article.PageView = val
 		r.statistics_pv[uint32(req.ArticleID)] += 1
-		r.hits_trigger.hits += 1
 		r.log.Info("pv: ", r.statistics_pv[uint32(req.ArticleID)])
 	} else {
 		r.statistics_pv[uint32(req.ArticleID)] = result.Article.PageView
