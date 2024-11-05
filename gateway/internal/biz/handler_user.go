@@ -1,7 +1,6 @@
 package biz
 
 import (
-	"fmt"
 	"gateway/api/users"
 	"gateway/internal/middlewares"
 	"net/http"
@@ -15,6 +14,7 @@ type GatewayUserRepo interface {
 	GRPC_DeleteUser(*users.DeleteUsersRequest) (*users.DeleteUsersReply, error)
 	GRPC_AuthUser(*users.AuthUsersRequest) (*users.AuthUsersReply, error)
 	GRPC_GetSelectedUsers(*users.GetSelectedUsersRequest) (*users.GetSelectedUsersReply, error)
+	GRPC_GetUserStatisticsInfo(*users.GetStatisticsRequest) (*users.GetStatisticsReply, error)
 }
 
 type GatewayUserUsecase struct {
@@ -134,7 +134,7 @@ func (u *GatewayUserUsecase) GetPublicUsersInfo(c *gin.Context) {
 	}
 
 	resp, err := u.repo.GRPC_GetSelectedUsers(req)
-	fmt.Println(resp, err)
+	// fmt.Println(resp, err)
 	if err != nil {
 		c.JSON(http.StatusGatewayTimeout, gin.H{
 			"result": err.Error(),
@@ -150,5 +150,37 @@ func (u *GatewayUserUsecase) GetPublicUsersInfo(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"result": resp.SelectedUsers,
+	})
+}
+
+func (u *GatewayUserUsecase) GetUserStatisticsInfo(c *gin.Context) {
+	userID, err := strconv.Atoi(c.Query("userID"))
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"result": err.Error(),
+		})
+		return
+	}
+
+	req := &users.GetStatisticsRequest{
+		ID: uint64(userID),
+	}
+	resp, err := u.repo.GRPC_GetUserStatisticsInfo(req)
+	if err != nil {
+		c.JSON(http.StatusGatewayTimeout, gin.H{
+			"result": err.Error(),
+		})
+		return
+	}
+	if resp.Code != 200 {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"result": resp.Msg,
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"result": resp.Info,
 	})
 }

@@ -12,7 +12,7 @@ type Article struct {
 	Desc     string   `gorm:"type:varchar(200)" json:"desc"`
 	Content  string   `gorm:"type:longtext" json:"content"`
 	Img      string   `gorm:"type:longtext" json:"img"`
-	PageView uint     `gorm:"type:uint;defualt:0" json:"pv"`
+	PageView uint     `gorm:"type:uint;defualt:1" json:"pv"`
 	Cid      uint     `json:"cid"`
 	Uid      uint     `json:"uid"`
 	Category Category `gorm:"foreignKey:Cid"`

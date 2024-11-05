@@ -19,12 +19,13 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	Users_CreateUsers_FullMethodName      = "/api.users.Users/CreateUsers"
-	Users_UpdateUsers_FullMethodName      = "/api.users.Users/UpdateUsers"
-	Users_DeleteUsers_FullMethodName      = "/api.users.Users/DeleteUsers"
-	Users_GetSelectedUsers_FullMethodName = "/api.users.Users/GetSelectedUsers"
-	Users_ListUsers_FullMethodName        = "/api.users.Users/ListUsers"
-	Users_AuthUsers_FullMethodName        = "/api.users.Users/AuthUsers"
+	Users_CreateUsers_FullMethodName           = "/api.users.Users/CreateUsers"
+	Users_UpdateUsers_FullMethodName           = "/api.users.Users/UpdateUsers"
+	Users_DeleteUsers_FullMethodName           = "/api.users.Users/DeleteUsers"
+	Users_GetSelectedUsers_FullMethodName      = "/api.users.Users/GetSelectedUsers"
+	Users_ListUsers_FullMethodName             = "/api.users.Users/ListUsers"
+	Users_AuthUsers_FullMethodName             = "/api.users.Users/AuthUsers"
+	Users_GetUserStatisticsInfo_FullMethodName = "/api.users.Users/GetUserStatisticsInfo"
 )
 
 // UsersClient is the client API for Users service.
@@ -37,6 +38,7 @@ type UsersClient interface {
 	GetSelectedUsers(ctx context.Context, in *GetSelectedUsersRequest, opts ...grpc.CallOption) (*GetSelectedUsersReply, error)
 	ListUsers(ctx context.Context, in *ListUsersRequest, opts ...grpc.CallOption) (*ListUsersReply, error)
 	AuthUsers(ctx context.Context, in *AuthUsersRequest, opts ...grpc.CallOption) (*AuthUsersReply, error)
+	GetUserStatisticsInfo(ctx context.Context, in *GetStatisticsRequest, opts ...grpc.CallOption) (*GetStatisticsReply, error)
 }
 
 type usersClient struct {
@@ -107,6 +109,16 @@ func (c *usersClient) AuthUsers(ctx context.Context, in *AuthUsersRequest, opts 
 	return out, nil
 }
 
+func (c *usersClient) GetUserStatisticsInfo(ctx context.Context, in *GetStatisticsRequest, opts ...grpc.CallOption) (*GetStatisticsReply, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetStatisticsReply)
+	err := c.cc.Invoke(ctx, Users_GetUserStatisticsInfo_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UsersServer is the server API for Users service.
 // All implementations must embed UnimplementedUsersServer
 // for forward compatibility.
@@ -117,6 +129,7 @@ type UsersServer interface {
 	GetSelectedUsers(context.Context, *GetSelectedUsersRequest) (*GetSelectedUsersReply, error)
 	ListUsers(context.Context, *ListUsersRequest) (*ListUsersReply, error)
 	AuthUsers(context.Context, *AuthUsersRequest) (*AuthUsersReply, error)
+	GetUserStatisticsInfo(context.Context, *GetStatisticsRequest) (*GetStatisticsReply, error)
 	mustEmbedUnimplementedUsersServer()
 }
 
@@ -144,6 +157,9 @@ func (UnimplementedUsersServer) ListUsers(context.Context, *ListUsersRequest) (*
 }
 func (UnimplementedUsersServer) AuthUsers(context.Context, *AuthUsersRequest) (*AuthUsersReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AuthUsers not implemented")
+}
+func (UnimplementedUsersServer) GetUserStatisticsInfo(context.Context, *GetStatisticsRequest) (*GetStatisticsReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUserStatisticsInfo not implemented")
 }
 func (UnimplementedUsersServer) mustEmbedUnimplementedUsersServer() {}
 func (UnimplementedUsersServer) testEmbeddedByValue()               {}
@@ -274,6 +290,24 @@ func _Users_AuthUsers_Handler(srv interface{}, ctx context.Context, dec func(int
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Users_GetUserStatisticsInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetStatisticsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UsersServer).GetUserStatisticsInfo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Users_GetUserStatisticsInfo_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UsersServer).GetUserStatisticsInfo(ctx, req.(*GetStatisticsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Users_ServiceDesc is the grpc.ServiceDesc for Users service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -304,6 +338,10 @@ var Users_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "AuthUsers",
 			Handler:    _Users_AuthUsers_Handler,
+		},
+		{
+			MethodName: "GetUserStatisticsInfo",
+			Handler:    _Users_GetUserStatisticsInfo_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

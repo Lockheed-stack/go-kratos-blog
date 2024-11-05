@@ -12,13 +12,20 @@ service Users {
 	rpc GetSelectedUsers (GetSelectedUsersRequest) returns (GetSelectedUsersReply);
 	rpc ListUsers (ListUsersRequest) returns (ListUsersReply);
 	rpc AuthUsers (AuthUsersRequest) returns (AuthUsersReply);
+	rpc GetUserStatisticsInfo(GetStatisticsRequest)returns(GetStatisticsReply);
 }
 
-message UserInfo {
+message UserPublicInfo {
 	string Username = 1;
 	string Avatar = 2;
 	string SelfDesc = 3;
 	uint64 ID = 4;
+}
+message StatisticsInfo{
+	uint64 TotalLoginDays = 1;
+	uint64 TotalBlogs = 2;
+	uint64 TotalPageviews = 3;
+	uint64 TotalUniqueviews = 4;
 }
 
 message CreateUsersRequest {
@@ -45,7 +52,7 @@ message GetSelectedUsersRequest {
 	repeated uint64 UsersID = 1;
 }
 message GetSelectedUsersReply {
-	repeated UserInfo SelectedUsers = 1;
+	repeated UserPublicInfo SelectedUsers = 1;
 	uint32 Code = 2;
 }
 
@@ -60,5 +67,14 @@ message AuthUsersRequest {
 message AuthUsersReply{
 	string Msg = 1;
 	uint32 Code = 2;
-	UserInfo SelectedUser = 3;
+	UserPublicInfo SelectedUser = 3;
+}
+
+message GetStatisticsRequest{
+	uint64 ID = 1;
+}
+message GetStatisticsReply{
+	StatisticsInfo Info = 1;
+	uint32 Code = 2;
+	string Msg = 3;
 }

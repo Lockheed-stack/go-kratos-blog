@@ -56,3 +56,12 @@ func (r *gatewayUserRepo) GRPC_GetSelectedUsers(req *users.GetSelectedUsersReque
 	}
 	return result, nil
 }
+func (r *gatewayUserRepo) GRPC_GetUserStatisticsInfo(req *users.GetStatisticsRequest) (*users.GetStatisticsReply, error) {
+	client := users.NewUsersClient(r.data.ConnGRPC_user)
+	result, err := client.GetUserStatisticsInfo(context.Background(), req)
+	if err != nil {
+		r.log.Error(err)
+		return nil, err
+	}
+	return result, nil
+}

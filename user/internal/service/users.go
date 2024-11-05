@@ -79,3 +79,18 @@ func (s *UsersService) AuthUsers(ctx context.Context, req *pb.AuthUsersRequest) 
 	}
 	return resp, nil
 }
+
+func (s *UsersService) GetUserStatisticsInfo(ctx context.Context, req *pb.GetStatisticsRequest) (*pb.GetStatisticsReply, error) {
+	resp := &pb.GetStatisticsReply{}
+	result, err := s.uc.GetStatisticsInfoByID(req.ID)
+	if err != nil {
+		kratos_err := err.(*errors.Error)
+		resp.Code = uint32(kratos_err.Code)
+		resp.Msg = kratos_err.Reason
+	} else {
+		resp.Code = 200
+		resp.Info = result
+		resp.Msg = "OK"
+	}
+	return resp, nil
+}
