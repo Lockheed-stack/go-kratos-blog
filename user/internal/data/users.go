@@ -7,6 +7,7 @@ import (
 	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-sql-driver/mysql"
+	"gorm.io/gorm"
 )
 
 type userRepo struct {
@@ -133,4 +134,39 @@ func (r *userRepo) GetUserStatitics(id uint64) (*pb.StatisticsInfo, error) {
 	// result.TotalUniqueviews = uint64(user.TotalUniqueviews)
 	// fmt.Println(user, sqlRes.RowsAffected)
 	return result, nil
+}
+
+func (r *userRepo) UpdateUserStatisticsInfo(infos []*pb.StatisticsInfo) (int64, error) {
+	user := &biz.User{}
+	update_fields := make(map[string]interface{})
+	var rowsAffected int64
+	for _, v := range infos {
+		user.ID = uint(v.ID)
+		update_fields["total_pageviews"] = gorm.Expr("total_pageviews + ?", v.TotalPageviews)
+		update_fields["total_uniqueviews"] = gorm.Expr("total_uniqueviews + ?", v.TotalUniqueviews)
+		sqlRes := r.data.db.Model(user).Updates(update_fields)
+		if err := sqlRes.Error; err != nil {
+			return rowsAffected, err
+		}
+		rowsAffected += 1
+	}
+	return rowsAffected, nil
+}
+func (r *userRepo) UpdateUserPublicInfo(info *pb.UserPublicInfo) error {
+	user := &biz.User{}
+	user.ID = uint(info.ID)
+	sqlRes := r.data.db.Model(user).Updates(biz.User{Username: info.Username, Avatar: info.Avatar, SelfDesc: info.SelfDesc})
+	if err := sqlRes.Error; err != nil {
+		r.log.Error(err)
+		if mysqlErr, ok := err.(*mysql.MySQLError); ok {
+			switch mysqlErr.Number {
+			case 1062: //duplicate entry
+				return errors.New(400, "ERR_USER_PRE_EXISTING", "")
+			default:
+				return errors.New(400, "ERR_USER_INVALID_REQUEST", "")
+
+			}
+		}
+	}
+	return nil
 }

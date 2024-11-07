@@ -30,6 +30,8 @@ type UserRepo interface {
 	AuthLogin(name string, pwd string) (*pb.UserPublicInfo, error)
 	GetSelectedUsers(selectedFields []string, IDs []uint64) ([]*pb.UserPublicInfo, error)
 	GetUserStatitics(id uint64) (*pb.StatisticsInfo, error)
+	UpdateUserStatisticsInfo(infos []*pb.StatisticsInfo) (int64, error)
+	UpdateUserPublicInfo(info *pb.UserPublicInfo) error
 }
 
 type UserUsecase struct {
@@ -128,4 +130,34 @@ func (uc *UserUsecase) GetStatisticsInfoByID(id uint64) (*pb.StatisticsInfo, err
 	}
 
 	return result, nil
+}
+
+func (uc *UserUsecase) BatchUpdateUserStatisticsInfo(infos []*pb.StatisticsInfo) error {
+
+	result, err := uc.repo.UpdateUserStatisticsInfo(infos)
+	if err != nil {
+		e := errors.FromError(err)
+		switch e.Reason {
+		default:
+			return pb.ErrorErrUserInvalidRequest("")
+		}
+	} else if result < int64(len(infos)) {
+		return pb.ErrorErrUserInvalidRequest("expect %v records updated, but only %v records updated", len(infos), result)
+	}
+	return nil
+}
+
+func (uc *UserUsecase) UpdateOneUserPublicInfo(info *pb.UserPublicInfo) error {
+
+	err := uc.repo.UpdateUserPublicInfo(info)
+	if err != nil {
+		e := errors.FromError(err)
+		switch e.Reason {
+		case "ERR_USER_PRE_EXISTING":
+			return pb.ErrorErrUserPreExisting("username exist")
+		default:
+			return pb.ErrorErrUserInvalidRequest("")
+		}
+	}
+	return nil
 }

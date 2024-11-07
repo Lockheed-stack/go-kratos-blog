@@ -34,8 +34,8 @@ func (s *UsersService) CreateUsers(ctx context.Context, req *pb.CreateUsersReque
 
 	return resp, nil
 }
-func (s *UsersService) UpdateUsers(ctx context.Context, req *pb.UpdateUsersRequest) (*pb.UpdateUsersReply, error) {
-	return &pb.UpdateUsersReply{}, nil
+func (s *UsersService) UpdateUsers(ctx context.Context, req *pb.UpdateUserPublicInfoRequest) (*pb.UpdateUserPublicInfoReply, error) {
+	return &pb.UpdateUserPublicInfoReply{}, nil
 }
 func (s *UsersService) DeleteUsers(ctx context.Context, req *pb.DeleteUsersRequest) (*pb.DeleteUsersReply, error) {
 	resp := &pb.DeleteUsersReply{}
@@ -90,6 +90,36 @@ func (s *UsersService) GetUserStatisticsInfo(ctx context.Context, req *pb.GetSta
 	} else {
 		resp.Code = 200
 		resp.Info = result
+		resp.Msg = "OK"
+	}
+	return resp, nil
+}
+
+func (s *UsersService) UpdateUserPublicInfo(ctx context.Context, req *pb.UpdateUserPublicInfoRequest) (*pb.UpdateUserPublicInfoReply, error) {
+
+	resp := &pb.UpdateUserPublicInfoReply{}
+	err := s.uc.UpdateOneUserPublicInfo(req.Info)
+	if err != nil {
+		kratos_err := err.(*errors.Error)
+		resp.Code = uint32(kratos_err.Code)
+		resp.Msg = kratos_err.Reason
+	} else {
+		resp.Code = 200
+		resp.Msg = "OK"
+	}
+	return resp, nil
+}
+
+func (s *UsersService) UpdateUserStatisticsInfo(ctx context.Context, req *pb.UpdateUserStatisticsInfoRequest) (*pb.UpdateUserStatisticsInfoReply, error) {
+
+	resp := &pb.UpdateUserStatisticsInfoReply{}
+	err := s.uc.BatchUpdateUserStatisticsInfo(req.Infos)
+	if err != nil {
+		kratos_err := err.(*errors.Error)
+		resp.Code = uint32(kratos_err.Code)
+		resp.Msg = kratos_err.Reason
+	} else {
+		resp.Code = 200
 		resp.Msg = "OK"
 	}
 	return resp, nil

@@ -62,6 +62,7 @@ func NewGinRouter(
 		// auth_Required_group.DELETE("/user/rm", user_handler.DeleteOneUser)
 		auth_Required_group.POST("/user/token-check", user_handler.TokenCheck)
 		auth_Required_group.GET("/user/statisticsInfo", user_handler.GetUserStatisticsInfo)
+		auth_Required_group.PATCH("/user/updatePublicInfo", user_handler.UpdateUserPublicInfo)
 	}
 
 	return r

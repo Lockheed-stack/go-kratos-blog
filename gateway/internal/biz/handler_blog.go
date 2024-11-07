@@ -23,12 +23,14 @@ type GatewayBlogRepo interface {
 type GatewayBlogUsecase struct {
 	repo        GatewayBlogRepo
 	upload_repo GatewayUploadRepo
+	user_repo   GatewayUserRepo
 }
 
-func NewGatewayBlogUsecase(repo GatewayBlogRepo, upload_repo GatewayUploadRepo) *GatewayBlogUsecase {
+func NewGatewayBlogUsecase(repo GatewayBlogRepo, upload_repo GatewayUploadRepo, user_repo GatewayUserRepo) *GatewayBlogUsecase {
 	return &GatewayBlogUsecase{
 		repo:        repo,
 		upload_repo: upload_repo,
+		user_repo:   user_repo,
 	}
 }
 
@@ -273,13 +275,25 @@ func (u *GatewayBlogUsecase) GetOneBlog(c *gin.Context) {
 
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{
+			"result": err.Error(),
+		})
+		return
+	} else if resp.Code != 200 {
+		c.JSON(http.StatusNotFound, gin.H{
 			"result": "Please check blog id",
 		})
 		return
 	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"result": resp.Article,
 	})
+
+	// processing user statistics info
+	ip := c.ClientIP()
+	go func() {
+		u.user_repo.MaintainUserStatisticsInfo(resp.Article.Uid, ip, resp.Article.PageView)
+	}()
 }
 
 func (u *GatewayBlogUsecase) UpdateOneBlog(c *gin.Context) {

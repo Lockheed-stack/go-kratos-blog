@@ -7,12 +7,13 @@ option go_package = "user/api/users;users";
 
 service Users {
 	rpc CreateUsers (CreateUsersRequest) returns (CreateUsersReply);
-	rpc UpdateUsers (UpdateUsersRequest) returns (UpdateUsersReply);
+	rpc UpdateUserPublicInfo (UpdateUserPublicInfoRequest) returns (UpdateUserPublicInfoReply);
 	rpc DeleteUsers (DeleteUsersRequest) returns (DeleteUsersReply);
 	rpc GetSelectedUsers (GetSelectedUsersRequest) returns (GetSelectedUsersReply);
 	rpc ListUsers (ListUsersRequest) returns (ListUsersReply);
 	rpc AuthUsers (AuthUsersRequest) returns (AuthUsersReply);
 	rpc GetUserStatisticsInfo(GetStatisticsRequest)returns(GetStatisticsReply);
+	rpc UpdateUserStatisticsInfo (UpdateUserStatisticsInfoRequest) returns (UpdateUserStatisticsInfoReply);
 }
 
 message UserPublicInfo {
@@ -26,6 +27,7 @@ message StatisticsInfo{
 	uint64 TotalBlogs = 2;
 	uint64 TotalPageviews = 3;
 	uint64 TotalUniqueviews = 4;
+	uint64 ID = 5;
 }
 
 message CreateUsersRequest {
@@ -37,8 +39,13 @@ message CreateUsersReply {
 	uint32 Code = 2;
 }
 
-message UpdateUsersRequest {}
-message UpdateUsersReply {}
+message UpdateUserPublicInfoRequest {
+	UserPublicInfo Info = 1;
+}
+message UpdateUserPublicInfoReply {
+	string Msg = 1;
+	uint32 Code = 2;
+}
 
 message DeleteUsersRequest {
 	uint64 ID = 1;
@@ -77,4 +84,12 @@ message GetStatisticsReply{
 	StatisticsInfo Info = 1;
 	uint32 Code = 2;
 	string Msg = 3;
+}
+
+message UpdateUserStatisticsInfoRequest{
+	repeated StatisticsInfo Infos = 1;
+}
+message UpdateUserStatisticsInfoReply{
+	string Msg = 1;
+	uint32 Code = 2;
 }

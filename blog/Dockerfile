@@ -16,6 +16,12 @@ FROM alpine
 
 COPY --from=builder /src/bin /app
 
+# set time zone
+RUN apk add --no-cache tzdata \
+    && cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
+    && echo "Asia/Shanghai" > /etc/timezone \
+    && apk del tzdata
+
 WORKDIR /app
 
 EXPOSE 8000

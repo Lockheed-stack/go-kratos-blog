@@ -15,6 +15,8 @@ type GatewayUserRepo interface {
 	GRPC_AuthUser(*users.AuthUsersRequest) (*users.AuthUsersReply, error)
 	GRPC_GetSelectedUsers(*users.GetSelectedUsersRequest) (*users.GetSelectedUsersReply, error)
 	GRPC_GetUserStatisticsInfo(*users.GetStatisticsRequest) (*users.GetStatisticsReply, error)
+	GRPC_UpdateUserPublicInfo(*users.UpdateUserPublicInfoRequest) (*users.UpdateUserPublicInfoReply, error)
+	MaintainUserStatisticsInfo(uid uint64, ip string, pv uint32) error
 }
 
 type GatewayUserUsecase struct {
@@ -182,5 +184,34 @@ func (u *GatewayUserUsecase) GetUserStatisticsInfo(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"result": resp.Info,
+	})
+}
+
+func (u *GatewayUserUsecase) UpdateUserPublicInfo(c *gin.Context) {
+	uid := c.GetInt("request_userid")
+	req := &users.UserPublicInfo{}
+	if err := c.ShouldBindJSON(req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"result": err.Error(),
+		})
+		return
+	}
+	req.ID = uint64(uid)
+
+	resp, err := u.repo.GRPC_UpdateUserPublicInfo(&users.UpdateUserPublicInfoRequest{Info: req})
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"result": err.Error(),
+		})
+		return
+	} else if resp.Code != 200 {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"result": resp.Msg,
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"result": resp.Msg,
 	})
 }
