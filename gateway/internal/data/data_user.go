@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/go-kratos/kratos/v2/log"
+	"github.com/redis/go-redis/v9"
 )
 
 type gatewayUserRepo struct {
@@ -24,7 +25,7 @@ func NewGatewayUserRepo(data *Data, logger log.Logger) biz.GatewayUserRepo {
 	now := time.Now() // the time of service start
 	nowStamp := now.Unix()
 	tomorrowStamp := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location()).AddDate(0, 0, 1).Unix()
-	timer := time.NewTimer(time.Duration(tomorrowStamp - nowStamp))
+	timer := time.NewTimer(time.Second * time.Duration(tomorrowStamp-nowStamp))
 	repo := &gatewayUserRepo{
 		data:         data,
 		log:          log.NewHelper(logger),
@@ -112,13 +113,20 @@ func (r *gatewayUserRepo) GRPC_UpdateUserPublicInfo(req *users.UpdateUserPublicI
 }
 
 // non-gRPC functions
-func (r *gatewayUserRepo) MaintainUserStatisticsInfo(uid uint64, ip string, pv uint32) error {
+func (r *gatewayUserRepo) MaintainUserStatisticsInfo(uid uint64, ip string, pv uint32, is_newBlog bool) error {
+
+	// if add a new blog
+	uid_str := strconv.Itoa(int(uid))
+	if is_newBlog {
+		err := SetTodayUserNewBlogNumRedis(r.data.Redis_cli, uid_str)
+		if err != nil {
+			return err
+		}
+		return nil
+	}
 
 	// set unique view
-	uid_str := strconv.Itoa(int(uid))
-	uv_key := "user_uv:" + uid_str
-	pv_key := uid_str
-	err := SetUserUniqueviewAndPageviewRedis(r.data.Redis_cli, pv_key, uv_key, ip)
+	err := SetUserUniqueviewAndPageviewRedis(r.data.Redis_cli, uid_str, ip)
 	if err != nil {
 		r.log.Error(err)
 		return err
@@ -130,6 +138,26 @@ func (r *gatewayUserRepo) MaintainUserStatisticsInfo(uid uint64, ip string, pv u
 	r.lock.Unlock()
 
 	return nil
+}
+func (r *gatewayUserRepo) TodayUserStatisticsInfo(uid uint64) (*users.StatisticsInfo, error) {
+
+	resp := &users.StatisticsInfo{}
+
+	key := strconv.Itoa(int(uid))
+	pv, uv, err := GetUserUniqueviewAndPageviewRedis(r.data.Redis_cli, key)
+	if err != nil && err != redis.Nil {
+		return resp, err
+	}
+	blogs_num, err := GetTodayUserNewBlogNumRedis(r.data.Redis_cli, key)
+	if err != nil && err != redis.Nil {
+		return resp, err
+	}
+
+	resp.TotalPageviews = uint64(pv)
+	resp.TotalUniqueviews = uint64(uv)
+	resp.TotalBlogs = uint64(blogs_num)
+
+	return resp, nil
 }
 
 // internal functions
@@ -154,7 +182,7 @@ func (r *gatewayUserRepo) saveStatisticsInfoToDB() error {
 	r.lock.Unlock()
 
 	// get statistics info from redis
-	pv, uv, err := GetAllUsersStatisticsInfo(r.data.Redis_cli, keys)
+	pv, uv, new_blogs_num, err := GetAllUsersStatisticsInfo(r.data.Redis_cli, keys)
 	if err != nil {
 		r.log.Error(err)
 		return err
@@ -162,8 +190,10 @@ func (r *gatewayUserRepo) saveStatisticsInfoToDB() error {
 	for i := range infos {
 		id_str := strconv.Itoa(int(infos[i].ID))
 		pv_num, _ := strconv.Atoi(pv[id_str])
+		blogs_num, _ := strconv.Atoi(new_blogs_num[id_str])
 		infos[i].TotalPageviews = uint64(pv_num)
 		infos[i].TotalUniqueviews = uint64(uv[id_str])
+		infos[i].TotalBlogs = uint64(blogs_num)
 	}
 
 	// save to DB

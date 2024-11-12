@@ -16,7 +16,8 @@ type GatewayUserRepo interface {
 	GRPC_GetSelectedUsers(*users.GetSelectedUsersRequest) (*users.GetSelectedUsersReply, error)
 	GRPC_GetUserStatisticsInfo(*users.GetStatisticsRequest) (*users.GetStatisticsReply, error)
 	GRPC_UpdateUserPublicInfo(*users.UpdateUserPublicInfoRequest) (*users.UpdateUserPublicInfoReply, error)
-	MaintainUserStatisticsInfo(uid uint64, ip string, pv uint32) error
+	MaintainUserStatisticsInfo(uid uint64, ip string, pv uint32, is_newBlog bool) error
+	TodayUserStatisticsInfo(uid uint64) (*users.StatisticsInfo, error)
 }
 
 type GatewayUserUsecase struct {
@@ -184,6 +185,27 @@ func (u *GatewayUserUsecase) GetUserStatisticsInfo(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"result": resp.Info,
+	})
+}
+func (u *GatewayUserUsecase) GetUserTodayStatistics(c *gin.Context) {
+	userID, err := strconv.Atoi(c.Query("userID"))
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"result": err.Error(),
+		})
+		return
+	}
+	resp, err := u.repo.TodayUserStatisticsInfo(uint64(userID))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"result": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"result": resp,
 	})
 }
 

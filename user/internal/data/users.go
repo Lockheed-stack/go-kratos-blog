@@ -144,6 +144,7 @@ func (r *userRepo) UpdateUserStatisticsInfo(infos []*pb.StatisticsInfo) (int64, 
 		user.ID = uint(v.ID)
 		update_fields["total_pageviews"] = gorm.Expr("total_pageviews + ?", v.TotalPageviews)
 		update_fields["total_uniqueviews"] = gorm.Expr("total_uniqueviews + ?", v.TotalUniqueviews)
+		update_fields["total_blogs"] = gorm.Expr("total_blogs + ?", v.TotalBlogs)
 		sqlRes := r.data.db.Model(user).Updates(update_fields)
 		if err := sqlRes.Error; err != nil {
 			return rowsAffected, err

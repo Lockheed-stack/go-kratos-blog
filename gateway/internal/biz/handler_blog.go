@@ -131,6 +131,11 @@ func (u *GatewayBlogUsecase) CreateOneBlog(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"result": resp.Msg,
 	})
+
+	// processing user statistics info
+	go func() {
+		u.user_repo.MaintainUserStatisticsInfo(0, "", 0, true)
+	}()
 }
 
 func (u *GatewayBlogUsecase) GetBlogsInSameCategory(c *gin.Context) {
@@ -292,7 +297,7 @@ func (u *GatewayBlogUsecase) GetOneBlog(c *gin.Context) {
 	// processing user statistics info
 	ip := c.ClientIP()
 	go func() {
-		u.user_repo.MaintainUserStatisticsInfo(resp.Article.Uid, ip, resp.Article.PageView)
+		u.user_repo.MaintainUserStatisticsInfo(resp.Article.Uid, ip, resp.Article.PageView, false)
 	}()
 }
 
