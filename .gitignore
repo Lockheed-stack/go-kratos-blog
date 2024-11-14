@@ -4,3 +4,4 @@ configs/
 docker-compose.yml
 deploy_test/
 .dockerignore
+.vscode/

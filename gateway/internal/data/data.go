@@ -20,16 +20,18 @@ var ProviderSet = wire.NewSet(
 	NewGatewayBlogRepo,
 	NewGatewayCategoryRepo,
 	NewGatewayUserRepo,
+	NewGatewayStatUserRepo,
 )
 
 // Data .
 type Data struct {
 	// TODO wrapped database client
-	ETCD_reg          *etcd.Registry
-	ConnGRPC_blog     *grpc.ClientConn
-	ConnGRPC_category *grpc.ClientConn
-	ConnGRPC_user     *grpc.ClientConn
-	Redis_cli         *redis.Client
+	ETCD_reg           *etcd.Registry
+	ConnGRPC_blog      *grpc.ClientConn
+	ConnGRPC_category  *grpc.ClientConn
+	ConnGRPC_user      *grpc.ClientConn
+	ConnGRPC_stat_user *grpc.ClientConn
+	Redis_cli          *redis.Client
 	// qiniuyun
 	Qiniu_AccessKey      string
 	Qiniu_SecretKey      string
@@ -96,6 +98,16 @@ func NewData(c *conf.Data, logger log.Logger) (*Data, func(), error) {
 		return data, nil, err
 	}
 	data.ConnGRPC_user = conn3
+
+	conn4, err := kratos_grpc.DialInsecure(
+		context.Background(),
+		kratos_grpc.WithEndpoint("discovery:///stat_user"),
+		kratos_grpc.WithDiscovery(data.ETCD_reg),
+	)
+	if err != nil {
+		return data, nil, err
+	}
+	data.ConnGRPC_stat_user = conn4
 
 	// qiniuyun config
 	data.Qiniu_AccessKey = c.Qiniuyun.AccessKey

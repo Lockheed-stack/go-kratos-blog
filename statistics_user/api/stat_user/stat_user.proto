@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+package api.stat_user;
+
+option go_package = "statistics_user/api/stat_user;stat_user";
+
+service StatUser {
+	rpc GetUserSevenDaysStat (GetUserSevenDaysStatRequest) returns (GetUserSevenDaysStatReply);
+	rpc SetUserStatInfo(SetUserStatInfoRequest) returns (SetUserStatInfoReply);
+}
+
+message DayStatistics{
+	string CreatedAt = 1;
+	uint64 Pv = 2;
+	uint64 Uv = 3;
+	uint64 Uid = 4;
+}
+
+message GetUserSevenDaysStatRequest {
+	uint64 Uid = 1;
+}
+message GetUserSevenDaysStatReply {
+	repeated DayStatistics SevenDaysData = 1;
+	uint32 Code = 2;
+	string Msg = 3;
+}
+
+message SetUserStatInfoRequest{
+	repeated DayStatistics Data = 1;
+}
+message SetUserStatInfoReply{
+	uint32 Code = 1;
+	string Msg = 2;
+}

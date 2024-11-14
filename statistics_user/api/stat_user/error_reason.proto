@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+// 定义包名
+package api.stat_user;
+import "errors/errors.proto";
+
+// 多语言特定包名，用于源代码引用
+option go_package = "statistics_user/api/stat_user;stat_user";
+
+
+enum ErrorReason {
+
+    // 为某个枚举单独设置错误码
+    USER_NOT_FOUND = 0 [(errors.code) = 404];
+    INVALID_USER_ID = 1 [(errors.code) = 400];
+    INVALID_REQUEST = 2 [(errors.code) = 400];
+}

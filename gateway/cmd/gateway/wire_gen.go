@@ -37,8 +37,10 @@ func wireApp(confServer *conf.Server, confData *conf.Data, logger log.Logger, co
 	gatewayCategoryUsecase := biz.NewGatewayCategoryUsecase(gatewayCategoryRepo)
 	gatewayUserUsecase := biz.NewGatewayUserUsecase(gatewayUserRepo)
 	gatewayUploadUsecase := biz.NewGatewayUploadUsecase(gatewayUploadRepo)
+	gatewayStatUserRepo := data.NewGatewayStatUserRepo(dataData, logger)
+	gatewayStatUserUsecase := biz.NewGatewayStatUserUsecase(gatewayStatUserRepo)
 	mids := middlewares.NewMids(confMiddlewares, logger)
-	engine := router.NewGinRouter(gatewayBlogUsecase, gatewayCategoryUsecase, gatewayUserUsecase, gatewayUploadUsecase, mids)
+	engine := router.NewGinRouter(gatewayBlogUsecase, gatewayCategoryUsecase, gatewayUserUsecase, gatewayUploadUsecase, gatewayStatUserUsecase, mids)
 	httpServer := server.NewHTTPServer(confServer, logger, engine)
 	app := newApp(logger, httpServer)
 	return app, func() {
