@@ -103,7 +103,7 @@ jobs:
                 docker push lockheedlee/kratos-blog-micro-gateway:latest    
     ssh_deploy:
         runs-on: ubuntu-latest
-        needs: [build_user,build_blog,build_category,build_gateway]
+        needs: [build_user,build_blog,build_category,build_gateway,build_stat_user]
         steps:
             - name: deploy
               uses: easingthemes/ssh-deploy@v5.1.0
