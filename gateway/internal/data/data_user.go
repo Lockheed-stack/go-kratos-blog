@@ -2,6 +2,7 @@ package data
 
 import (
 	"context"
+	"gateway/api/stat_user"
 	"gateway/api/users"
 	"gateway/internal/biz"
 	"strconv"
@@ -13,25 +14,28 @@ import (
 )
 
 type gatewayUserRepo struct {
-	data         *Data
-	log          *log.Helper
-	timer        *time.Timer
-	lock         sync.Mutex
-	active_users map[uint64]struct{}
+	data           *Data
+	log            *log.Helper
+	timer          *time.Timer
+	lock           sync.Mutex
+	active_users   map[uint64]struct{}
+	stat_user_repo biz.GatewayStatUserRepo
 }
 
-func NewGatewayUserRepo(data *Data, logger log.Logger) biz.GatewayUserRepo {
+func NewGatewayUserRepo(data *Data, logger log.Logger, stat_user_repo biz.GatewayStatUserRepo) biz.GatewayUserRepo {
 
-	now := time.Now() // the time of service start
-	nowStamp := now.Unix()
-	tomorrowStamp := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location()).AddDate(0, 0, 1).Unix()
-	timer := time.NewTimer(time.Second * time.Duration(tomorrowStamp-nowStamp))
+	// now := time.Now() // the time of service start
+	// nowStamp := now.Unix()
+	// tomorrowStamp := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location()).AddDate(0, 0, 1).Unix()
+	// timer := time.NewTimer(time.Second * time.Duration(tomorrowStamp-nowStamp))
+	timer := time.NewTimer(time.Second * 60)
 	repo := &gatewayUserRepo{
-		data:         data,
-		log:          log.NewHelper(logger),
-		timer:        timer,
-		lock:         sync.Mutex{},
-		active_users: make(map[uint64]struct{}),
+		data:           data,
+		log:            log.NewHelper(logger),
+		timer:          timer,
+		lock:           sync.Mutex{},
+		active_users:   make(map[uint64]struct{}),
+		stat_user_repo: stat_user_repo,
 	}
 
 	// start a scheduled task
@@ -163,18 +167,28 @@ func (r *gatewayUserRepo) TodayUserStatisticsInfo(uid uint64) (*users.Statistics
 // internal functions
 func (r *gatewayUserRepo) saveStatisticsInfoToDB() error {
 
-	req := &users.UpdateUserStatisticsInfoRequest{}
+	req_user := &users.UpdateUserStatisticsInfoRequest{}
+	req_stat_user := &stat_user.SetUserStatInfoRequest{}
 
 	// prepare data for update
 	r.lock.Lock()
 	activeUserNum := len(r.active_users)
-	infos := make([]*users.StatisticsInfo, activeUserNum)
+	req_user_infos := make([]*users.StatisticsInfo, activeUserNum)
+	req_stat_user_data := make([]*stat_user.DayStatistics, activeUserNum)
 	keys := make([]string, activeUserNum)
 	idx := 0
 	for k := range r.active_users {
-		tmp := new(users.StatisticsInfo)
-		tmp.ID = k
-		infos[idx] = tmp
+		// UpdateUserStatisticsInfoRequest
+		tmp_info := new(users.StatisticsInfo)
+		tmp_info.ID = k
+		req_user_infos[idx] = tmp_info
+
+		// SetUserStatInfoRequest
+		tmp_data := new(stat_user.DayStatistics)
+		tmp_data.Uid = k
+		req_stat_user_data[idx] = tmp_data
+
+		// redis key
 		keys[idx] = strconv.Itoa(int(k))
 		idx += 1
 		delete(r.active_users, k)
@@ -187,26 +201,42 @@ func (r *gatewayUserRepo) saveStatisticsInfoToDB() error {
 		r.log.Error(err)
 		return err
 	}
-	for i := range infos {
-		id_str := strconv.Itoa(int(infos[i].ID))
+	for i := range req_user_infos {
+		id_str := strconv.Itoa(int(req_user_infos[i].ID))
 		pv_num, _ := strconv.Atoi(pv[id_str])
 		blogs_num, _ := strconv.Atoi(new_blogs_num[id_str])
-		infos[i].TotalPageviews = uint64(pv_num)
-		infos[i].TotalUniqueviews = uint64(uv[id_str])
-		infos[i].TotalBlogs = uint64(blogs_num)
+
+		req_user_infos[i].TotalPageviews = uint64(pv_num)
+		req_user_infos[i].TotalUniqueviews = uint64(uv[id_str])
+		req_user_infos[i].TotalBlogs = uint64(blogs_num)
+
+		req_stat_user_data[i].Pv = uint64(pv_num)
+		req_stat_user_data[i].Uv = uint64(uv[id_str])
 	}
 
-	// save to DB
-	req.Infos = infos
+	// save to the user table in DB
+	req_user.Infos = req_user_infos
 	client := users.NewUsersClient(r.data.ConnGRPC_user)
-	resp, err := client.UpdateUserStatisticsInfo(context.Background(), req)
+	resp, err := client.UpdateUserStatisticsInfo(context.Background(), req_user)
 	if err != nil {
 		r.log.Error(err)
 		return err
 	} else if resp.Code != 200 {
 		r.log.Error(resp.Msg)
 	} else {
-		r.log.Info("User statistics info has been saved to DB")
+		r.log.Info("User statistics info has been saved to the user table in DB")
+	}
+
+	// save to the stat_user table in DB
+	req_stat_user.Data = req_stat_user_data
+	resp2, err := r.stat_user_repo.GRPC_SetUserTodayStatData(req_stat_user)
+	if err != nil {
+		r.log.Error(err)
+		return err
+	} else if resp2.Code != 200 {
+		r.log.Error(resp.Msg)
+	} else {
+		r.log.Info("User statistics info has been saved to the stat_user table in DB")
 	}
 
 	// clean redis key

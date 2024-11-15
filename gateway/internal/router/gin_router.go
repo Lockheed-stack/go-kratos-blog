@@ -14,7 +14,7 @@ func NewGinRouter(
 	category_handler *biz.GatewayCategoryUsecase,
 	user_handler *biz.GatewayUserUsecase,
 	upload_handler *biz.GatewayUploadUsecase,
-	stat_handler *biz.GatewayStatUserUsecase,
+	stat_user_handler *biz.GatewayStatUserUsecase,
 	mids *middlewares.Mids,
 ) *gin.Engine {
 
@@ -66,7 +66,7 @@ func NewGinRouter(
 		auth_Required_group.GET("/user/todayStatistics", user_handler.GetUserTodayStatistics)
 		auth_Required_group.PATCH("/user/updatePublicInfo", user_handler.UpdateUserPublicInfo)
 		// statistics
-		auth_Required_group.GET("/stat/user/sevenDays", stat_handler.GetUserSevenDaysStat)
+		auth_Required_group.GET("/stat/user/sevenDays", stat_user_handler.GetUserSevenDaysStat)
 	}
 
 	return r
