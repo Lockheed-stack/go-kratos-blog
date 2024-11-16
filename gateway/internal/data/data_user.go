@@ -14,28 +14,31 @@ import (
 )
 
 type gatewayUserRepo struct {
-	data           *Data
-	log            *log.Helper
-	timer          *time.Timer
-	lock           sync.Mutex
-	active_users   map[uint64]struct{}
-	stat_user_repo biz.GatewayStatUserRepo
+	data                *Data
+	log                 *log.Helper
+	timer               *time.Timer
+	lock                sync.Mutex
+	users_being_vivited map[uint64]struct{}
+	active_users        map[uint64]struct{}
+	stat_user_repo      biz.GatewayStatUserRepo
 }
 
 func NewGatewayUserRepo(data *Data, logger log.Logger, stat_user_repo biz.GatewayStatUserRepo) biz.GatewayUserRepo {
 
-	// now := time.Now() // the time of service start
-	// nowStamp := now.Unix()
-	// tomorrowStamp := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location()).AddDate(0, 0, 1).Unix()
-	// timer := time.NewTimer(time.Second * time.Duration(tomorrowStamp-nowStamp))
-	timer := time.NewTimer(time.Second * 60)
+	now := time.Now() // the time of service start
+	nowStamp := now.Unix()
+	tomorrowStamp := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location()).AddDate(0, 0, 1).Unix()
+	timer := time.NewTimer(time.Second * time.Duration(tomorrowStamp-nowStamp))
+	// timer := time.NewTimer(time.Second * 60)
+
 	repo := &gatewayUserRepo{
-		data:           data,
-		log:            log.NewHelper(logger),
-		timer:          timer,
-		lock:           sync.Mutex{},
-		active_users:   make(map[uint64]struct{}),
-		stat_user_repo: stat_user_repo,
+		data:                data,
+		log:                 log.NewHelper(logger),
+		timer:               timer,
+		lock:                sync.Mutex{},
+		users_being_vivited: make(map[uint64]struct{}),
+		active_users:        make(map[uint64]struct{}),
+		stat_user_repo:      stat_user_repo,
 	}
 
 	// start a scheduled task
@@ -86,6 +89,13 @@ func (r *gatewayUserRepo) GRPC_AuthUser(req *users.AuthUsersRequest) (*users.Aut
 		r.log.Error(err)
 		return nil, err
 	}
+
+	// if User Authentication Success
+	if result.Code == 200 {
+		r.lock.Lock()
+		r.active_users[result.SelectedUser.ID] = struct{}{}
+		r.lock.Unlock()
+	}
 	return result, nil
 }
 func (r *gatewayUserRepo) GRPC_GetSelectedUsers(req *users.GetSelectedUsersRequest) (*users.GetSelectedUsersReply, error) {
@@ -104,6 +114,8 @@ func (r *gatewayUserRepo) GRPC_GetUserStatisticsInfo(req *users.GetStatisticsReq
 		r.log.Error(err)
 		return nil, err
 	}
+	// Only the user has been logged can call this function successfully, therefore we add 1 to TotalLoginDays.
+	result.Info.TotalLoginDays += 1
 	return result, nil
 }
 func (r *gatewayUserRepo) GRPC_UpdateUserPublicInfo(req *users.UpdateUserPublicInfoRequest) (*users.UpdateUserPublicInfoReply, error) {
@@ -136,9 +148,9 @@ func (r *gatewayUserRepo) MaintainUserStatisticsInfo(uid uint64, ip string, pv u
 		return err
 	}
 
-	// update active users
+	// update users_being_vivited
 	r.lock.Lock()
-	r.active_users[uid] = struct{}{}
+	r.users_being_vivited[uid] = struct{}{}
 	r.lock.Unlock()
 
 	return nil
@@ -172,27 +184,48 @@ func (r *gatewayUserRepo) saveStatisticsInfoToDB() error {
 
 	// prepare data for update
 	r.lock.Lock()
+	visitedUserNum := len(r.users_being_vivited)
 	activeUserNum := len(r.active_users)
-	req_user_infos := make([]*users.StatisticsInfo, activeUserNum)
-	req_stat_user_data := make([]*stat_user.DayStatistics, activeUserNum)
-	keys := make([]string, activeUserNum)
+	visited_and_active_user_map := make(map[uint64]*users.StatisticsInfo)
+	today_user_stat_map := make(map[uint64]*stat_user.DayStatistics)
+
+	req_user_infos := make([]*users.StatisticsInfo, 0, visitedUserNum+activeUserNum)
+	req_stat_user_data := make([]*stat_user.DayStatistics, 0, visitedUserNum)
+	keys := make([]string, visitedUserNum)
+
+	// iterate over users_being_vivited
 	idx := 0
-	for k := range r.active_users {
+	for k := range r.users_being_vivited {
 		// UpdateUserStatisticsInfoRequest
 		tmp_info := new(users.StatisticsInfo)
 		tmp_info.ID = k
-		req_user_infos[idx] = tmp_info
+		visited_and_active_user_map[k] = tmp_info
 
 		// SetUserStatInfoRequest
 		tmp_data := new(stat_user.DayStatistics)
 		tmp_data.Uid = k
-		req_stat_user_data[idx] = tmp_data
+		today_user_stat_map[k] = tmp_data
 
 		// redis key
 		keys[idx] = strconv.Itoa(int(k))
 		idx += 1
-		delete(r.active_users, k)
 	}
+
+	// iterate over active_users
+	for k := range r.active_users {
+		if _, ok := visited_and_active_user_map[k]; !ok {
+			tmp_info := new(users.StatisticsInfo)
+			tmp_info.ID = k
+			tmp_info.TotalLoginDays = 1
+			visited_and_active_user_map[k] = tmp_info
+		} else {
+			visited_and_active_user_map[k].TotalLoginDays = 1
+		}
+	}
+
+	// clear map
+	r.active_users = make(map[uint64]struct{})
+	r.users_being_vivited = make(map[uint64]struct{})
 	r.lock.Unlock()
 
 	// get statistics info from redis
@@ -201,17 +234,23 @@ func (r *gatewayUserRepo) saveStatisticsInfoToDB() error {
 		r.log.Error(err)
 		return err
 	}
-	for i := range req_user_infos {
-		id_str := strconv.Itoa(int(req_user_infos[i].ID))
+
+	for k, v := range visited_and_active_user_map {
+		id_str := strconv.Itoa(int(k))
 		pv_num, _ := strconv.Atoi(pv[id_str])
 		blogs_num, _ := strconv.Atoi(new_blogs_num[id_str])
+		uv_num := uv[id_str]
 
-		req_user_infos[i].TotalPageviews = uint64(pv_num)
-		req_user_infos[i].TotalUniqueviews = uint64(uv[id_str])
-		req_user_infos[i].TotalBlogs = uint64(blogs_num)
+		v.TotalPageviews = uint64(pv_num)
+		v.TotalBlogs = uint64(blogs_num)
+		v.TotalUniqueviews = uint64(uv_num)
+		req_user_infos = append(req_user_infos, v)
 
-		req_stat_user_data[i].Pv = uint64(pv_num)
-		req_stat_user_data[i].Uv = uint64(uv[id_str])
+		if val, ok := today_user_stat_map[k]; ok {
+			val.Pv = uint64(pv_num)
+			val.Uv = uint64(uv_num)
+			req_stat_user_data = append(req_stat_user_data, val)
+		}
 	}
 
 	// save to the user table in DB
