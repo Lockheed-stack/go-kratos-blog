@@ -50,10 +50,13 @@ func (uc *StatUserUsecase) GetUserSevenDaysStatistics(uid uint64) ([]*pb.DayStat
 
 func (uc *StatUserUsecase) SetUserTodayStatistics(req []*pb.DayStatistics) error {
 	users_data := make([]StatUser, len(req))
+	now := time.Now()
+	yesterday := time.Date(now.Year(), now.Month(), now.Day(), 23, 59, 0, 0, now.Location()).AddDate(0, 0, -1)
 	for i, v := range req {
 		users_data[i].Uid = uint(v.Uid)
 		users_data[i].Pv = uint(v.Pv)
 		users_data[i].Uv = uint(v.Uv)
+		users_data[i].CreatedAt = yesterday
 	}
 	err := uc.repo.SetUserTodayStatData(users_data)
 	if err != nil {

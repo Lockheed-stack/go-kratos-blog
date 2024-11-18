@@ -29,7 +29,7 @@ func NewGatewayUserRepo(data *Data, logger log.Logger, stat_user_repo biz.Gatewa
 	nowStamp := now.Unix()
 	tomorrowStamp := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location()).AddDate(0, 0, 1).Unix()
 	timer := time.NewTimer(time.Second * time.Duration(tomorrowStamp-nowStamp))
-	// timer := time.NewTimer(time.Second * 60)
+	// timer := time.NewTimer(time.Second * 40)
 
 	repo := &gatewayUserRepo{
 		data:                data,
@@ -253,29 +253,39 @@ func (r *gatewayUserRepo) saveStatisticsInfoToDB() error {
 		}
 	}
 
-	// save to the user table in DB
-	req_user.Infos = req_user_infos
-	client := users.NewUsersClient(r.data.ConnGRPC_user)
-	resp, err := client.UpdateUserStatisticsInfo(context.Background(), req_user)
-	if err != nil {
-		r.log.Error(err)
-		return err
-	} else if resp.Code != 200 {
-		r.log.Error(resp.Msg)
+	// Save to the corresponding table in the database
+
+	if len(req_user_infos) > 0 {
+		// save to the user table in DB
+		req_user.Infos = req_user_infos
+		client := users.NewUsersClient(r.data.ConnGRPC_user)
+		resp, err := client.UpdateUserStatisticsInfo(context.Background(), req_user)
+		if err != nil {
+			r.log.Error(err)
+			return err
+		} else if resp.Code != 200 {
+			r.log.Error(resp.Msg)
+		} else {
+			r.log.Info("User statistics info has been saved to the user table in DB")
+		}
 	} else {
-		r.log.Info("User statistics info has been saved to the user table in DB")
+		r.log.Info("There are none User statistics info should be saved to the user table in DB")
 	}
 
-	// save to the stat_user table in DB
-	req_stat_user.Data = req_stat_user_data
-	resp2, err := r.stat_user_repo.GRPC_SetUserTodayStatData(req_stat_user)
-	if err != nil {
-		r.log.Error(err)
-		return err
-	} else if resp2.Code != 200 {
-		r.log.Error(resp.Msg)
+	if len(req_stat_user_data) > 0 {
+		// save to the stat_user table in DB
+		req_stat_user.Data = req_stat_user_data
+		resp2, err := r.stat_user_repo.GRPC_SetUserTodayStatData(req_stat_user)
+		if err != nil {
+			r.log.Error(err)
+			return err
+		} else if resp2.Code != 200 {
+			r.log.Error(resp2.Msg)
+		} else {
+			r.log.Info("User statistics info has been saved to the stat_user table in DB")
+		}
 	} else {
-		r.log.Info("User statistics info has been saved to the stat_user table in DB")
+		r.log.Info("There are none User statistics info should be saved to the stat_user table in DB")
 	}
 
 	// clean redis key
