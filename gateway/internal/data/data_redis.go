@@ -108,6 +108,12 @@ func GetOneBlogRedis(rdb *redis.Client, key string) (*articles.DetailArticleInfo
 	if err != nil {
 		return nil, err
 	}
+	if err = blog_info.Err(); err != nil {
+		return nil, err
+	}
+	if err = blog_pv.Err(); err != nil {
+		return nil, err
+	}
 
 	// Unmarshal
 	result := &articles.DetailArticleInfo{}
