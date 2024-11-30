@@ -97,17 +97,27 @@ import (
 // blogs relate
 func GetOneBlogRedis(rdb *redis.Client, key string) (*articles.DetailArticleInfo, error) {
 
-	val, err := rdb.Get(context.Background(), key).Result()
+	pipe := rdb.Pipeline()
+	// get blog info
+	blog_info := pipe.Get(context.Background(), key)
+	// get blog pv
+	blog_pv := pipe.Incr(context.Background(), "blog_pv:"+key)
+	// val, err := rdb.Get(context.Background(), key).Result()
+	_, err := pipe.Exec(context.Background())
+
 	if err != nil {
 		return nil, err
 	}
 
 	// Unmarshal
 	result := &articles.DetailArticleInfo{}
-	dec := gob.NewDecoder(bytes.NewBufferString(val))
+	dec := gob.NewDecoder(bytes.NewBufferString(blog_info.Val()))
 	err = dec.Decode(result)
 	if err != nil {
 		return nil, err
+	}
+	if blog_pv.Val() > int64(result.PageView) {
+		result.PageView = uint32(blog_pv.Val())
 	}
 	return result, nil
 }
@@ -121,10 +131,18 @@ func SetOneBlogRedis(rdb *redis.Client, key string, data *articles.DetailArticle
 		return err
 	}
 
+	// set blog info
 	_, err = rdb.SetNX(context.Background(), key, buf.Bytes(), 0).Result()
-
 	if err != nil {
 		return err
+	}
+	// set blog pv
+	pv := rdb.Incr(context.Background(), "blog_pv:"+key)
+	if pv.Val() < int64(data.PageView) {
+		_, err = rdb.Set(context.Background(), "blog_pv:"+key, data.PageView, 0).Result()
+		if err != nil {
+			return err
+		}
 	}
 	return nil
 }

@@ -193,9 +193,16 @@ func (r *gatewayBlogRepo) GRPC_GetSingleBlog(req *articles.GetSingleArticleReque
 	r.lock.Unlock()
 
 	info, err := GetOneBlogRedis(r.data.Redis_cli, article_id_str)
-	if err == nil && ok { // redis cache matched. But if service restart, the data in statistics_pv will lost.
+	if err == nil { // redis cache matched. But if service restart, the data in statistics_pv will lost.
 
-		info.PageView = pv
+		if ok { // the article id in statistics_pv.
+			info.PageView = pv
+		} else { // But if service restart, the data in statistics_pv will lost. So we have to update statistics_pv.
+			r.lock.Lock()
+			r.statistics_pv[uint32(req.ArticleID)] = info.PageView
+			r.lock.Unlock()
+		}
+
 		r.hits_ch <- struct{}{}
 		result := &articles.GetSingleArticleReply{
 			Article: info,
@@ -218,7 +225,6 @@ func (r *gatewayBlogRepo) GRPC_GetSingleBlog(req *articles.GetSingleArticleReque
 	if val, ok := r.statistics_pv[uint32(req.ArticleID)]; ok {
 		result.Article.PageView = val
 		r.statistics_pv[uint32(req.ArticleID)] += 1
-		// r.log.Info("pv: ", r.statistics_pv[uint32(req.ArticleID)])
 	} else {
 		r.statistics_pv[uint32(req.ArticleID)] = result.Article.PageView
 	}
@@ -294,7 +300,10 @@ func (r *gatewayBlogRepo) savePageviewToDB() {
 		// remove keys in redis
 		keys := []string{}
 		for k := range r.statistics_pv {
-			keys = append(keys, strconv.Itoa(int(k)))
+			// blog info
+			blog_id_str := strconv.Itoa(int(k))
+			blog_pv_id := "blog_pv:" + blog_id_str
+			keys = append(keys, blog_id_str, blog_pv_id)
 		}
 		err = DelBatchBlogKeyRedis(r.data.Redis_cli, keys)
 		if err != nil {

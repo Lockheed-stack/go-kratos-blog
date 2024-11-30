@@ -77,7 +77,7 @@ func (ap *articleRepo) GetArticlesByRandomSelect(count uint32) ([]*pb.DetailArti
 		return result, nil
 	}
 
-	max_start_index := total - int64(count)
+	max_start_index := total - int64(count) + 1
 	var random_start_index int64
 	if max_start_index > 0 {
 		r := rand.New(rand.NewSource(time.Now().Unix()))
