@@ -186,7 +186,7 @@ func (r *gatewayBlogRepo) GRPC_GetSingleBlog(req *articles.GetSingleArticleReque
 
 	// NOTE: map is non-concurrent safety, it cannot concurrent write or read
 	r.lock.Lock()
-	pv, ok := r.statistics_pv[uint32(req.ArticleID)]
+	_, ok := r.statistics_pv[uint32(req.ArticleID)]
 	if ok {
 		r.statistics_pv[uint32(req.ArticleID)] += 1
 	}
@@ -195,9 +195,7 @@ func (r *gatewayBlogRepo) GRPC_GetSingleBlog(req *articles.GetSingleArticleReque
 	info, err := GetOneBlogRedis(r.data.Redis_cli, article_id_str)
 	if err == nil { // redis cache matched. But if service restart, the data in statistics_pv will lost.
 
-		if ok { // the article id in statistics_pv.
-			info.PageView = pv
-		} else { // But if service restart, the data in statistics_pv will lost. So we have to update statistics_pv.
+		if !ok { // But if service restart, the data in statistics_pv will lost. So we have to update statistics_pv.
 			r.lock.Lock()
 			r.statistics_pv[uint32(req.ArticleID)] = info.PageView
 			r.lock.Unlock()
