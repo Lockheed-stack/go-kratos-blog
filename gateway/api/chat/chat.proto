@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+package api.chat;
+
+option go_package = "AIChat/api/chat;chat";
+
+service Chat {
+	rpc ServerStreamAIChat(AIChatRequest) returns (stream AIChatReply);
+	rpc AIPaint(AIPaintRequest) returns (AIPaintReply);
+}
+
+message AIChatRequest{
+	message Message {
+		string role = 1;
+		string content = 2;
+	}
+	Message Msg = 1;
+	float Temperature = 2; // Controls the randomness of the output; higher values produce more random results.
+	uint32 TopK = 3; // Limits the AI to choose from the top 'k' most probable words. Lower values make responses more focused; higher values introduce more variety and potential surprises.
+	string ModelKind = 4;
+}
+message AIChatReply{
+	string Msg = 1;
+}
+
+message AIPaintRequest{
+	string Prompt = 1;
+	uint32 Height = 2;
+	uint32 Width = 3;
+	float Guidance = 4; // Controls how closely the generated image should adhere to the prompt; higher values make the image more aligned with the prompt
+	string ModelKind = 5;
+}
+message AIPaintReply{
+	bytes ImgBinary = 1;
+	string Msg = 2;
+}

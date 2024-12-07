@@ -2,6 +2,7 @@ package middlewares
 
 import (
 	"bytes"
+	"context"
 	"encoding/binary"
 	"encoding/hex"
 	"net/http"
@@ -64,7 +65,7 @@ func GenerateToken(username string, userID uint64) (string, error) {
 	accessToken := jwt.NewWithClaims(jwt.SigningMethodHS256, SetClaims)
 	signedString, err := accessToken.SignedString(JwtKey)
 	if err != nil {
-		Kratos_log.Error(err.Error())
+		kratos_log.Error(err.Error())
 		return "", err
 	}
 	return signedString, nil
@@ -121,10 +122,26 @@ func AuthToken(token string) (uint64, error) {
 		}
 
 		plain_id := binary.BigEndian.Uint64(cipher_id)
-		Kratos_log.Infof("auth user id:%v, Token is valid\n", plain_id)
+		kratos_log.Infof("auth user id:%v, Token is valid\n", plain_id)
 		return plain_id, nil
 	}
 	return 0, nil
+}
+
+func redis_Visitors_AI_Calling_Limiting(ip string) bool {
+	result := redis_cli.HIncrBy(context.Background(), "AI_visitor", ip, 1)
+	v, err := result.Result()
+	if err != nil {
+		kratos_log.Error(err)
+		return true
+	}
+	if v > 10 {
+		return true
+	}
+	return false
+}
+func redis_Remove_Visitors_AI_key() {
+	redis_cli.Del(context.Background(), "AI_visitor")
 }
 
 func JwtMids() gin.HandlerFunc {
@@ -133,6 +150,22 @@ func JwtMids() gin.HandlerFunc {
 		tokenHeader := ctx.Request.Header.Get("Authorization")
 
 		if tokenHeader == "" {
+			// 10 free AI API calls per visitor per day
+			pathArr := strings.Split(ctx.Request.URL.Path, "/")
+			if len(pathArr) > 2 && pathArr[1] == "ai" {
+				// if over limiting
+				if redis_Visitors_AI_Calling_Limiting(ctx.ClientIP()) {
+					ctx.JSON(http.StatusUnauthorized, gin.H{
+						"result": "Please login",
+					})
+					ctx.Abort()
+					return
+				} else {
+					return
+				}
+			}
+
+			// other requests which should be authorized.
 			ctx.JSON(http.StatusUnauthorized, gin.H{
 				"result": "Invalid token",
 			})

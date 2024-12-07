@@ -15,6 +15,7 @@ func NewGinRouter(
 	user_handler *biz.GatewayUserUsecase,
 	upload_handler *biz.GatewayUploadUsecase,
 	stat_user_handler *biz.GatewayStatUserUsecase,
+	aichat_handler *biz.GatewayAIChatUsecase,
 	mids *middlewares.Mids,
 ) *gin.Engine {
 
@@ -69,5 +70,16 @@ func NewGinRouter(
 		auth_Required_group.GET("/stat/user/sevenDays", stat_user_handler.GetUserSevenDaysStat)
 	}
 
+	AIChat_group := r.Group("/ai")
+	AIChat_group.Use(
+		kgin.Middlewares(
+			recovery.Recovery(),
+		),
+		middlewares.JwtMids(),
+	)
+	{
+		AIChat_group.POST("/chat", aichat_handler.AIChatStreamGetResponse)
+		AIChat_group.POST("/chat/text2img", aichat_handler.AIPainting)
+	}
 	return r
 }

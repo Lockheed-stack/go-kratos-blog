@@ -9,4 +9,5 @@ var ProviderSet = wire.NewSet(
 	NewGatewayUserUsecase,
 	NewGatewayUploadUsecase,
 	NewGatewayStatUserUsecase,
+	NewGatewayAIChatUsecase,
 )

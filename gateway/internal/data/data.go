@@ -3,6 +3,7 @@ package data
 import (
 	"context"
 	"gateway/internal/conf"
+	"time"
 
 	"github.com/go-kratos/kratos/contrib/registry/etcd/v2"
 	"github.com/go-kratos/kratos/v2/log"
@@ -21,6 +22,7 @@ var ProviderSet = wire.NewSet(
 	NewGatewayCategoryRepo,
 	NewGatewayUserRepo,
 	NewGatewayStatUserRepo,
+	NewGatewayAIChatRepo,
 )
 
 // Data .
@@ -31,6 +33,7 @@ type Data struct {
 	ConnGRPC_category  *grpc.ClientConn
 	ConnGRPC_user      *grpc.ClientConn
 	ConnGRPC_stat_user *grpc.ClientConn
+	ConnGRPC_ai_chat   *grpc.ClientConn
 	Redis_cli          *redis.Client
 	// qiniuyun
 	Qiniu_AccessKey      string
@@ -69,6 +72,7 @@ func NewData(c *conf.Data, logger log.Logger) (*Data, func(), error) {
 	data.Redis_cli = rdb
 
 	// connection of gprc
+	// blog service
 	conn1, err := kratos_grpc.DialInsecure(
 		context.Background(),
 		kratos_grpc.WithEndpoint("discovery:///blog"),
@@ -79,6 +83,7 @@ func NewData(c *conf.Data, logger log.Logger) (*Data, func(), error) {
 	}
 	data.ConnGRPC_blog = conn1
 
+	// category service
 	conn2, err := kratos_grpc.DialInsecure(
 		context.Background(),
 		kratos_grpc.WithEndpoint("discovery:///category"),
@@ -89,6 +94,7 @@ func NewData(c *conf.Data, logger log.Logger) (*Data, func(), error) {
 	}
 	data.ConnGRPC_category = conn2
 
+	// user service
 	conn3, err := kratos_grpc.DialInsecure(
 		context.Background(),
 		kratos_grpc.WithEndpoint("discovery:///user"),
@@ -99,6 +105,7 @@ func NewData(c *conf.Data, logger log.Logger) (*Data, func(), error) {
 	}
 	data.ConnGRPC_user = conn3
 
+	// statistics-user service
 	conn4, err := kratos_grpc.DialInsecure(
 		context.Background(),
 		kratos_grpc.WithEndpoint("discovery:///stat_user"),
@@ -108,6 +115,18 @@ func NewData(c *conf.Data, logger log.Logger) (*Data, func(), error) {
 		return data, nil, err
 	}
 	data.ConnGRPC_stat_user = conn4
+
+	// ai service
+	conn5, err := kratos_grpc.DialInsecure(
+		context.Background(),
+		kratos_grpc.WithEndpoint("discovery:///AIChat"),
+		kratos_grpc.WithDiscovery(data.ETCD_reg),
+		kratos_grpc.WithTimeout(time.Second*30),
+	)
+	if err != nil {
+		return data, nil, err
+	}
+	data.ConnGRPC_ai_chat = conn5
 
 	// qiniuyun config
 	data.Qiniu_AccessKey = c.Qiniuyun.AccessKey
