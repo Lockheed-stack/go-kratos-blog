@@ -99,8 +99,8 @@ jobs:
   
           - name: Tag and Push the Docker image
             run: |
-                docker tag tmp-image lockheedlee/kratos-blog-micro-AIChat:latest
-                docker push lockheedlee/kratos-blog-micro-AIChat:latest
+                docker tag tmp-image lockheedlee/kratos-blog-micro-ai-chat:latest
+                docker push lockheedlee/kratos-blog-micro-ai-chat:latest
     build_gateway:
         runs-on: ubuntu-latest
         steps:
