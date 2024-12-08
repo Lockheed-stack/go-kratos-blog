@@ -148,24 +148,7 @@ func JwtMids() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 
 		tokenHeader := ctx.Request.Header.Get("Authorization")
-
 		if tokenHeader == "" {
-			// 10 free AI API calls per visitor per day
-			pathArr := strings.Split(ctx.Request.URL.Path, "/")
-			if len(pathArr) > 2 && pathArr[1] == "ai" {
-				// if over limiting
-				if redis_Visitors_AI_Calling_Limiting(ctx.ClientIP()) {
-					ctx.JSON(http.StatusUnauthorized, gin.H{
-						"result": "Please login",
-					})
-					ctx.Abort()
-					return
-				} else {
-					return
-				}
-			}
-
-			// other requests which should be authorized.
 			ctx.JSON(http.StatusUnauthorized, gin.H{
 				"result": "Invalid token",
 			})
@@ -174,13 +157,35 @@ func JwtMids() gin.HandlerFunc {
 		}
 
 		checkToken := strings.Split(tokenHeader, " ")
-
-		if len(checkToken) != 2 && checkToken[0] != "Bearer" {
+		if len(checkToken) != 2 || checkToken[0] != "Bearer" {
 			ctx.JSON(http.StatusUnauthorized, gin.H{
 				"result": "Unkown token type",
 			})
 			ctx.Abort()
 			return
+		}
+
+		// 10 free AI API calls per visitor per day
+		if len(checkToken) == 2 && checkToken[1] == "null" {
+			pathArr := strings.Split(ctx.Request.URL.Path, "/")
+			if len(pathArr) > 2 && pathArr[1] == "ai" { // calling AI APIs
+				// if over limiting
+				if redis_Visitors_AI_Calling_Limiting(ctx.ClientIP()) {
+					ctx.JSON(http.StatusUnauthorized, gin.H{
+						"result": "Please login",
+					})
+					ctx.Abort()
+					return
+				} else { // no over limiting
+					return
+				}
+			} else { // calling other APIs which need to be authorized
+				ctx.JSON(http.StatusUnauthorized, gin.H{
+					"result": "token can not be null",
+				})
+				ctx.Abort()
+				return
+			}
 		}
 
 		userid, err := AuthToken(checkToken[1])
