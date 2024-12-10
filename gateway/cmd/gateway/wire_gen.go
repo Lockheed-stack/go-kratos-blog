@@ -40,7 +40,7 @@ func wireApp(confServer *conf.Server, confData *conf.Data, logger log.Logger, co
 	gatewayUploadUsecase := biz.NewGatewayUploadUsecase(gatewayUploadRepo)
 	gatewayStatUserUsecase := biz.NewGatewayStatUserUsecase(gatewayStatUserRepo)
 	gatewayAIChatRepo := data.NewGatewayAIChatRepo(dataData, logger)
-	gatewayAIChatUsecase := biz.NewGatewayAIChatUsecase(gatewayAIChatRepo)
+	gatewayAIChatUsecase := biz.NewGatewayAIChatUsecase(gatewayAIChatRepo, gatewayBlogRepo)
 	mids := middlewares.NewMids(confMiddlewares, confData, logger)
 	engine := router.NewGinRouter(gatewayBlogUsecase, gatewayCategoryUsecase, gatewayUserUsecase, gatewayUploadUsecase, gatewayStatUserUsecase, gatewayAIChatUsecase, mids)
 	httpServer := server.NewHTTPServer(confServer, logger, engine)

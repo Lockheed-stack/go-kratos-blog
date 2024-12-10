@@ -103,6 +103,23 @@ func (ap *articleRepo) GetOneArticle(id uint64) (*biz.Article, error) {
 
 	return article, nil
 }
+func (ap *articleRepo) CheckArticleID(id uint64) (bool, error) {
+	var article = &biz.Article{}
+	article.ID = uint(id)
+
+	sqlRes := ap.data.db.Select("id").Find(article)
+
+	if err := sqlRes.Error; err != nil {
+		ap.log.Error(err)
+		return false, err
+	}
+
+	if sqlRes.RowsAffected == 0 {
+		return false, nil
+	}
+
+	return true, nil
+}
 
 // update
 func (ap *articleRepo) UpdateOneArticle(article *biz.Article) (uint32, error) {

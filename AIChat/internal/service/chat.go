@@ -51,3 +51,24 @@ func (s *ChatService) AIPaint(ctx context.Context, req *pb.AIPaintRequest) (*pb.
 	}
 	return resp, nil
 }
+
+func (s *ChatService) AISummarization(req *pb.AISummarizationRequest, conn pb.Chat_AISummarizationServer) error {
+
+	ch := make(chan *biz.AIChatRespond)
+	defer close(ch)
+	go s.uc.StreamGetAISummarization(req, ch)
+
+	for resp := range ch {
+		if resp != nil {
+			err := conn.Send(&pb.AISummarizationReply{
+				TextAbstract: resp.Response,
+			})
+			if err != nil {
+				return err
+			}
+		} else {
+			return nil
+		}
+	}
+	return nil
+}

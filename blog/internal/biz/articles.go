@@ -44,6 +44,8 @@ type ArticleRepo interface {
 	UpdateOneArticle(*Article) (uint32, error)
 	UpdateArticlesPageview(map[uint32]uint32) (uint32, error)
 	RemoveOneArticle(uint64) (uint32, error)
+
+	CheckArticleID(id uint64) (bool, error)
 }
 
 type ArticleUsecase struct {
@@ -99,6 +101,13 @@ func (uc *ArticleUsecase) GetArticleByID(id uint64) (*Article, error) {
 		return article, pb.ErrorErrArticleNotExist("Article '%v' doesn't exist\n", id)
 	}
 	return article, nil
+}
+func (uc *ArticleUsecase) CheckWhetherBlogIDExistence(id uint64) (bool, error) {
+	result, err := uc.repo.CheckArticleID(id)
+	if err != nil {
+		return false, pb.ErrorErrArticleNotExist("Article '%v' doesn't exist\n", id)
+	}
+	return result, nil
 }
 
 // update

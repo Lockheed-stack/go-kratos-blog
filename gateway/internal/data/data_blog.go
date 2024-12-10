@@ -275,6 +275,16 @@ func (r *gatewayBlogRepo) GRPC_DeleteBlog(req *articles.DeleteArticlesRequest) (
 	return result, nil
 }
 
+func (r *gatewayBlogRepo) GRPC_CheckBlogIsExistence(req *articles.CheckExistenceOfBlogRequest) (*articles.CheckExistenceOfBlogReply, error) {
+	client := articles.NewArticlesClient(r.data.ConnGRPC_blog)
+	result, err := client.CheckExistenceOfBlog(context.Background(), req)
+	if err != nil {
+		r.log.Error(err)
+		return result, err
+	}
+	return result, nil
+}
+
 // internal functions
 func (r *gatewayBlogRepo) savePageviewToDB() {
 

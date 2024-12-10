@@ -3,6 +3,7 @@ package biz
 import (
 	pb "AIChat/api/chat"
 	"context"
+	"strings"
 
 	"github.com/go-kratos/kratos/v2/errors"
 )
@@ -23,8 +24,9 @@ type AIChatRequestContent struct {
 type AIChatRequest struct {
 	Messages    []AIChatRequestContent `json:"messages"`
 	Stream      bool                   `json:"stream"`
-	Temperature float32                `json:"temperature"`
-	TopK        uint32                 `json:"top_k"`
+	Temperature float32                `json:"temperature,omitempty"`
+	TopK        uint32                 `json:"top_k,omitempty"`
+	MaxTokens   uint32                 `json:"max_tokens,omitempty"` // The maximum number of tokens to generate in the response.
 }
 type AIChatRespond struct {
 	Response string `json:"response"`
@@ -64,9 +66,12 @@ func (uc *AIChatUsecase) StreamGetAIChatRespond(promptAndSetting *pb.AIChatReque
 	}
 
 	// assembling the request structure
-	MsgContents := make([]AIChatRequestContent, 1)
-	MsgContents[0].Role = promptAndSetting.Msg.Role
-	MsgContents[0].Content = promptAndSetting.Msg.Content
+	MsgContents := make([]AIChatRequestContent, len(promptAndSetting.Msg))
+	for i, v := range promptAndSetting.Msg {
+		MsgContents[i].Role = v.Role
+		MsgContents[i].Content = v.Content
+	}
+
 	req := &AIChatRequest{
 		Messages:    MsgContents,
 		Stream:      true,
@@ -105,4 +110,31 @@ func (uc *AIChatUsecase) CloudflareAIPaintingRespond(promptAndSetting *pb.AIPain
 		return nil, errors.New(400, "Please adjust parameters", "Failed to generate images")
 	}
 	return bin, nil
+}
+
+func (uc *AIChatUsecase) StreamGetAISummarization(text_bytes *pb.AISummarizationRequest, ch chan *AIChatRespond) {
+
+	var builder strings.Builder
+	builder.WriteString("对这篇markdown格式的文章进行摘要：\n")
+	builder.Write(text_bytes.ArticleText)
+	MsgContents := make([]AIChatRequestContent, 2)
+	MsgContents[0].Role = "system"
+	MsgContents[0].Content = "your are a helpful assistant"
+	MsgContents[1].Role = "user"
+	MsgContents[1].Content = builder.String()
+
+	req := &AIChatRequest{
+		Messages:    MsgContents,
+		Stream:      true,
+		Temperature: 0.6,
+		TopK:        30,
+		MaxTokens:   2048,
+	}
+	err := uc.repo.CloudflareStreamGetAIChat(context.Background(), req, ch, "qwen1.5-14b-chat-awq")
+	if err != nil {
+		ch <- &AIChatRespond{
+			Response: err.Error(),
+		}
+	}
+	ch <- nil
 }

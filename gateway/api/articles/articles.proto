@@ -14,6 +14,7 @@ service Articles {
 	rpc GetSingleArticle (GetSingleArticleRequest) returns (GetSingleArticleReply);
 	rpc GetRecommendArticles (GetRecommendArticlesRequest) returns (GetRecommendArticlesReply);
 	rpc GetRandomArticles(GetRandomArticlesRequest) returns (GetRandomArticlesReply);
+	rpc CheckExistenceOfBlog(CheckExistenceOfBlogRequest)returns(CheckExistenceOfBlogReply);
 }
 
 message DetailArticleInfo{
@@ -114,4 +115,13 @@ message DeleteArticlesRequest {
 message DeleteArticlesReply {
 	uint32 code = 1;
 	string Msg = 2;
+}
+
+message CheckExistenceOfBlogRequest{
+	uint32 ArticleID = 1;
+}
+message CheckExistenceOfBlogReply{
+	bool Existence = 1;
+	uint32 code = 2;
+	string Msg = 3;
 }

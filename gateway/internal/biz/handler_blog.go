@@ -18,6 +18,7 @@ type GatewayBlogRepo interface {
 	GRPC_GetSingleBlog(*articles.GetSingleArticleRequest) (*articles.GetSingleArticleReply, error)
 	GRPC_UpdateBlog(*articles.UpdateArticlesRequest) (*articles.UpdateArticlesReply, error)
 	GRPC_DeleteBlog(*articles.DeleteArticlesRequest) (*articles.DeleteArticlesReply, error)
+	GRPC_CheckBlogIsExistence(*articles.CheckExistenceOfBlogRequest) (*articles.CheckExistenceOfBlogReply, error)
 }
 
 type GatewayBlogUsecase struct {

@@ -80,6 +80,7 @@ func NewGinRouter(
 	{
 		AIChat_group.POST("/chat", aichat_handler.AIChatStreamGetResponse)
 		AIChat_group.POST("/text2img", aichat_handler.AIPainting)
+		AIChat_group.POST("/summarization", aichat_handler.AISummarizationStreamGetResponse)
 	}
 	return r
 }

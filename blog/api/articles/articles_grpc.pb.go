@@ -28,6 +28,7 @@ const (
 	Articles_GetSingleArticle_FullMethodName          = "/api.articles.Articles/GetSingleArticle"
 	Articles_GetRecommendArticles_FullMethodName      = "/api.articles.Articles/GetRecommendArticles"
 	Articles_GetRandomArticles_FullMethodName         = "/api.articles.Articles/GetRandomArticles"
+	Articles_CheckExistenceOfBlog_FullMethodName      = "/api.articles.Articles/CheckExistenceOfBlog"
 )
 
 // ArticlesClient is the client API for Articles service.
@@ -43,6 +44,7 @@ type ArticlesClient interface {
 	GetSingleArticle(ctx context.Context, in *GetSingleArticleRequest, opts ...grpc.CallOption) (*GetSingleArticleReply, error)
 	GetRecommendArticles(ctx context.Context, in *GetRecommendArticlesRequest, opts ...grpc.CallOption) (*GetRecommendArticlesReply, error)
 	GetRandomArticles(ctx context.Context, in *GetRandomArticlesRequest, opts ...grpc.CallOption) (*GetRandomArticlesReply, error)
+	CheckExistenceOfBlog(ctx context.Context, in *CheckExistenceOfBlogRequest, opts ...grpc.CallOption) (*CheckExistenceOfBlogReply, error)
 }
 
 type articlesClient struct {
@@ -143,6 +145,16 @@ func (c *articlesClient) GetRandomArticles(ctx context.Context, in *GetRandomArt
 	return out, nil
 }
 
+func (c *articlesClient) CheckExistenceOfBlog(ctx context.Context, in *CheckExistenceOfBlogRequest, opts ...grpc.CallOption) (*CheckExistenceOfBlogReply, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CheckExistenceOfBlogReply)
+	err := c.cc.Invoke(ctx, Articles_CheckExistenceOfBlog_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ArticlesServer is the server API for Articles service.
 // All implementations must embed UnimplementedArticlesServer
 // for forward compatibility.
@@ -156,6 +168,7 @@ type ArticlesServer interface {
 	GetSingleArticle(context.Context, *GetSingleArticleRequest) (*GetSingleArticleReply, error)
 	GetRecommendArticles(context.Context, *GetRecommendArticlesRequest) (*GetRecommendArticlesReply, error)
 	GetRandomArticles(context.Context, *GetRandomArticlesRequest) (*GetRandomArticlesReply, error)
+	CheckExistenceOfBlog(context.Context, *CheckExistenceOfBlogRequest) (*CheckExistenceOfBlogReply, error)
 	mustEmbedUnimplementedArticlesServer()
 }
 
@@ -192,6 +205,9 @@ func (UnimplementedArticlesServer) GetRecommendArticles(context.Context, *GetRec
 }
 func (UnimplementedArticlesServer) GetRandomArticles(context.Context, *GetRandomArticlesRequest) (*GetRandomArticlesReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetRandomArticles not implemented")
+}
+func (UnimplementedArticlesServer) CheckExistenceOfBlog(context.Context, *CheckExistenceOfBlogRequest) (*CheckExistenceOfBlogReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CheckExistenceOfBlog not implemented")
 }
 func (UnimplementedArticlesServer) mustEmbedUnimplementedArticlesServer() {}
 func (UnimplementedArticlesServer) testEmbeddedByValue()                  {}
@@ -376,6 +392,24 @@ func _Articles_GetRandomArticles_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Articles_CheckExistenceOfBlog_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CheckExistenceOfBlogRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ArticlesServer).CheckExistenceOfBlog(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Articles_CheckExistenceOfBlog_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ArticlesServer).CheckExistenceOfBlog(ctx, req.(*CheckExistenceOfBlogRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Articles_ServiceDesc is the grpc.ServiceDesc for Articles service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -418,6 +452,10 @@ var Articles_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetRandomArticles",
 			Handler:    _Articles_GetRandomArticles_Handler,
+		},
+		{
+			MethodName: "CheckExistenceOfBlog",
+			Handler:    _Articles_CheckExistenceOfBlog_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -7,6 +7,7 @@ option go_package = "AIChat/api/chat;chat";
 service Chat {
 	rpc ServerStreamAIChat(AIChatRequest) returns (stream AIChatReply);
 	rpc AIPaint(AIPaintRequest) returns (AIPaintReply);
+	rpc AISummarization(AISummarizationRequest) returns (stream AISummarizationReply);
 }
 
 message AIChatRequest{
@@ -14,7 +15,7 @@ message AIChatRequest{
 		string role = 1;
 		string content = 2;
 	}
-	Message Msg = 1;
+	repeated Message Msg = 1;
 	float Temperature = 2; // Controls the randomness of the output; higher values produce more random results.
 	uint32 TopK = 3; // Limits the AI to choose from the top 'k' most probable words. Lower values make responses more focused; higher values introduce more variety and potential surprises.
 	string ModelKind = 4;
@@ -33,4 +34,11 @@ message AIPaintRequest{
 message AIPaintReply{
 	bytes ImgBinary = 1;
 	string Msg = 2;
+}
+
+message AISummarizationRequest {
+	bytes ArticleText = 1;
+}
+message AISummarizationReply{
+	string TextAbstract = 1;
 }

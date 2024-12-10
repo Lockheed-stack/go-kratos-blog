@@ -21,6 +21,7 @@ const _ = grpc.SupportPackageIsVersion9
 const (
 	Chat_ServerStreamAIChat_FullMethodName = "/api.chat.Chat/ServerStreamAIChat"
 	Chat_AIPaint_FullMethodName            = "/api.chat.Chat/AIPaint"
+	Chat_AISummarization_FullMethodName    = "/api.chat.Chat/AISummarization"
 )
 
 // ChatClient is the client API for Chat service.
@@ -29,6 +30,7 @@ const (
 type ChatClient interface {
 	ServerStreamAIChat(ctx context.Context, in *AIChatRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[AIChatReply], error)
 	AIPaint(ctx context.Context, in *AIPaintRequest, opts ...grpc.CallOption) (*AIPaintReply, error)
+	AISummarization(ctx context.Context, in *AISummarizationRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[AISummarizationReply], error)
 }
 
 type chatClient struct {
@@ -68,12 +70,32 @@ func (c *chatClient) AIPaint(ctx context.Context, in *AIPaintRequest, opts ...gr
 	return out, nil
 }
 
+func (c *chatClient) AISummarization(ctx context.Context, in *AISummarizationRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[AISummarizationReply], error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	stream, err := c.cc.NewStream(ctx, &Chat_ServiceDesc.Streams[1], Chat_AISummarization_FullMethodName, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &grpc.GenericClientStream[AISummarizationRequest, AISummarizationReply]{ClientStream: stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type Chat_AISummarizationClient = grpc.ServerStreamingClient[AISummarizationReply]
+
 // ChatServer is the server API for Chat service.
 // All implementations must embed UnimplementedChatServer
 // for forward compatibility.
 type ChatServer interface {
 	ServerStreamAIChat(*AIChatRequest, grpc.ServerStreamingServer[AIChatReply]) error
 	AIPaint(context.Context, *AIPaintRequest) (*AIPaintReply, error)
+	AISummarization(*AISummarizationRequest, grpc.ServerStreamingServer[AISummarizationReply]) error
 	mustEmbedUnimplementedChatServer()
 }
 
@@ -89,6 +111,9 @@ func (UnimplementedChatServer) ServerStreamAIChat(*AIChatRequest, grpc.ServerStr
 }
 func (UnimplementedChatServer) AIPaint(context.Context, *AIPaintRequest) (*AIPaintReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AIPaint not implemented")
+}
+func (UnimplementedChatServer) AISummarization(*AISummarizationRequest, grpc.ServerStreamingServer[AISummarizationReply]) error {
+	return status.Errorf(codes.Unimplemented, "method AISummarization not implemented")
 }
 func (UnimplementedChatServer) mustEmbedUnimplementedChatServer() {}
 func (UnimplementedChatServer) testEmbeddedByValue()              {}
@@ -140,6 +165,17 @@ func _Chat_AIPaint_Handler(srv interface{}, ctx context.Context, dec func(interf
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Chat_AISummarization_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(AISummarizationRequest)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(ChatServer).AISummarization(m, &grpc.GenericServerStream[AISummarizationRequest, AISummarizationReply]{ServerStream: stream})
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type Chat_AISummarizationServer = grpc.ServerStreamingServer[AISummarizationReply]
+
 // Chat_ServiceDesc is the grpc.ServiceDesc for Chat service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -156,6 +192,11 @@ var Chat_ServiceDesc = grpc.ServiceDesc{
 		{
 			StreamName:    "ServerStreamAIChat",
 			Handler:       _Chat_ServerStreamAIChat_Handler,
+			ServerStreams: true,
+		},
+		{
+			StreamName:    "AISummarization",
+			Handler:       _Chat_AISummarization_Handler,
 			ServerStreams: true,
 		},
 	},

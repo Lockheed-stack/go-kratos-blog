@@ -6,6 +6,7 @@ import (
 	"encoding/gob"
 	"gateway/api/articles"
 	"gateway/api/category"
+	"gateway/api/chat"
 	"strconv"
 	"time"
 
@@ -194,6 +195,24 @@ func GetBlogsListRedis(rdb *redis.Client, key string) ([]*articles.DetailArticle
 }
 func DelBatchBlogKeyRedis(rdb *redis.Client, keys []string) error {
 	_, err := rdb.Del(context.Background(), keys...).Result()
+	if err != nil {
+		return err
+	}
+	return nil
+}
+func GetAISummarizationRedis(rdb *redis.Client, key string) (*chat.AISummarizationReply, error) {
+	val, err := rdb.Get(context.Background(), "AI_Abstract:"+key).Result()
+	if err != nil {
+		return nil, err
+	}
+
+	result := &chat.AISummarizationReply{}
+	result.TextAbstract = val
+	return result, nil
+}
+func SetAISummarizationRedis(rdb *redis.Client, key string, data string) error {
+
+	_, err := rdb.SetNX(context.Background(), "AI_Abstract:"+key, data, time.Hour*24).Result()
 	if err != nil {
 		return err
 	}

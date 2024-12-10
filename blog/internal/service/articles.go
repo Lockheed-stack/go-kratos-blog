@@ -186,3 +186,18 @@ func (s *ArticlesService) DeleteArticles(ctx context.Context, req *pb.DeleteArti
 	}
 	return resp, nil
 }
+
+func (s *ArticlesService) CheckExistenceOfBlog(ctx context.Context, req *pb.CheckExistenceOfBlogRequest) (*pb.CheckExistenceOfBlogReply, error) {
+	resp := &pb.CheckExistenceOfBlogReply{}
+	val, err := s.ac.CheckWhetherBlogIDExistence(uint64(req.ArticleID))
+	if err != nil {
+		kratos_err := err.(*errors.Error)
+		resp.Code = uint32(kratos_err.Code)
+		resp.Msg = kratos_err.Reason
+	} else {
+		resp.Code = 200
+		resp.Msg = "OK"
+	}
+	resp.Existence = val
+	return resp, nil
+}
