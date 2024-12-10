@@ -19,9 +19,9 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	Chat_ServerStreamAIChat_FullMethodName = "/api.chat.Chat/ServerStreamAIChat"
-	Chat_AIPaint_FullMethodName            = "/api.chat.Chat/AIPaint"
-	Chat_AISummarization_FullMethodName    = "/api.chat.Chat/AISummarization"
+	Chat_ServerStreamAIChat_FullMethodName    = "/api.chat.Chat/ServerStreamAIChat"
+	Chat_AIPaint_FullMethodName               = "/api.chat.Chat/AIPaint"
+	Chat_AISummarizationStream_FullMethodName = "/api.chat.Chat/AISummarizationStream"
 )
 
 // ChatClient is the client API for Chat service.
@@ -30,7 +30,7 @@ const (
 type ChatClient interface {
 	ServerStreamAIChat(ctx context.Context, in *AIChatRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[AIChatReply], error)
 	AIPaint(ctx context.Context, in *AIPaintRequest, opts ...grpc.CallOption) (*AIPaintReply, error)
-	AISummarization(ctx context.Context, in *AISummarizationRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[AISummarizationReply], error)
+	AISummarizationStream(ctx context.Context, in *AISummarizationRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[AISummarizationReply], error)
 }
 
 type chatClient struct {
@@ -70,9 +70,9 @@ func (c *chatClient) AIPaint(ctx context.Context, in *AIPaintRequest, opts ...gr
 	return out, nil
 }
 
-func (c *chatClient) AISummarization(ctx context.Context, in *AISummarizationRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[AISummarizationReply], error) {
+func (c *chatClient) AISummarizationStream(ctx context.Context, in *AISummarizationRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[AISummarizationReply], error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	stream, err := c.cc.NewStream(ctx, &Chat_ServiceDesc.Streams[1], Chat_AISummarization_FullMethodName, cOpts...)
+	stream, err := c.cc.NewStream(ctx, &Chat_ServiceDesc.Streams[1], Chat_AISummarizationStream_FullMethodName, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -87,7 +87,7 @@ func (c *chatClient) AISummarization(ctx context.Context, in *AISummarizationReq
 }
 
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type Chat_AISummarizationClient = grpc.ServerStreamingClient[AISummarizationReply]
+type Chat_AISummarizationStreamClient = grpc.ServerStreamingClient[AISummarizationReply]
 
 // ChatServer is the server API for Chat service.
 // All implementations must embed UnimplementedChatServer
@@ -95,7 +95,7 @@ type Chat_AISummarizationClient = grpc.ServerStreamingClient[AISummarizationRepl
 type ChatServer interface {
 	ServerStreamAIChat(*AIChatRequest, grpc.ServerStreamingServer[AIChatReply]) error
 	AIPaint(context.Context, *AIPaintRequest) (*AIPaintReply, error)
-	AISummarization(*AISummarizationRequest, grpc.ServerStreamingServer[AISummarizationReply]) error
+	AISummarizationStream(*AISummarizationRequest, grpc.ServerStreamingServer[AISummarizationReply]) error
 	mustEmbedUnimplementedChatServer()
 }
 
@@ -112,8 +112,8 @@ func (UnimplementedChatServer) ServerStreamAIChat(*AIChatRequest, grpc.ServerStr
 func (UnimplementedChatServer) AIPaint(context.Context, *AIPaintRequest) (*AIPaintReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AIPaint not implemented")
 }
-func (UnimplementedChatServer) AISummarization(*AISummarizationRequest, grpc.ServerStreamingServer[AISummarizationReply]) error {
-	return status.Errorf(codes.Unimplemented, "method AISummarization not implemented")
+func (UnimplementedChatServer) AISummarizationStream(*AISummarizationRequest, grpc.ServerStreamingServer[AISummarizationReply]) error {
+	return status.Errorf(codes.Unimplemented, "method AISummarizationStream not implemented")
 }
 func (UnimplementedChatServer) mustEmbedUnimplementedChatServer() {}
 func (UnimplementedChatServer) testEmbeddedByValue()              {}
@@ -165,16 +165,16 @@ func _Chat_AIPaint_Handler(srv interface{}, ctx context.Context, dec func(interf
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Chat_AISummarization_Handler(srv interface{}, stream grpc.ServerStream) error {
+func _Chat_AISummarizationStream_Handler(srv interface{}, stream grpc.ServerStream) error {
 	m := new(AISummarizationRequest)
 	if err := stream.RecvMsg(m); err != nil {
 		return err
 	}
-	return srv.(ChatServer).AISummarization(m, &grpc.GenericServerStream[AISummarizationRequest, AISummarizationReply]{ServerStream: stream})
+	return srv.(ChatServer).AISummarizationStream(m, &grpc.GenericServerStream[AISummarizationRequest, AISummarizationReply]{ServerStream: stream})
 }
 
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type Chat_AISummarizationServer = grpc.ServerStreamingServer[AISummarizationReply]
+type Chat_AISummarizationStreamServer = grpc.ServerStreamingServer[AISummarizationReply]
 
 // Chat_ServiceDesc is the grpc.ServiceDesc for Chat service.
 // It's only intended for direct use with grpc.RegisterService,
@@ -195,8 +195,8 @@ var Chat_ServiceDesc = grpc.ServiceDesc{
 			ServerStreams: true,
 		},
 		{
-			StreamName:    "AISummarization",
-			Handler:       _Chat_AISummarization_Handler,
+			StreamName:    "AISummarizationStream",
+			Handler:       _Chat_AISummarizationStream_Handler,
 			ServerStreams: true,
 		},
 	},

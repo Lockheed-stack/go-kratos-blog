@@ -52,7 +52,7 @@ func (s *ChatService) AIPaint(ctx context.Context, req *pb.AIPaintRequest) (*pb.
 	return resp, nil
 }
 
-func (s *ChatService) AISummarization(req *pb.AISummarizationRequest, conn pb.Chat_AISummarizationServer) error {
+func (s *ChatService) AISummarizationStream(req *pb.AISummarizationRequest, conn pb.Chat_AISummarizationStreamServer) error {
 
 	ch := make(chan *biz.AIChatRespond)
 	defer close(ch)

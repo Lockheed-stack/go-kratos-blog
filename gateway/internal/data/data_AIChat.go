@@ -73,17 +73,18 @@ func (r *gatewayAIChatRepo) GRPC_AISummarizationStreamGetResponse(req_body io.Re
 	}
 
 	// slow path
-	req := &chat.AISummarizationRequest{}
+	gprc_req := &chat.AISummarizationRequest{}
 	var b = make([]byte, 0, 4096)
 	buf := bytes.NewBuffer(b)
 	buf.ReadFrom(req_body)
-	req.ArticleText = buf.Bytes()
+	gprc_req.ArticleText = buf.Bytes()
 	defer req_body.Close()
+	r.log.Info(len(gprc_req.ArticleText))
 
 	client := chat.NewChatClient(r.data.ConnGRPC_ai_chat)
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*30)
 	defer cancel()
-	stream, err := client.AISummarization(ctx, req)
+	stream, err := client.AISummarizationStream(ctx, gprc_req)
 	if err != nil {
 		r.log.Error(err)
 		ch <- &chat.AISummarizationReply{

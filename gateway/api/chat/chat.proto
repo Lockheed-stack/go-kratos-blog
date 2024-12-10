@@ -7,7 +7,7 @@ option go_package = "AIChat/api/chat;chat";
 service Chat {
 	rpc ServerStreamAIChat(AIChatRequest) returns (stream AIChatReply);
 	rpc AIPaint(AIPaintRequest) returns (AIPaintReply);
-	rpc AISummarization(AISummarizationRequest) returns (stream AISummarizationReply);
+	rpc AISummarizationStream(AISummarizationRequest) returns (stream AISummarizationReply);
 }
 
 message AIChatRequest{
