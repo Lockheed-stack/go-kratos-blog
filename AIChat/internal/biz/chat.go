@@ -130,7 +130,7 @@ func (uc *AIChatUsecase) StreamGetAISummarization(text_bytes *pb.AISummarization
 		TopK:        30,
 		MaxTokens:   2048,
 	}
-	err := uc.repo.CloudflareStreamGetAIChat(context.Background(), req, ch, "qwen1.5-14b-chat-awq")
+	err := uc.repo.CloudflareStreamGetAIChat(context.Background(), req, ch, "llama-3.3-70b-instruct-fp8-fast")
 	if err != nil {
 		ch <- &AIChatRespond{
 			Response: err.Error(),

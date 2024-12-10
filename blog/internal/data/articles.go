@@ -71,13 +71,15 @@ func (ap *articleRepo) GetArticlesForRecommend_Pagination(pageSize uint32, offse
 }
 func (ap *articleRepo) GetArticlesByRandomSelect(count uint32) ([]*pb.DetailArticleInfo, error) {
 	var result = []*pb.DetailArticleInfo{}
-	var total int64
-	ap.data.db.Model(&biz.Article{}).Count(&total)
-	if total == 0 {
+	// var total int64
+	// ap.data.db.Model(&biz.Article{}).Count(&total)
+	tmp_article := &biz.Article{}
+	ap.data.db.Select("id").Order("id desc").Limit(1).Find(tmp_article)
+	if tmp_article.ID == 0 {
 		return result, nil
 	}
 
-	max_start_index := total - int64(count) + 1
+	max_start_index := int64(tmp_article.ID) - int64(count) + 1
 	var random_start_index int64
 	if max_start_index > 0 {
 		r := rand.New(rand.NewSource(time.Now().Unix()))

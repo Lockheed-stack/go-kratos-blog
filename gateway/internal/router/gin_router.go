@@ -70,17 +70,29 @@ func NewGinRouter(
 		auth_Required_group.GET("/stat/user/sevenDays", stat_user_handler.GetUserSevenDaysStat)
 	}
 
+	// AI apis
 	AIChat_group := r.Group("/ai")
 	AIChat_group.Use(
+		kgin.Middlewares(
+			recovery.Recovery(),
+		),
+	)
+	{
+		AIChat_group.POST("/summarization", aichat_handler.AISummarizationStreamGetResponse)
+	}
+
+	AIChat_Auth_group := r.Group("/ai/auth")
+	AIChat_Auth_group.Use(
 		kgin.Middlewares(
 			recovery.Recovery(),
 		),
 		middlewares.JwtMids(),
 	)
 	{
-		AIChat_group.POST("/chat", aichat_handler.AIChatStreamGetResponse)
-		AIChat_group.POST("/text2img", aichat_handler.AIPainting)
-		AIChat_group.POST("/summarization", aichat_handler.AISummarizationStreamGetResponse)
+		AIChat_Auth_group.POST("/chat", aichat_handler.AIChatStreamGetResponse)
+		AIChat_Auth_group.POST("/text2img", aichat_handler.AIPainting)
+
 	}
+
 	return r
 }

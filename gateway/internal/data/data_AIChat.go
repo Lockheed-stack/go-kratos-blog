@@ -25,8 +25,11 @@ func NewGatewayAIChatRepo(data *Data, logger log.Logger) biz.GatewayAIChatRepo {
 }
 
 func (r *gatewayAIChatRepo) GRPC_AIChatStreamGetResponse(req *chat.AIChatRequest, ch chan *chat.AIChatReply) {
+
 	client := chat.NewChatClient(r.data.ConnGRPC_ai_chat)
-	stream, err := client.ServerStreamAIChat(context.Background(), req)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*30)
+	defer cancel()
+	stream, err := client.ServerStreamAIChat(ctx, req)
 	if err != nil {
 		r.log.Error(err)
 		ch <- &chat.AIChatReply{
@@ -78,7 +81,7 @@ func (r *gatewayAIChatRepo) GRPC_AISummarizationStreamGetResponse(req_body io.Re
 	defer req_body.Close()
 
 	client := chat.NewChatClient(r.data.ConnGRPC_ai_chat)
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*30)
 	defer cancel()
 	stream, err := client.AISummarization(ctx, req)
 	if err != nil {
