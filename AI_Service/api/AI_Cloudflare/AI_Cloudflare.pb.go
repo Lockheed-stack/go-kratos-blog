@@ -114,6 +114,313 @@ func (x *AISummarizationReply) GetTextAbstract() string {
 	return ""
 }
 
+type AIChatRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Msg         []*AIChatRequest_Message `protobuf:"bytes,1,rep,name=Msg,proto3" json:"Msg,omitempty"`
+	Temperature float32                  `protobuf:"fixed32,2,opt,name=Temperature,proto3" json:"Temperature,omitempty"` // Controls the randomness of the output; higher values produce more random results.
+	TopK        uint32                   `protobuf:"varint,3,opt,name=TopK,proto3" json:"TopK,omitempty"`                // Limits the AI to choose from the top 'k' most probable words. Lower values make responses more focused; higher values introduce more variety and potential surprises.
+	ModelKind   string                   `protobuf:"bytes,4,opt,name=ModelKind,proto3" json:"ModelKind,omitempty"`
+}
+
+func (x *AIChatRequest) Reset() {
+	*x = AIChatRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_api_AI_Cloudflare_AI_Cloudflare_proto_msgTypes[2]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *AIChatRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AIChatRequest) ProtoMessage() {}
+
+func (x *AIChatRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_api_AI_Cloudflare_AI_Cloudflare_proto_msgTypes[2]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AIChatRequest.ProtoReflect.Descriptor instead.
+func (*AIChatRequest) Descriptor() ([]byte, []int) {
+	return file_api_AI_Cloudflare_AI_Cloudflare_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *AIChatRequest) GetMsg() []*AIChatRequest_Message {
+	if x != nil {
+		return x.Msg
+	}
+	return nil
+}
+
+func (x *AIChatRequest) GetTemperature() float32 {
+	if x != nil {
+		return x.Temperature
+	}
+	return 0
+}
+
+func (x *AIChatRequest) GetTopK() uint32 {
+	if x != nil {
+		return x.TopK
+	}
+	return 0
+}
+
+func (x *AIChatRequest) GetModelKind() string {
+	if x != nil {
+		return x.ModelKind
+	}
+	return ""
+}
+
+type AIChatReply struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Msg string `protobuf:"bytes,1,opt,name=Msg,proto3" json:"Msg,omitempty"`
+}
+
+func (x *AIChatReply) Reset() {
+	*x = AIChatReply{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_api_AI_Cloudflare_AI_Cloudflare_proto_msgTypes[3]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *AIChatReply) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AIChatReply) ProtoMessage() {}
+
+func (x *AIChatReply) ProtoReflect() protoreflect.Message {
+	mi := &file_api_AI_Cloudflare_AI_Cloudflare_proto_msgTypes[3]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AIChatReply.ProtoReflect.Descriptor instead.
+func (*AIChatReply) Descriptor() ([]byte, []int) {
+	return file_api_AI_Cloudflare_AI_Cloudflare_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *AIChatReply) GetMsg() string {
+	if x != nil {
+		return x.Msg
+	}
+	return ""
+}
+
+type AIPaintRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Prompt    string  `protobuf:"bytes,1,opt,name=Prompt,proto3" json:"Prompt,omitempty"`
+	Height    uint32  `protobuf:"varint,2,opt,name=Height,proto3" json:"Height,omitempty"`
+	Width     uint32  `protobuf:"varint,3,opt,name=Width,proto3" json:"Width,omitempty"`
+	Guidance  float32 `protobuf:"fixed32,4,opt,name=Guidance,proto3" json:"Guidance,omitempty"` // Controls how closely the generated image should adhere to the prompt; higher values make the image more aligned with the prompt
+	ModelKind string  `protobuf:"bytes,5,opt,name=ModelKind,proto3" json:"ModelKind,omitempty"`
+}
+
+func (x *AIPaintRequest) Reset() {
+	*x = AIPaintRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_api_AI_Cloudflare_AI_Cloudflare_proto_msgTypes[4]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *AIPaintRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AIPaintRequest) ProtoMessage() {}
+
+func (x *AIPaintRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_api_AI_Cloudflare_AI_Cloudflare_proto_msgTypes[4]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AIPaintRequest.ProtoReflect.Descriptor instead.
+func (*AIPaintRequest) Descriptor() ([]byte, []int) {
+	return file_api_AI_Cloudflare_AI_Cloudflare_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *AIPaintRequest) GetPrompt() string {
+	if x != nil {
+		return x.Prompt
+	}
+	return ""
+}
+
+func (x *AIPaintRequest) GetHeight() uint32 {
+	if x != nil {
+		return x.Height
+	}
+	return 0
+}
+
+func (x *AIPaintRequest) GetWidth() uint32 {
+	if x != nil {
+		return x.Width
+	}
+	return 0
+}
+
+func (x *AIPaintRequest) GetGuidance() float32 {
+	if x != nil {
+		return x.Guidance
+	}
+	return 0
+}
+
+func (x *AIPaintRequest) GetModelKind() string {
+	if x != nil {
+		return x.ModelKind
+	}
+	return ""
+}
+
+type AIPaintReply struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	ImgBinary []byte `protobuf:"bytes,1,opt,name=ImgBinary,proto3" json:"ImgBinary,omitempty"`
+	Msg       string `protobuf:"bytes,2,opt,name=Msg,proto3" json:"Msg,omitempty"`
+}
+
+func (x *AIPaintReply) Reset() {
+	*x = AIPaintReply{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_api_AI_Cloudflare_AI_Cloudflare_proto_msgTypes[5]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *AIPaintReply) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AIPaintReply) ProtoMessage() {}
+
+func (x *AIPaintReply) ProtoReflect() protoreflect.Message {
+	mi := &file_api_AI_Cloudflare_AI_Cloudflare_proto_msgTypes[5]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AIPaintReply.ProtoReflect.Descriptor instead.
+func (*AIPaintReply) Descriptor() ([]byte, []int) {
+	return file_api_AI_Cloudflare_AI_Cloudflare_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *AIPaintReply) GetImgBinary() []byte {
+	if x != nil {
+		return x.ImgBinary
+	}
+	return nil
+}
+
+func (x *AIPaintReply) GetMsg() string {
+	if x != nil {
+		return x.Msg
+	}
+	return ""
+}
+
+type AIChatRequest_Message struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Role    string `protobuf:"bytes,1,opt,name=role,proto3" json:"role,omitempty"`
+	Content string `protobuf:"bytes,2,opt,name=content,proto3" json:"content,omitempty"`
+}
+
+func (x *AIChatRequest_Message) Reset() {
+	*x = AIChatRequest_Message{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_api_AI_Cloudflare_AI_Cloudflare_proto_msgTypes[6]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *AIChatRequest_Message) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AIChatRequest_Message) ProtoMessage() {}
+
+func (x *AIChatRequest_Message) ProtoReflect() protoreflect.Message {
+	mi := &file_api_AI_Cloudflare_AI_Cloudflare_proto_msgTypes[6]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AIChatRequest_Message.ProtoReflect.Descriptor instead.
+func (*AIChatRequest_Message) Descriptor() ([]byte, []int) {
+	return file_api_AI_Cloudflare_AI_Cloudflare_proto_rawDescGZIP(), []int{2, 0}
+}
+
+func (x *AIChatRequest_Message) GetRole() string {
+	if x != nil {
+		return x.Role
+	}
+	return ""
+}
+
+func (x *AIChatRequest_Message) GetContent() string {
+	if x != nil {
+		return x.Content
+	}
+	return ""
+}
+
 var File_api_AI_Cloudflare_AI_Cloudflare_proto protoreflect.FileDescriptor
 
 var file_api_AI_Cloudflare_AI_Cloudflare_proto_rawDesc = []byte{
@@ -128,7 +435,36 @@ var file_api_AI_Cloudflare_AI_Cloudflare_proto_rawDesc = []byte{
 	0x61, 0x72, 0x69, 0x7a, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x12, 0x22,
 	0x0a, 0x0c, 0x54, 0x65, 0x78, 0x74, 0x41, 0x62, 0x73, 0x74, 0x72, 0x61, 0x63, 0x74, 0x18, 0x01,
 	0x20, 0x01, 0x28, 0x09, 0x52, 0x0c, 0x54, 0x65, 0x78, 0x74, 0x41, 0x62, 0x73, 0x74, 0x72, 0x61,
-	0x63, 0x74, 0x32, 0x7d, 0x0a, 0x0c, 0x41, 0x49, 0x43, 0x6c, 0x6f, 0x75, 0x64, 0x66, 0x6c, 0x61,
+	0x63, 0x74, 0x22, 0xd8, 0x01, 0x0a, 0x0d, 0x41, 0x49, 0x43, 0x68, 0x61, 0x74, 0x52, 0x65, 0x71,
+	0x75, 0x65, 0x73, 0x74, 0x12, 0x3a, 0x0a, 0x03, 0x4d, 0x73, 0x67, 0x18, 0x01, 0x20, 0x03, 0x28,
+	0x0b, 0x32, 0x28, 0x2e, 0x61, 0x70, 0x69, 0x2e, 0x41, 0x49, 0x5f, 0x43, 0x6c, 0x6f, 0x75, 0x64,
+	0x66, 0x6c, 0x61, 0x72, 0x65, 0x2e, 0x41, 0x49, 0x43, 0x68, 0x61, 0x74, 0x52, 0x65, 0x71, 0x75,
+	0x65, 0x73, 0x74, 0x2e, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x52, 0x03, 0x4d, 0x73, 0x67,
+	0x12, 0x20, 0x0a, 0x0b, 0x54, 0x65, 0x6d, 0x70, 0x65, 0x72, 0x61, 0x74, 0x75, 0x72, 0x65, 0x18,
+	0x02, 0x20, 0x01, 0x28, 0x02, 0x52, 0x0b, 0x54, 0x65, 0x6d, 0x70, 0x65, 0x72, 0x61, 0x74, 0x75,
+	0x72, 0x65, 0x12, 0x12, 0x0a, 0x04, 0x54, 0x6f, 0x70, 0x4b, 0x18, 0x03, 0x20, 0x01, 0x28, 0x0d,
+	0x52, 0x04, 0x54, 0x6f, 0x70, 0x4b, 0x12, 0x1c, 0x0a, 0x09, 0x4d, 0x6f, 0x64, 0x65, 0x6c, 0x4b,
+	0x69, 0x6e, 0x64, 0x18, 0x04, 0x20, 0x01, 0x28, 0x09, 0x52, 0x09, 0x4d, 0x6f, 0x64, 0x65, 0x6c,
+	0x4b, 0x69, 0x6e, 0x64, 0x1a, 0x37, 0x0a, 0x07, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x12,
+	0x12, 0x0a, 0x04, 0x72, 0x6f, 0x6c, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x72,
+	0x6f, 0x6c, 0x65, 0x12, 0x18, 0x0a, 0x07, 0x63, 0x6f, 0x6e, 0x74, 0x65, 0x6e, 0x74, 0x18, 0x02,
+	0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x63, 0x6f, 0x6e, 0x74, 0x65, 0x6e, 0x74, 0x22, 0x1f, 0x0a,
+	0x0b, 0x41, 0x49, 0x43, 0x68, 0x61, 0x74, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x12, 0x10, 0x0a, 0x03,
+	0x4d, 0x73, 0x67, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x4d, 0x73, 0x67, 0x22, 0x90,
+	0x01, 0x0a, 0x0e, 0x41, 0x49, 0x50, 0x61, 0x69, 0x6e, 0x74, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73,
+	0x74, 0x12, 0x16, 0x0a, 0x06, 0x50, 0x72, 0x6f, 0x6d, 0x70, 0x74, 0x18, 0x01, 0x20, 0x01, 0x28,
+	0x09, 0x52, 0x06, 0x50, 0x72, 0x6f, 0x6d, 0x70, 0x74, 0x12, 0x16, 0x0a, 0x06, 0x48, 0x65, 0x69,
+	0x67, 0x68, 0x74, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0d, 0x52, 0x06, 0x48, 0x65, 0x69, 0x67, 0x68,
+	0x74, 0x12, 0x14, 0x0a, 0x05, 0x57, 0x69, 0x64, 0x74, 0x68, 0x18, 0x03, 0x20, 0x01, 0x28, 0x0d,
+	0x52, 0x05, 0x57, 0x69, 0x64, 0x74, 0x68, 0x12, 0x1a, 0x0a, 0x08, 0x47, 0x75, 0x69, 0x64, 0x61,
+	0x6e, 0x63, 0x65, 0x18, 0x04, 0x20, 0x01, 0x28, 0x02, 0x52, 0x08, 0x47, 0x75, 0x69, 0x64, 0x61,
+	0x6e, 0x63, 0x65, 0x12, 0x1c, 0x0a, 0x09, 0x4d, 0x6f, 0x64, 0x65, 0x6c, 0x4b, 0x69, 0x6e, 0x64,
+	0x18, 0x05, 0x20, 0x01, 0x28, 0x09, 0x52, 0x09, 0x4d, 0x6f, 0x64, 0x65, 0x6c, 0x4b, 0x69, 0x6e,
+	0x64, 0x22, 0x3e, 0x0a, 0x0c, 0x41, 0x49, 0x50, 0x61, 0x69, 0x6e, 0x74, 0x52, 0x65, 0x70, 0x6c,
+	0x79, 0x12, 0x1c, 0x0a, 0x09, 0x49, 0x6d, 0x67, 0x42, 0x69, 0x6e, 0x61, 0x72, 0x79, 0x18, 0x01,
+	0x20, 0x01, 0x28, 0x0c, 0x52, 0x09, 0x49, 0x6d, 0x67, 0x42, 0x69, 0x6e, 0x61, 0x72, 0x79, 0x12,
+	0x10, 0x0a, 0x03, 0x4d, 0x73, 0x67, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x4d, 0x73,
+	0x67, 0x32, 0xa0, 0x02, 0x0a, 0x0c, 0x41, 0x49, 0x43, 0x6c, 0x6f, 0x75, 0x64, 0x66, 0x6c, 0x61,
 	0x72, 0x65, 0x12, 0x6d, 0x0a, 0x15, 0x53, 0x74, 0x72, 0x65, 0x61, 0x6d, 0x41, 0x49, 0x53, 0x75,
 	0x6d, 0x6d, 0x61, 0x72, 0x69, 0x7a, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x29, 0x2e, 0x61, 0x70,
 	0x69, 0x2e, 0x41, 0x49, 0x5f, 0x43, 0x6c, 0x6f, 0x75, 0x64, 0x66, 0x6c, 0x61, 0x72, 0x65, 0x2e,
@@ -136,10 +472,20 @@ var file_api_AI_Cloudflare_AI_Cloudflare_proto_rawDesc = []byte{
 	0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x27, 0x2e, 0x61, 0x70, 0x69, 0x2e, 0x41, 0x49, 0x5f,
 	0x43, 0x6c, 0x6f, 0x75, 0x64, 0x66, 0x6c, 0x61, 0x72, 0x65, 0x2e, 0x41, 0x49, 0x53, 0x75, 0x6d,
 	0x6d, 0x61, 0x72, 0x69, 0x7a, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x30,
-	0x01, 0x42, 0x2c, 0x5a, 0x2a, 0x41, 0x49, 0x5f, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2f,
-	0x61, 0x70, 0x69, 0x2f, 0x41, 0x49, 0x5f, 0x43, 0x6c, 0x6f, 0x75, 0x64, 0x66, 0x6c, 0x61, 0x72,
-	0x65, 0x3b, 0x41, 0x49, 0x5f, 0x43, 0x6c, 0x6f, 0x75, 0x64, 0x66, 0x6c, 0x61, 0x72, 0x65, 0x62,
-	0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x01, 0x12, 0x52, 0x0a, 0x0c, 0x53, 0x74, 0x72, 0x65, 0x61, 0x6d, 0x41, 0x49, 0x43, 0x68, 0x61,
+	0x74, 0x12, 0x20, 0x2e, 0x61, 0x70, 0x69, 0x2e, 0x41, 0x49, 0x5f, 0x43, 0x6c, 0x6f, 0x75, 0x64,
+	0x66, 0x6c, 0x61, 0x72, 0x65, 0x2e, 0x41, 0x49, 0x43, 0x68, 0x61, 0x74, 0x52, 0x65, 0x71, 0x75,
+	0x65, 0x73, 0x74, 0x1a, 0x1e, 0x2e, 0x61, 0x70, 0x69, 0x2e, 0x41, 0x49, 0x5f, 0x43, 0x6c, 0x6f,
+	0x75, 0x64, 0x66, 0x6c, 0x61, 0x72, 0x65, 0x2e, 0x41, 0x49, 0x43, 0x68, 0x61, 0x74, 0x52, 0x65,
+	0x70, 0x6c, 0x79, 0x30, 0x01, 0x12, 0x4d, 0x0a, 0x07, 0x41, 0x49, 0x50, 0x61, 0x69, 0x6e, 0x74,
+	0x12, 0x21, 0x2e, 0x61, 0x70, 0x69, 0x2e, 0x41, 0x49, 0x5f, 0x43, 0x6c, 0x6f, 0x75, 0x64, 0x66,
+	0x6c, 0x61, 0x72, 0x65, 0x2e, 0x41, 0x49, 0x50, 0x61, 0x69, 0x6e, 0x74, 0x52, 0x65, 0x71, 0x75,
+	0x65, 0x73, 0x74, 0x1a, 0x1f, 0x2e, 0x61, 0x70, 0x69, 0x2e, 0x41, 0x49, 0x5f, 0x43, 0x6c, 0x6f,
+	0x75, 0x64, 0x66, 0x6c, 0x61, 0x72, 0x65, 0x2e, 0x41, 0x49, 0x50, 0x61, 0x69, 0x6e, 0x74, 0x52,
+	0x65, 0x70, 0x6c, 0x79, 0x42, 0x2c, 0x5a, 0x2a, 0x41, 0x49, 0x5f, 0x53, 0x65, 0x72, 0x76, 0x69,
+	0x63, 0x65, 0x2f, 0x61, 0x70, 0x69, 0x2f, 0x41, 0x49, 0x5f, 0x43, 0x6c, 0x6f, 0x75, 0x64, 0x66,
+	0x6c, 0x61, 0x72, 0x65, 0x3b, 0x41, 0x49, 0x5f, 0x43, 0x6c, 0x6f, 0x75, 0x64, 0x66, 0x6c, 0x61,
+	0x72, 0x65, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -154,19 +500,29 @@ func file_api_AI_Cloudflare_AI_Cloudflare_proto_rawDescGZIP() []byte {
 	return file_api_AI_Cloudflare_AI_Cloudflare_proto_rawDescData
 }
 
-var file_api_AI_Cloudflare_AI_Cloudflare_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+var file_api_AI_Cloudflare_AI_Cloudflare_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
 var file_api_AI_Cloudflare_AI_Cloudflare_proto_goTypes = []any{
 	(*AISummarizationRequest)(nil), // 0: api.AI_Cloudflare.AISummarizationRequest
 	(*AISummarizationReply)(nil),   // 1: api.AI_Cloudflare.AISummarizationReply
+	(*AIChatRequest)(nil),          // 2: api.AI_Cloudflare.AIChatRequest
+	(*AIChatReply)(nil),            // 3: api.AI_Cloudflare.AIChatReply
+	(*AIPaintRequest)(nil),         // 4: api.AI_Cloudflare.AIPaintRequest
+	(*AIPaintReply)(nil),           // 5: api.AI_Cloudflare.AIPaintReply
+	(*AIChatRequest_Message)(nil),  // 6: api.AI_Cloudflare.AIChatRequest.Message
 }
 var file_api_AI_Cloudflare_AI_Cloudflare_proto_depIdxs = []int32{
-	0, // 0: api.AI_Cloudflare.AICloudflare.StreamAISummarization:input_type -> api.AI_Cloudflare.AISummarizationRequest
-	1, // 1: api.AI_Cloudflare.AICloudflare.StreamAISummarization:output_type -> api.AI_Cloudflare.AISummarizationReply
-	1, // [1:2] is the sub-list for method output_type
-	0, // [0:1] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	6, // 0: api.AI_Cloudflare.AIChatRequest.Msg:type_name -> api.AI_Cloudflare.AIChatRequest.Message
+	0, // 1: api.AI_Cloudflare.AICloudflare.StreamAISummarization:input_type -> api.AI_Cloudflare.AISummarizationRequest
+	2, // 2: api.AI_Cloudflare.AICloudflare.StreamAIChat:input_type -> api.AI_Cloudflare.AIChatRequest
+	4, // 3: api.AI_Cloudflare.AICloudflare.AIPaint:input_type -> api.AI_Cloudflare.AIPaintRequest
+	1, // 4: api.AI_Cloudflare.AICloudflare.StreamAISummarization:output_type -> api.AI_Cloudflare.AISummarizationReply
+	3, // 5: api.AI_Cloudflare.AICloudflare.StreamAIChat:output_type -> api.AI_Cloudflare.AIChatReply
+	5, // 6: api.AI_Cloudflare.AICloudflare.AIPaint:output_type -> api.AI_Cloudflare.AIPaintReply
+	4, // [4:7] is the sub-list for method output_type
+	1, // [1:4] is the sub-list for method input_type
+	1, // [1:1] is the sub-list for extension type_name
+	1, // [1:1] is the sub-list for extension extendee
+	0, // [0:1] is the sub-list for field type_name
 }
 
 func init() { file_api_AI_Cloudflare_AI_Cloudflare_proto_init() }
@@ -199,6 +555,66 @@ func file_api_AI_Cloudflare_AI_Cloudflare_proto_init() {
 				return nil
 			}
 		}
+		file_api_AI_Cloudflare_AI_Cloudflare_proto_msgTypes[2].Exporter = func(v any, i int) any {
+			switch v := v.(*AIChatRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_api_AI_Cloudflare_AI_Cloudflare_proto_msgTypes[3].Exporter = func(v any, i int) any {
+			switch v := v.(*AIChatReply); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_api_AI_Cloudflare_AI_Cloudflare_proto_msgTypes[4].Exporter = func(v any, i int) any {
+			switch v := v.(*AIPaintRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_api_AI_Cloudflare_AI_Cloudflare_proto_msgTypes[5].Exporter = func(v any, i int) any {
+			switch v := v.(*AIPaintReply); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_api_AI_Cloudflare_AI_Cloudflare_proto_msgTypes[6].Exporter = func(v any, i int) any {
+			switch v := v.(*AIChatRequest_Message); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
@@ -206,7 +622,7 @@ func file_api_AI_Cloudflare_AI_Cloudflare_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_api_AI_Cloudflare_AI_Cloudflare_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   2,
+			NumMessages:   7,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

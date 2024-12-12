@@ -91,9 +91,10 @@ func NewGinRouter(
 		middlewares.JwtMids(),
 	)
 	{
-		AIChat_Auth_group.POST("/chat", aichat_handler.AIChatStreamGetResponse)
-		AIChat_Auth_group.POST("/text2img", aichat_handler.AIPainting)
-
+		// AIChat_Auth_group.POST("/chat", aichat_handler.AIChatStreamGetResponse)
+		// AIChat_Auth_group.POST("/text2img", aichat_handler.AIPainting)
+		AIChat_Auth_group.POST("/chat", ai_handler.AIChat)
+		AIChat_Auth_group.POST("/text2img", ai_handler.GetAIPainting)
 	}
 
 	return r

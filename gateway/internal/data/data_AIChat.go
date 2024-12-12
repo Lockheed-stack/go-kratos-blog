@@ -65,12 +65,12 @@ func (r *gatewayAIChatRepo) GRPC_AIPainting(req *chat.AIPaintRequest) (*chat.AIP
 func (r *gatewayAIChatRepo) GRPC_AISummarizationStreamGetResponse(req_body io.ReadCloser, blogID string, ch chan *chat.AISummarizationReply) {
 
 	// fast path
-	val, err := GetAISummarizationRedis(r.data.Redis_cli, blogID)
-	if err == nil {
-		ch <- val
-		ch <- nil
-		return
-	}
+	// val, err := GetAISummarizationRedis(r.data.Redis_cli, blogID)
+	// if err == nil {
+	// 	ch <- val
+	// 	ch <- nil
+	// 	return
+	// }
 
 	// slow path
 	gprc_req := &chat.AISummarizationRequest{}

@@ -8,6 +8,8 @@ import (
 	"encoding/json"
 	"net/http"
 	"strings"
+
+	"github.com/go-kratos/kratos/v2/errors"
 )
 
 type aiCloudflareRepo struct {
@@ -22,8 +24,15 @@ func NewAICloudflareRepo(data *Data) biz.AICloudflareRepo {
 
 // StreamTextGeneration implements biz.AICloudflareRepo.
 func (r *aiCloudflareRepo) StreamTextGeneration(ctx context.Context, messages *biz.CloudflareAITextGenerationRequest, ch chan *biz.CloudflareAITextGenerationReply, model string) error {
-	// Checking whether the modelKind exists.
 
+	// Checking whether the modelKind exists.
+	modelAddr := ""
+	if v, ok := r.data.aiModelTextOnly[model]; !ok {
+		r.data.log.Errorf("Model '%s' does not exist.\n", model)
+		return errors.New(400, "", "Model does not exist.")
+	} else {
+		modelAddr = v
+	}
 	// POST Body serialization
 	body, err := json.Marshal(messages)
 	if err != nil {
@@ -31,7 +40,7 @@ func (r *aiCloudflareRepo) StreamTextGeneration(ctx context.Context, messages *b
 		return err
 	}
 	// POST Request settings
-	req, err := http.NewRequest("POST", r.data.cfAPIBaseUrl+model, bytes.NewBuffer(body))
+	req, err := http.NewRequest("POST", r.data.cfAPIBaseUrl+modelAddr, bytes.NewBuffer(body))
 	if err != nil {
 		r.data.log.Error(err)
 		return err
@@ -65,4 +74,50 @@ func (r *aiCloudflareRepo) StreamTextGeneration(ctx context.Context, messages *b
 		}
 	}
 	return nil
+}
+
+// ImageGeneration implements biz.AICloudflareRepo.
+func (r *aiCloudflareRepo) ImageGeneration(messages *biz.CloudflareAIPaintingRequest, model string) ([]byte, error) {
+
+	// Checking whether the modelKind exists.
+	modelAddr := ""
+	if v, ok := r.data.aiModelTextToImg[model]; !ok {
+		r.data.log.Errorf("Model '%s' does not exist.\n", model)
+		return nil, errors.New(400, "", "Model does not exist.")
+	} else {
+		modelAddr = v
+	}
+
+	// POST Body serialization
+	body, err := json.Marshal(messages)
+	if err != nil {
+		r.data.log.Error(err)
+		return nil, err
+	}
+	// POST Request settings
+	req, err := http.NewRequest("POST", r.data.cfAPIBaseUrl+modelAddr, bytes.NewBuffer(body))
+	if err != nil {
+		r.data.log.Error(err)
+		return nil, err
+	}
+	req.Header.Add("Authorization", "Bearer "+r.data.cfToken)
+	req.Header.Add("Content-Type", "application/json")
+
+	// send request
+	resp, err := r.data.cf_httpClient.Do(req)
+	if err != nil {
+		r.data.log.Error(err)
+		return nil, err
+	}
+	// read response
+	// r.data.log.Infof("content-length: %v\n", resp.ContentLength)
+
+	var b = make([]byte, 0, 1024*500) // 500KB
+	buf := bytes.NewBuffer(b)
+	_, err = buf.ReadFrom(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	return buf.Bytes(), nil
 }
