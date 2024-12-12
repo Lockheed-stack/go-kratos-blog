@@ -82,7 +82,7 @@ jobs:
               run: |
                 docker tag tmp-image lockheedlee/kratos-blog-micro-stat-user:latest
                 docker push lockheedlee/kratos-blog-micro-stat-user:latest
-    build_AIChat:
+    build_AI:
         runs-on: ubuntu-latest
         steps:
           - name: Checkout
@@ -95,12 +95,12 @@ jobs:
                 password: ${{ secrets.DOCKERHUB_TOKEN }}
 
           - name: Build the Docker image
-            run: docker build ./AIChat/. --tag tmp-image
+            run: docker build ./AI_Service/. --tag tmp-image
   
           - name: Tag and Push the Docker image
             run: |
-                docker tag tmp-image lockheedlee/kratos-blog-micro-ai-chat:latest
-                docker push lockheedlee/kratos-blog-micro-ai-chat:latest
+                docker tag tmp-image lockheedlee/kratos-blog-micro-ai:latest
+                docker push lockheedlee/kratos-blog-micro-ai:latest
     build_gateway:
         runs-on: ubuntu-latest
         steps:

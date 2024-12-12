@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package api.AI_Cloudflare;
+
+option go_package = "AI_Service/api/AI_Cloudflare;AI_Cloudflare";
+
+service AICloudflare {
+	rpc StreamAISummarization(AISummarizationRequest) returns (stream AISummarizationReply);
+}
+
+message AISummarizationRequest{
+	bytes ArticleText = 1;
+}
+message AISummarizationReply{
+	string TextAbstract = 1;
+}

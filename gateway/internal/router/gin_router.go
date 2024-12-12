@@ -16,6 +16,7 @@ func NewGinRouter(
 	upload_handler *biz.GatewayUploadUsecase,
 	stat_user_handler *biz.GatewayStatUserUsecase,
 	aichat_handler *biz.GatewayAIChatUsecase,
+	ai_handler *biz.GatewayAIUsecase,
 	mids *middlewares.Mids,
 ) *gin.Engine {
 
@@ -78,7 +79,8 @@ func NewGinRouter(
 		),
 	)
 	{
-		AIChat_group.POST("/summarization", aichat_handler.AISummarizationStreamGetResponse)
+		// AIChat_group.POST("/summarization", aichat_handler.AISummarizationStreamGetResponse)
+		AIChat_group.POST("/summarization", ai_handler.GetAISummarization)
 	}
 
 	AIChat_Auth_group := r.Group("/ai/auth")

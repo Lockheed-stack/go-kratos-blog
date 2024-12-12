@@ -23,6 +23,7 @@ var ProviderSet = wire.NewSet(
 	NewGatewayUserRepo,
 	NewGatewayStatUserRepo,
 	NewGatewayAIChatRepo,
+	NewGatewayAIRepo,
 )
 
 // Data .
@@ -34,6 +35,7 @@ type Data struct {
 	ConnGRPC_user      *grpc.ClientConn
 	ConnGRPC_stat_user *grpc.ClientConn
 	ConnGRPC_ai_chat   *grpc.ClientConn
+	ConnGRPC_ai        *grpc.ClientConn
 	Redis_cli          *redis.Client
 	// qiniuyun
 	Qiniu_AccessKey      string
@@ -127,6 +129,17 @@ func NewData(c *conf.Data, logger log.Logger) (*Data, func(), error) {
 		return data, nil, err
 	}
 	data.ConnGRPC_ai_chat = conn5
+
+	conn6, err := kratos_grpc.DialInsecure(
+		context.Background(),
+		kratos_grpc.WithEndpoint("discovery:///AI_Service"),
+		kratos_grpc.WithDiscovery(data.ETCD_reg),
+		kratos_grpc.WithTimeout(time.Second*30),
+	)
+	if err != nil {
+		return data, nil, err
+	}
+	data.ConnGRPC_ai = conn6
 
 	// qiniuyun config
 	data.Qiniu_AccessKey = c.Qiniuyun.AccessKey
